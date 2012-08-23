@@ -6,13 +6,11 @@ project_root: ~/Code/treehouse
 pre:
   - export RBENV_DIR=
 tabs:
-  - app:
-      layout: main-horizontal
+  - editor: vi
+  - utility:
+      layout: tiled
       panes:
-        - vim
         - 
-  - challenge_engine:
-      layout: main-horizontal
-      panes:
-        - cd ~/Code/code_challenges && vim
-        - cd ~/Code/code_challenges && ./worker
+        - bundle exec rake db:test:prepare && tconsole
+        - powder applog
+        - cd ../code_challenges && bundle exec ./worker
