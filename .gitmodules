@@ -99,3 +99,9 @@
 [submodule "vim/bundle/lusty"]
 	path = vim/bundle/lusty
 	url = https://github.com/sjbach/lusty.git
+[submodule "vim/bundle/vim-tomorrow-night"]
+	path = vim/bundle/vim-tomorrow-night
+	url = https://github.com/ootoovak/vim-tomorrow-night.git
+[submodule "vim/bundle/vim-railscasts"]
+	path = vim/bundle/vim-railscasts
+	url = git@github.com:rickharris/vim-railscasts.git
