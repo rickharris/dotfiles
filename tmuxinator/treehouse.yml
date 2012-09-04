@@ -2,15 +2,13 @@
 # you can make as many tabs as you wish...
 
 project_name: treehouse
-project_root: ~/Code/treehouse
-pre:
-  - export RBENV_DIR=
+project_root: ~/Code/treehouse/web
 tabs:
   - editor: vi
   - utility:
       layout: tiled
       panes:
-        - 
-        - bundle exec rake db:test:prepare && tconsole
+        -
+        - exit
         - powder applog
-        - cd ../code_challenges && bundle exec ./worker
+        - cd ../challenges && bundle exec ./worker
