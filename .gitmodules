@@ -96,12 +96,16 @@
 	path = vim/bundle/VimClojure
 	url = https://github.com/vim-scripts/VimClojure.git
 	ignore = dirty
-[submodule "vim/bundle/lusty"]
-	path = vim/bundle/lusty
-	url = https://github.com/sjbach/lusty.git
 [submodule "vim/bundle/vim-tomorrow-night"]
 	path = vim/bundle/vim-tomorrow-night
 	url = https://github.com/ootoovak/vim-tomorrow-night.git
 [submodule "vim/bundle/vim-railscasts"]
 	path = vim/bundle/vim-railscasts
 	url = git@github.com:rickharris/vim-railscasts.git
+[submodule "vim/bundle/vimux"]
+	path = vim/bundle/vimux
+	url = https://github.com/benmills/vimux.git
+[submodule "vim/bundle/bufexplorer.zip"]
+	path = vim/bundle/bufexplorer.zip
+	url = https://github.com/vim-scripts/bufexplorer.zip.git
+	ignore = dirty
