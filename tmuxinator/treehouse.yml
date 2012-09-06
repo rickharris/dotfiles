@@ -1,6 +1,4 @@
 # ~/.tmuxinator/treehouse.yml
-# you can make as many tabs as you wish...
-
 project_name: treehouse
 project_root: ~/Code/treehouse/web
 tabs:
@@ -11,4 +9,4 @@ tabs:
         -
         - exit
         - powder applog
-        - cd ../challenges && bundle exec ./worker
+        - cd ../cc && be ./worker
