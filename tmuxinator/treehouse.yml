@@ -1,5 +1,5 @@
 # ~/.tmuxinator/treehouse.yml
-project_name: treehouse
+project_name: Treehouse
 project_root: ~/Code/treehouse/web
 tabs:
   - editor: vi
