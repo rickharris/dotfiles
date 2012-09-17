@@ -43,4 +43,4 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
-colorscheme railscasts
+colorscheme solarized
