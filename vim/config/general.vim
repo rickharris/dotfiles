@@ -45,4 +45,4 @@ set undofile
 syntax on " syntax highlighting engage!
 set bg=dark
 let g:solarized_termtrans=1
-colorscheme solarized
+colorscheme Tomorrow-Night
