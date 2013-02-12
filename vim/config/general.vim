@@ -46,3 +46,6 @@ syntax on " syntax highlighting engage!
 set bg=dark
 let g:solarized_termtrans=1
 colorscheme Tomorrow-Night
+
+set colorcolumn=81
+set cursorline

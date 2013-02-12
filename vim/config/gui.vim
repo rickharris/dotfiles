@@ -8,4 +8,7 @@ if has("gui_running")
 
   " Disable the macvim toolbar
   set guioptions-=T
+
+  colo solarized
+  set bg=light
 endif
