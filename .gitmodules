@@ -115,3 +115,21 @@
 [submodule "vim/bundle/vim-bundler"]
 	path = vim/bundle/vim-bundler
 	url = https://github.com/tpope/vim-bundler.git
+[submodule "vim/bundle/vim-powerline"]
+	path = vim/bundle/vim-powerline
+	url = https://github.com/skwp/vim-powerline.git
+[submodule "vim/bundle/vim-ruby-conque"]
+	path = vim/bundle/vim-ruby-conque
+	url = https://github.com/skwp/vim-ruby-conque.git
+[submodule "vim/bundle/vim-conque"]
+	path = vim/bundle/vim-conque
+	url = https://github.com/skwp/vim-conque.git
+[submodule "vim/bundle/ag"]
+	path = vim/bundle/ag
+	url = https://github.com/rking/ag.vim
+[submodule "vim/bundle/vim-gitgutter"]
+	path = vim/bundle/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter.git
+[submodule "vim/bundle/ir_black"]
+	path = vim/bundle/ir_black
+	url = https://github.com/msutherl/vim-colors-ir_black-256.git
