@@ -43,9 +43,9 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
-" set bg=dark
-" let g:solarized_termtrans=1
-colorscheme Tomorrow
+set bg=dark
+let g:solarized_termtrans=1
+colorscheme solarized
 
 set colorcolumn=81
 set cursorline
