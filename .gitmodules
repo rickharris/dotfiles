@@ -98,7 +98,7 @@
 	url = https://github.com/ootoovak/vim-tomorrow-night.git
 [submodule "vim/bundle/vim-railscasts"]
 	path = vim/bundle/vim-railscasts
-	url = git@github.com:rickharris/vim-railscasts.git
+	url = https://github.com/rickharris/vim-railscasts.git
 [submodule "vim/bundle/vimux"]
 	path = vim/bundle/vimux
 	url = https://github.com/benmills/vimux.git
