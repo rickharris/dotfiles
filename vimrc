@@ -22,4 +22,5 @@ runtime! config/powerline.vim
 runtime! config/syntastic.vim
 runtime! config/tabular.vim
 runtime! config/unimpaired.vim
+runtime! config/vimux.vim
 runtime! config/yankring.vim
