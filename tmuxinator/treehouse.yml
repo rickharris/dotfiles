@@ -2,11 +2,19 @@
 project_name: Treehouse
 project_root: ~/Code/treehouse/web
 tabs:
-  - editor: vi
-  - utility:
-      layout: tiled
+  - editor:
+      layout: even-horizontal
+      panes:
+        - vi
+        - be guard
+  - console:
+      layout: even-horizontal
       panes:
         -
-        - exit
+        - be rails c
+  - utility:
+      layout: even-horizontal
+      panes:
         - powder applog
         - cd ../cc && be ./worker
+        - be spork
