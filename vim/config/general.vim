@@ -43,7 +43,7 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
-colorscheme Tomorrow-Night
+colorscheme railscasts
 
 set colorcolumn=81
 set cursorline
