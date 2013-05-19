@@ -43,3 +43,8 @@ fi
 source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # History substring searches
 source $HOME/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh
+for keycode in '[' '0'; do
+  bindkey "^[${keycode}A" history-substring-search-up
+  bindkey "^[${keycode}B" history-substring-search-down
+done
+unset keycode
