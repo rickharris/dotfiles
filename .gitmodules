@@ -115,10 +115,6 @@
 [submodule "vim/bundle/vim-bundler"]
 	path = vim/bundle/vim-bundler
 	url = https://github.com/tpope/vim-bundler.git
-[submodule "vim/bundle/vim-powerline"]
-	path = vim/bundle/vim-powerline
-	url = https://github.com/skwp/vim-powerline.git
-	ignore = dirty
 [submodule "vim/bundle/vim-ruby-conque"]
 	path = vim/bundle/vim-ruby-conque
 	url = https://github.com/skwp/vim-ruby-conque.git
@@ -144,3 +140,6 @@
 	path = vim/bundle/indentLine
 	url = https://github.com/Yggdroot/indentLine.git
 	ignore = dirty
+[submodule "vim/bundle/vim-hybrid"]
+	path = vim/bundle/vim-hybrid
+	url = https://github.com/w0ng/vim-hybrid.git

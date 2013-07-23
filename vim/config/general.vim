@@ -43,7 +43,8 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
-colorscheme railscasts
+let g:hybrid_use_Xresources=1
+colorscheme hybrid
 
 set colorcolumn=81
 set cursorline
