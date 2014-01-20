@@ -45,7 +45,9 @@ set undofile
 syntax on " syntax highlighting engage!
 let g:hybrid_use_Xresources = 1
 colorscheme hybrid
-let g:airline_theme='bubblegum'
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ }
 
 set colorcolumn=81
 set cursorline
