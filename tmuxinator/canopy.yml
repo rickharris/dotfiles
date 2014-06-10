@@ -1,0 +1,8 @@
+name: Canopy
+root: ~/Code/treehouse/canopy
+
+windows:
+  - editor: vi
+  - shell:
+  - console: rails c
+  - foreman: rails s

@@ -1,10 +1,5 @@
-# ~/.tmuxinator/treehouse.yml
-project_name: Bigscreen
-project_root: ~/Code/bigscreen
-tabs:
-  - editor:
-      layout: main-vertical
-      panes:
-        - vi
-        - ./script/server
-  - zsh:
+name: Bigscreen
+root: ~/Code/bigscreen
+windows:
+  - shell:
+  - server: ./script/server
