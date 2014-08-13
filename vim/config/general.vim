@@ -43,10 +43,7 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
-colorscheme solarized
-let g:lightline = {
-      \ 'colorscheme': 'solarized_dark',
-      \ }
+colorscheme hybrid
 
 set colorcolumn=81
 set cursorline
