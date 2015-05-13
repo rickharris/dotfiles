@@ -48,3 +48,7 @@ for keycode in '[' '0'; do
   bindkey "^[${keycode}B" history-substring-search-down
 done
 unset keycode
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.zsh/base16-shell/base16-ocean.dark.sh"
+[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL

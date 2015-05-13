@@ -43,7 +43,11 @@ set undodir=/tmp
 set undofile
 
 syntax on " syntax highlighting engage!
+let g:hybrid_use_Xresources = 1
 colorscheme hybrid
+let g:lightline = {
+      \ 'colorscheme': '16color',
+      \ }
 
 set colorcolumn=81
 set cursorline
