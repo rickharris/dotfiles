@@ -14,9 +14,6 @@
 	path = vim/bundle/greplace.vim
 	url = https://github.com/skwp/greplace.vim.git
 	ignore = dirty
-[submodule "vim/bundle/ack.vim"]
-	path = vim/bundle/ack.vim
-	url = https://github.com/mileszs/ack.vim.git
 [submodule "vim/bundle/gundu.vim"]
 	path = vim/bundle/gundu.vim
 	url = https://github.com/sjl/gundo.vim.git
@@ -77,46 +74,19 @@
 [submodule "zsh/zsh-history-substring-search"]
 	path = zsh/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search.git
-[submodule "vim/bundle/vim-tomorrow-night"]
-	path = vim/bundle/vim-tomorrow-night
-	url = https://github.com/ootoovak/vim-tomorrow-night.git
 [submodule "vim/bundle/vim-railscasts"]
 	path = vim/bundle/vim-railscasts
 	url = https://github.com/rickharris/vim-railscasts.git
-[submodule "vim/bundle/vimux"]
-	path = vim/bundle/vimux
-	url = https://github.com/benmills/vimux.git
 [submodule "vim/bundle/bufexplorer.zip"]
 	path = vim/bundle/bufexplorer.zip
 	url = https://github.com/vim-scripts/bufexplorer.zip.git
 	ignore = dirty
-[submodule "vim/bundle/vimux-ruby-test"]
-	path = vim/bundle/vimux-ruby-test
-	url = https://github.com/pgr0ss/vimux-ruby-test.git
 [submodule "vim/bundle/vim-tomorrow-theme"]
 	path = vim/bundle/vim-tomorrow-theme
 	url = https://github.com/chriskempson/vim-tomorrow-theme.git
-[submodule "vim/bundle/vim-bundler"]
-	path = vim/bundle/vim-bundler
-	url = https://github.com/tpope/vim-bundler.git
-[submodule "vim/bundle/vim-ruby-conque"]
-	path = vim/bundle/vim-ruby-conque
-	url = https://github.com/skwp/vim-ruby-conque.git
-[submodule "vim/bundle/vim-conque"]
-	path = vim/bundle/vim-conque
-	url = https://github.com/skwp/vim-conque.git
 [submodule "vim/bundle/ag"]
 	path = vim/bundle/ag
 	url = https://github.com/rking/ag.vim
-[submodule "vim/bundle/vim-gitgutter"]
-	path = vim/bundle/vim-gitgutter
-	url = https://github.com/airblade/vim-gitgutter.git
-[submodule "vim/bundle/ir_black"]
-	path = vim/bundle/ir_black
-	url = https://github.com/msutherl/vim-colors-ir_black-256.git
-[submodule "vim/bundle/vim-slim"]
-	path = vim/bundle/vim-slim
-	url = https://github.com/slim-template/vim-slim.git
 [submodule "vim/bundle/indentLine"]
 	path = vim/bundle/indentLine
 	url = https://github.com/Yggdroot/indentLine.git
@@ -127,15 +97,6 @@
 [submodule "vim/bundle/base16-vim"]
 	path = vim/bundle/base16-vim
 	url = https://github.com/chriskempson/base16-vim.git
-[submodule "vim/bundle/vim-airline"]
-	path = vim/bundle/vim-airline
-	url = https://github.com/bling/vim-airline.git
-[submodule "vim/bundle/lightline.vim"]
-	path = vim/bundle/lightline.vim
-	url = https://github.com/itchyny/lightline.vim.git
 [submodule "vim/bundle/vim-polyglot"]
 	path = vim/bundle/vim-polyglot
 	url = https://github.com/sheerun/vim-polyglot.git
-[submodule "zsh/base16-shell"]
-	path = zsh/base16-shell
-	url = https://github.com/chriskempson/base16-shell
