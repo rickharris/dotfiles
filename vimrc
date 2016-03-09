@@ -11,12 +11,14 @@ runtime! config/general.vim
 runtime! config/gui.vim
 runtime! config/keybindings.vim
 
+
 " Plugin-specific config
 runtime! config/bufonly.vim
 runtime! config/ctrlp.vim
 runtime! config/delimitMate.vim
 runtime! config/gundo.vim
 runtime! config/indent-guides.vim
+runtime! config/jsx.vim
 runtime! config/lusty.vim
 runtime! config/powerline.vim
 runtime! config/syntastic.vim
