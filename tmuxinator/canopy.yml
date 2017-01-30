@@ -1,8 +1,0 @@
-name: Canopy
-root: ~/Code/treehouse/canopy
-pre_window: rvm use `cat .ruby-version` && rvm gemset use `cat .ruby-gemset`
-windows:
-  - editor: vi
-  - shell:
-  - console: rails c
-  - foreman: rails s -p 3030

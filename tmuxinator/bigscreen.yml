@@ -1,5 +1,0 @@
-name: Bigscreen
-root: ~/Code/bigscreen
-windows:
-  - shell:
-  - server: ./script/server

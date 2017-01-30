@@ -1,8 +1,0 @@
-name: Treehouse
-root: ~/Code/treehouse/treehouse
-pre_window: rvm use `cat .ruby-version` && rvm gemset use `cat .ruby-gemset`
-windows:
-  - editor: vi
-  - shell:
-  - console: bin/rails c
-  - server: bin/rails s

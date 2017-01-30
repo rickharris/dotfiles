@@ -1,0 +1,7 @@
+name: abstract/server
+root: ~/src/github.com/elasticprojects/propeller-server
+
+windows:
+  - shell:
+  - console: docker-compose run --rm api bin/rails c
+  - server: docker-compose up

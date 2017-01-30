@@ -1,0 +1,6 @@
+name: abstract/desktop
+root: ~/src/github.com/elasticprojects/propeller-desktop
+
+windows:
+  - shell:
+  - server: npm install && npm start

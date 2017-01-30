@@ -1,0 +1,6 @@
+name: abstract/core
+root: ~/src/github.com/elasticprojects/abstract-core
+
+windows:
+  - shell:
+  - server: npm install && npm start

@@ -1,0 +1,6 @@
+name: abstract/webapp
+root: ~/src/github.com/elasticprojects/abstract-webapp
+
+windows:
+  - shell:
+  - server: npm install && npm start
