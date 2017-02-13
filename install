@@ -15,6 +15,21 @@ fi
 brew tap Homebrew/bundle
 brew bundle
 
+if [ ! -e $HOME/.hammerspoon ]
+then
+  echo "Installing Hammerspoon config..."
+
+  dir=$HOME/src/github.com/jasonrudolph/keyboard
+  if [ ! -d $dir ]
+  then
+    git clone https://github.com/jasonrudolph/keyboard.git $dir
+  else
+    git -C $dir pull origin master
+  fi
+
+  ln -s $dir/hammerspoon $HOME/.hammerspoon
+fi
+
 if test ! $(which rubocop)
 then
   gem install rubocop
