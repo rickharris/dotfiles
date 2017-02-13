@@ -2,6 +2,8 @@
 
 linkables=(
   ackrc
+  atom/config.cson
+  atom/packages_list
   gemrc
   gitconfig
   config/nvim/init.vim
@@ -10,8 +12,7 @@ linkables=(
   zshrc
 )
 
-echo -e "\nCreating symlinks"
-echo "=============================="
+echo -e "\nCreating symlinks..."
 for path in "${linkables[@]}"; do
   source="$PWD/$path"
   target="$HOME/.$path"

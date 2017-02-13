@@ -40,6 +40,7 @@ Plug 'tpope/vim-commentary'
 Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'fatih/vim-go'
 call plug#end()
 
 let g:solarized_visibility="low" "very low contrast listchars
@@ -48,3 +49,5 @@ colorscheme NeoSolarized
 
 autocmd! BufWritePost * Neomake
 let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
+
+let g:go_fmt_command = "goimports"
