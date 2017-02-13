@@ -3,9 +3,9 @@
 require 'rake'
 
 desc "Hook our dotfiles into system-standard positions."
-task :install => [:submodules] do
+task :install do
   # this has all the linkables from this directory.
-  linkables = %w{ackrc gemrc gitconfig ssh/config tmux.conf tmuxinator vim vimrc zsh zshenv zshrc}
+  linkables = %w{ackrc gemrc gitconfig config/nvim/init.vim tmux.conf tmuxinator zshrc}
 
   skip_all = false
   overwrite_all = false
@@ -34,14 +34,10 @@ task :install => [:submodules] do
       FileUtils.rm_rf(target) if overwrite || overwrite_all
       run %{ mv "$HOME/.#{file}" "$HOME/.#{file}.backup" } if backup || backup_all
     end
+    run %{ mkdir -p "#{File.dirname(target)}"}
     run %{ ln -s "#{source}" "#{target}" }
   end
   puts "Dotfiles have been installed. Please restart your terminal and vim."
-end
-
-desc "Init and update submodules."
-task :submodules do
-  sh('git submodule update --init')
 end
 
 task :default => 'install'

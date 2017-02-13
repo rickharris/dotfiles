@@ -1,4 +1,5 @@
-let mapleader = ";" "let's face it, ';' is better than ','
+let mapleader = ";"
+:let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 set number "line numbers
 set autoread "reload changed files automatically
@@ -22,28 +23,25 @@ set softtabstop=2
 set tabstop=2
 set expandtab "use spaces instead of tabs
 
-filetype plugin on "turn on per-filetype plugins
-filetype indent on "turn on per-filetype indentation settings
-
-set list "show hidden characters
-" Line-ending: '¬'
-" Line extends past window: '»'
-" Real tab character: '▸'
-" Trailing spaces: '·'
-set listchars=eol:¬,extends:»,tab:▸\ ,trail:·
-let g:solarized_visibility="low" "very low contrast listchars
-
-" No backups
-set noswapfile
-set nobackup
-set nowb
-
-" Undo across vim sessions
-set undodir=/tmp
-set undofile
-
-syntax on
-set background=light
-colorscheme solarized
 set colorcolumn=81
-set cursorline
+
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.config/nvim/plugged')
+Plug 'tpope/vim-sensible'
+Plug 'altercation/vim-colors-solarized'
+Plug 'icymind/NeoSolarized'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'neomake/neomake'
+Plug 'benjie/neomake-local-eslint.vim'
+call plug#end()
+
+let g:solarized_visibility="low" "very low contrast listchars
+colorscheme NeoSolarized
+
+autocmd! BufWritePost * Neomake
+let g:neomake_javascript_enabled_makers = ['eslint', 'flow']

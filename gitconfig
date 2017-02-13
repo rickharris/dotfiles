@@ -1,5 +1,3 @@
-[user]
-  name = Rick Harris
 [color]
   ui = auto
 [alias]
@@ -10,3 +8,5 @@
   df = diff
 [core]
   editor = vim
+[include]
+  path = ~/.gitconfig.local
