@@ -16,6 +16,9 @@ echo -e "\nInstalling homebrew bundle..."
 brew tap Homebrew/bundle
 brew bundle
 
+echo -e "\nDisabling press and hold for Hyper..."
+defaults write co.zeit.hyper ApplePressAndHoldEnabled -bool false
+
 if [ ! -e $HOME/.hammerspoon ]
 then
   echo -e "\nInstalling Hammerspoon config..."

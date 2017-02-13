@@ -4,9 +4,10 @@ linkables=(
   ackrc
   atom/config.cson
   atom/packages_list
+  config/nvim/init.vim
   gemrc
   gitconfig
-  config/nvim/init.vim
+  hyper.js
   tmux.conf
   tmuxinator
   zshrc
