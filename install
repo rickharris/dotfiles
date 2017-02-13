@@ -16,6 +16,9 @@ echo -e "\nInstalling homebrew bundle..."
 brew tap Homebrew/bundle
 brew bundle
 
+echo -e "\nInstalling python support for neovim..."
+pip3 install --user neovim
+
 echo -e "\nDisabling press and hold for Hyper..."
 defaults write co.zeit.hyper ApplePressAndHoldEnabled -bool false
 

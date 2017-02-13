@@ -41,13 +41,16 @@ Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'fatih/vim-go'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-go', { 'do': 'make'}
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 call plug#end()
 
 let g:solarized_visibility="low" "very low contrast listchars
 set bg="dark"
 colorscheme NeoSolarized
-
 autocmd! BufWritePost * Neomake
 let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
-
 let g:go_fmt_command = "goimports"
+let g:deoplete#enable_at_startup = 1
+let g:tern#filetypes = ['javascript.jsx']

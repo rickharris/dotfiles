@@ -1,4 +1,4 @@
-export EDITOR="vi"
+export EDITOR="nvim"
 export PURE_PROMPT_SYMBOL="∴"
 export PATH="$PATH:$HOME/bin"
 
