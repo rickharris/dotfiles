@@ -1,0 +1,34 @@
+"*":
+  "atom-beautify":
+    general:
+      _analyticsUserId: "765ab51c-923c-40d4-9fd5-7b506620039a"
+  "base16-syntax":
+    scheme: "Atelier Sulphurpool"
+  core:
+    allowPendingPaneItems: false
+    telemetryConsent: "no"
+    themes: [
+      "one-dark-ui"
+      "duotone-dark-syntax"
+    ]
+    useCustomTitleBar: true
+  "duotone-dark-syntax":
+    color:
+      duo: "#ffc480"
+  editor:
+    fontFamily: "LetterGothicMono"
+    fontSize: 18
+    showIndentGuide: true
+    showInvisibles: true
+  "exception-reporting":
+    userId: "386631d3-bf09-8b3d-2467-c692d5d7c523"
+  "go-plus":
+    currentPanelHeight: "28.395860284605433vh"
+  linter: {}
+  "linter-eslint":
+    fixOnSave: true
+  "linter-rubocop":
+    disableWhenNoConfigFile: true
+  "prettier-atom": {}
+  welcome:
+    showOnStartup: false
