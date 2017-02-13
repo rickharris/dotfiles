@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+linkables=(
+  ackrc
+  gemrc
+  gitconfig
+  config/nvim/init.vim
+  tmux.conf
+  tmuxinator
+  zshrc
+)
+
+echo -e "\nCreating symlinks"
+echo "=============================="
+for path in "${linkables[@]}"; do
+  source="$PWD/$path"
+  target="$HOME/.$path"
+  targetDir=$(dirname $target)
+
+  if [ ! -d $targetdir ]; then
+    mkdir -p $targetdir
+  fi
+
+  if [ -e $target ]; then
+    echo "~${target#$HOME} exists, skipping."
+  else
+    echo "~${target#$HOME} created."
+    ln -s $source $target
+  fi
+done

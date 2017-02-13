@@ -36,12 +36,14 @@ Plug 'tpope/vim-sensible'
 Plug 'altercation/vim-colors-solarized'
 Plug 'icymind/NeoSolarized'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'tpope/vim-commentary'
 Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
 Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
 
 let g:solarized_visibility="low" "very low contrast listchars
+set bg="dark"
 colorscheme NeoSolarized
 
 autocmd! BufWritePost * Neomake

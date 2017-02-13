@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+if [[ ! -d $HOME/bin ]]
+then
+  echo "Creating $HOME/bin..."
+  mkdir -p $HOME/bin
+fi
+
+if test ! $(which brew)
+then
+  echo "Installing Homebrew..."
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+brew tap Homebrew/bundle
+brew bundle
+
+if test ! $(which rubocop)
+then
+  gem install rubocop
+fi
+
+if test ! $(which tmuxinator)
+then
+  gem install tmuxinator
+fi
+
+if [[ ! -f $HOME/.ssh/id_rsa ]]
+then
+  echo "Creating an ssh key..."
+  ssh-keygen -t rsa -b 4096
+fi
+
+# Install dotfiles
+./link
