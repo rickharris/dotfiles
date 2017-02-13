@@ -54,3 +54,6 @@ fi
 
 echo -e "\nInstalling atom packages..."
 apm install --packages-file=$HOME/.atom/packages_list
+
+echo -e "\nInstalling Terminal profiles..."
+osascript ./terminal/install.applescript
