@@ -38,6 +38,7 @@ Plug 'icymind/NeoSolarized'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'neomake/neomake'
 Plug 'benjie/neomake-local-eslint.vim'
+Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
 
 let g:solarized_visibility="low" "very low contrast listchars
