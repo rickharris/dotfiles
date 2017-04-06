@@ -1,5 +1,5 @@
-name: abstract/server
-root: ~/src/github.com/elasticprojects/propeller-server
+name: abstract/api
+root: ~/src/github.com/goabstract/api
 
 windows:
   - shell:

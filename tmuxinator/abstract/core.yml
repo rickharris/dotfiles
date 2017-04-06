@@ -1,6 +1,6 @@
 name: abstract/core
-root: ~/src/github.com/elasticprojects/abstract-core
+root: ~/src/github.com/goabstract/ui-core
 
 windows:
   - shell:
-  - server: npm install && npm start
+  - server: yarn && yarn start
