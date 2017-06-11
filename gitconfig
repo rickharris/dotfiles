@@ -10,3 +10,6 @@
   editor = vim
 [include]
   path = ~/.gitconfig.local
+[user]
+	name = Rick Harris
+	email = rickharris@users.noreply.github.com
