@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [ ! -e $HOME/.keyboard ]
+then
+  echo -e "\nInstalling Hammerspoon config..."
+
+  pwd=$(pwd)
+  dir=$HOME/src/github.com/jasonrudolph/keyboard
+  if [ ! -d $dir ]
+  then
+    git clone https://github.com/jasonrudolph/keyboard.git $dir
+  else
+    git -C $dir pull origin master
+  fi
+
+  ln -s $dir $HOME/.keyboard
+  cd $dir && ./script/setup
+  cd $pwd
+fi
+

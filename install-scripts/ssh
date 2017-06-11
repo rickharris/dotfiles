@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [[ ! -f $HOME/.ssh/config ]]
+then
+echo "Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa" > $HOME/.ssh/config
+fi
+
+if [[ ! -f $HOME/.ssh/id_rsa ]]
+then
+  echo -e "\nCreating an ssh key..."
+  ssh-keygen -t rsa -b 4096
+  ssh-add -K $HOME/.ssh/id_rsa
+fi

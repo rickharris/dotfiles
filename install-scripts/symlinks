@@ -17,7 +17,7 @@ echo -e "\nCreating symlinks..."
 for path in "${linkables[@]}"; do
   source="$PWD/$path"
   target="$HOME/.$path"
-  targetDir=$(dirname $target)
+  targetdir=$(dirname $target)
 
   if [ ! -d $targetdir ]; then
     mkdir -p $targetdir

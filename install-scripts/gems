@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if test ! $(which rubocop)
+then
+  echo -e "\nInstalling rubocop..."
+  gem install rubocop
+fi
+
+if test ! $(which tmuxinator)
+then
+  echo -e "\nInstalling tmuxinator..."
+  gem install tmuxinator
+fi
+

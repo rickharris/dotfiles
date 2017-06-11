@@ -1,65 +1,10 @@
 #!/usr/bin/env bash
 
-if [[ ! -d $HOME/bin ]]
-then
-  echo -e "\nCreating $HOME/bin..."
-  mkdir -p $HOME/bin
-fi
-
-if test ! $(which brew)
-then
-  echo -e "\nInstalling Homebrew..."
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-fi
-
-echo -e "\nInstalling homebrew bundle..."
-brew tap Homebrew/bundle
-brew bundle
-
-echo -e "\nInstalling python support for neovim..."
-pip3 install --user neovim
-
-echo -e "\nDisabling press and hold for Hyper..."
-defaults write co.zeit.hyper ApplePressAndHoldEnabled -bool false
-
-if [ ! -e $HOME/.hammerspoon ]
-then
-  echo -e "\nInstalling Hammerspoon config..."
-
-  dir=$HOME/src/github.com/jasonrudolph/keyboard
-  if [ ! -d $dir ]
-  then
-    git clone https://github.com/jasonrudolph/keyboard.git $dir
-  else
-    git -C $dir pull origin master
-  fi
-
-  ln -s $dir/hammerspoon $HOME/.hammerspoon
-fi
-
-if test ! $(which rubocop)
-then
-  echo -e "\nInstalling rubocop..."
-  gem install rubocop
-fi
-
-if test ! $(which tmuxinator)
-then
-  echo -e "\nInstalling tmuxinator..."
-  gem install tmuxinator
-fi
-
-if [[ ! -f $HOME/.ssh/id_rsa ]]
-then
-  echo -e "\nCreating an ssh key..."
-  ssh-keygen -t rsa -b 4096
-fi
-
-# Install dotfiles
-./link
-
-echo -e "\nInstalling atom packages..."
-apm install --packages-file=$HOME/.atom/packages_list
-
-echo -e "\nInstalling Terminal profiles..."
-osascript ./terminal/install.applescript
+./install-scripts/symlinks
+./install-scripts/homebrew
+./install-scripts/go
+./install-scripts/hammerspoon
+./install-scripts/gems
+./install-scripts/ssh
+./install-scripts/atom
+./install-scripts/terminal
