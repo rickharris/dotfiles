@@ -1,3 +1,4 @@
+export ZPLUG_HOME=/usr/local/opt/zplug
 export EDITOR="nvim"
 export PURE_PROMPT_SYMBOL="∴"
 export PATH="$PATH:$HOME/bin"
@@ -15,11 +16,7 @@ fi
 alias vi="nvim"
 alias vim="nvim"
 
-if [[ ! -d ~/.zplug ]]; then
-  curl -sL zplug.sh/installer | zsh
-fi
-
-source ~/.zplug/init.zsh
+source $ZPLUG_HOME/init.zsh
 
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-history-substring-search"
