@@ -32,7 +32,7 @@ cask 'sketch'
 cask 'atom'
 cask 'dropbox'
 cask 'hammerspoon'
-cask 'slack-beta'
+cask 'slack'
 
 mas 'Annotate',      id: 918207447
 mas 'Fantastical 2', id: 775737590
