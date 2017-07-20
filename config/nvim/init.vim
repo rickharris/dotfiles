@@ -33,7 +33,6 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 Plug 'tpope/vim-sensible'
-Plug 'altercation/vim-colors-solarized'
 Plug 'icymind/NeoSolarized'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-commentary'
@@ -46,11 +45,9 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 call plug#end()
 
-let g:solarized_visibility="low" "very low contrast listchars
-set bg="dark"
 colorscheme NeoSolarized
-autocmd! BufWritePost * Neomake
-let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
-let g:go_fmt_command = "goimports"
-let g:deoplete#enable_at_startup = 1
-let g:tern#filetypes = ['javascript.jsx']
+" autocmd! BufWritePost * Neomake
+" let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
+" let g:go_fmt_command = "goimports"
+" let g:deoplete#enable_at_startup = 1
+" let g:tern#filetypes = ['javascript.jsx']
