@@ -1,9 +1,13 @@
 "*":
   core:
+    customFileTypes:
+      "source.ini": [
+        ".flowconfig"
+      ]
     telemetryConsent: "no"
     themes: [
-      "one-dark-ui"
-      "solarized-dark-syntax"
+      "one-light-ui"
+      "solarized-light-syntax"
     ]
   editor:
     fontFamily: "LetterGothicMono"
@@ -12,9 +16,23 @@
     showInvisibles: true
   "exception-reporting":
     userId: "386631d3-bf09-8b3d-2467-c692d5d7c523"
+  "go-plus":
+    panel:
+      currentHeight: "27.563249001331556vh"
   "linter-eslint":
     fixOnSave: true
+  "linter-flow":
+    executablePath: "./node_modules/.bin/flow"
   "linter-rubocop":
     disableWhenNoConfigFile: true
+  "linter-ui-default":
+    panelHeight: 156
+    showPanel: true
+  "vim-mode-plus":
+    automaticallyEscapeInsertModeOnActivePaneItemChange: true
+    clearMultipleCursorsOnEscapeInsertMode: true
+    incrementalSearch: true
+    useClipboardAsDefaultRegister: false
+    useSmartcaseForSearch: true
   welcome:
     showOnStartup: false
