@@ -3,22 +3,41 @@
     customFileTypes:
       "source.ini": [
         ".flowconfig"
+        ".buckconfig"
+        ".hgrc"
       ]
+      "source.json": [
+        "BUCK.autodeps"
+      ]
+      "source.python": [
+        "BUCK"
+      ]
+    disabledPackages: [
+      "sort-lines"
+      "atom-ide-ui"
+      "ide-flowtype"
+    ]
     telemetryConsent: "no"
     themes: [
-      "one-light-ui"
-      "solarized-light-syntax"
+      "one-dark-ui"
+      "solarized-dark-syntax"
     ]
   editor:
     fontFamily: "LetterGothicMono"
-    fontSize: 18
+    fontSize: 16
     showIndentGuide: true
     showInvisibles: true
   "exception-reporting":
     userId: "386631d3-bf09-8b3d-2467-c692d5d7c523"
+  "flow-ide": {}
   "go-plus":
+    disabledBundledPackages: [
+      "linter"
+    ]
     panel:
       currentHeight: "27.563249001331556vh"
+  "ide-flowtype":
+    tryFlowBin: true
   "linter-eslint":
     fixOnSave: true
   "linter-flow":
@@ -26,8 +45,13 @@
   "linter-rubocop":
     disableWhenNoConfigFile: true
   "linter-ui-default":
-    panelHeight: 156
+    panelHeight: 169
     showPanel: true
+  "prettier-atom":
+    formatOnSaveOptions:
+      enabled: true
+  "tree-view":
+    hideVcsIgnoredFiles: true
   "vim-mode-plus":
     automaticallyEscapeInsertModeOnActivePaneItemChange: true
     clearMultipleCursorsOnEscapeInsertMode: true
