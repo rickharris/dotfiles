@@ -1,4 +1,8 @@
 "*":
+  "atom-package-deps":
+    ignored: [
+      "linter-eslint"
+    ]
   core:
     customFileTypes:
       "source.ini": [
@@ -14,17 +18,15 @@
       ]
     disabledPackages: [
       "sort-lines"
-      "atom-ide-ui"
-      "ide-flowtype"
     ]
     telemetryConsent: "no"
     themes: [
-      "one-dark-ui"
-      "solarized-dark-syntax"
+      "one-light-ui"
+      "solarized-light-syntax"
     ]
   editor:
     fontFamily: "LetterGothicMono"
-    fontSize: 16
+    fontSize: 18
     showIndentGuide: true
     showInvisibles: true
   "exception-reporting":

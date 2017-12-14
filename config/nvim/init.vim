@@ -34,20 +34,52 @@ endif
 call plug#begin('~/.config/nvim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'icymind/NeoSolarized'
-Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-commentary'
-Plug 'neomake/neomake'
-Plug 'benjie/neomake-local-eslint.vim'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'fatih/vim-go'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'cloudhead/neovim-fuzzy'
+Plug 'jlanzarotta/bufexplorer'
+Plug 'w0rp/ale'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-go', { 'do': 'make'}
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'steelsojka/deoplete-flow'
+Plug 'pangloss/vim-javascript', {'for': ['javascript', 'javascript.jsx']}
+Plug 'mxw/vim-jsx', {'for': ['javascript', 'javascript.jsx']}
+Plug 'fatih/vim-go'
+" Plug 'neomake/neomake'
+" Plug 'benjie/neomake-local-eslint.vim'
+" Plug 'christoomey/vim-tmux-navigator'
+" Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 call plug#end()
 
 colorscheme NeoSolarized
+nnoremap <leader>t :FuzzyOpen<CR>
+
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\   'go': ['goimports'],
+\}
+let g:ale_fix_on_save = 1
+let g:ale_open_list = 1
+
+let g:deoplete#enable_at_startup = 1
+" deoplete tab-complete
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+function! StrTrim(txt)
+  return substitute(a:txt, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
+endfunction
+
+let g:flow_path = StrTrim(system('PATH=$(npm bin):$PATH && which flow'))
+
+if g:flow_path != 'flow not found'
+  let g:deoplete#sources#flow#flow_bin = g:flow_path
+endif
+
+let g:javascript_plugin_flow = 1
+let g:jsx_ext_required = 0
+
 " autocmd! BufWritePost * Neomake
 " let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
 " let g:go_fmt_command = "goimports"
-" let g:deoplete#enable_at_startup = 1
 " let g:tern#filetypes = ['javascript.jsx']
