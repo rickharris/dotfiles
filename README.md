@@ -1,3 +1,3 @@
 # Dotfiles
 
-/bin/bash -e "$(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/master/install)"
+curl -o- https://raw.githubusercontent.com/rickharris/dotfiles/master/install | bash
