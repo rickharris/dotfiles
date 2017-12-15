@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
 echo -e "\nInstalling atom packages..."
-apm install --packages-file=$HOME/.atom/packages_list
+apm login
+apm starred --install

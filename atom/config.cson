@@ -2,6 +2,7 @@
   "atom-package-deps":
     ignored: [
       "linter-eslint"
+      "linter-sass-lint"
     ]
   core:
     customFileTypes:
@@ -25,7 +26,7 @@
       "solarized-light-syntax"
     ]
   editor:
-    fontFamily: "LetterGothicMono"
+    fontFamily: "LetterGothicMonoOT"
     fontSize: 18
     showIndentGuide: true
     showInvisibles: true

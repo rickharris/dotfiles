@@ -3,7 +3,7 @@
 linkables=(
   ackrc
   atom/config.cson
-  atom/packages_list
+  atom/styles.less
   config/nvim/init.vim
   gemrc
   gitconfig
