@@ -22,7 +22,7 @@ brew 'zsh'
 brew 'zplug'
 
 cask '1password'
-cask 'cloak'
+cask 'encryptme'
 cask 'firefox'
 cask 'opera'
 cask 'alfred'
@@ -36,9 +36,10 @@ cask 'hammerspoon'
 cask 'slack'
 
 mas 'Annotate',      id: 918207447
-mas 'Fantastical 2', id: 775737590
+mas 'Fantastical 2', id: 975937182
 mas 'iA Writer',     id: 775737590
 mas 'Simplenote',    id: 692867256
 mas 'Tweetbot',      id: 557168941
-mas 'Xcode',         id: 497799835
-
+# Defer installing xcode outside of the script, it takes too long to be
+# blocking.
+# mas 'Xcode',         id: 497799835
