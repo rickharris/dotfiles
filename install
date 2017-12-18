@@ -14,3 +14,4 @@ $dir/install-scripts/gems
 $dir/install-scripts/ssh
 $dir/install-scripts/atom
 $dir/install-scripts/terminal
+$dir/install-scripts/tmux
