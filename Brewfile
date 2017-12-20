@@ -3,6 +3,7 @@ tap 'caskroom/versions'
 tap 'neovim/neovim'
 
 brew 'awscli'
+brew 'dep'
 brew 'fzy'
 brew 'git'
 brew 'git-extras'
