@@ -26,6 +26,7 @@ zplug "sindresorhus/pure", use:"pure.zsh", from:github, as:theme
 zplug "lib/history", from:oh-my-zsh
 zplug "plugins/z", from:oh-my-zsh
 zplug "tmuxinator/tmuxinator", from:github, use:"completion/tmuxinator.zsh"
+zplug "g-plane/zsh-yarn-autocompletions"
 
 # Install packages that have not been installed yet
 if ! zplug check --verbose; then
