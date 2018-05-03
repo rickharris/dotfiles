@@ -11,4 +11,4 @@ brew tap Homebrew/bundle
 brew bundle
 
 echo -e "\nInstalling python support for neovim..."
-pip3 install --user neovim
+pip3 install --upgrade neovim

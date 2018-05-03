@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
 linkables=(
-  ackrc
-  atom/config.cson
-  atom/styles.less
   config/nvim/init.vim
-  gemrc
+  config/karabiner/karabiner.json
   gitconfig
-  hyper.js
   tmux.conf
   tmuxinator
   zshrc

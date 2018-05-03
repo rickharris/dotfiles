@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-echo -e "\nInstalling Terminal profiles..."
-osascript ./terminal/install.applescript

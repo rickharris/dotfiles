@@ -15,6 +15,7 @@ fi
 
 alias vi="nvim"
 alias vim="nvim"
+alias git-clean="git branch --merged master | grep -v "\* master" | xargs -n 1 git branch -d"
 
 source $ZPLUG_HOME/init.zsh
 

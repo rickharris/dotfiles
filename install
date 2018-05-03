@@ -9,9 +9,6 @@ fi
 $dir/install-scripts/symlinks
 $dir/install-scripts/homebrew
 $dir/install-scripts/go
-$dir/install-scripts/hammerspoon
 $dir/install-scripts/gems
 $dir/install-scripts/ssh
-$dir/install-scripts/atom
-$dir/install-scripts/terminal
 $dir/install-scripts/tmux

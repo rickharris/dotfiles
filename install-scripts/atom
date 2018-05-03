@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-echo -e "\nInstalling atom packages..."
-apm login
-apm starred --install

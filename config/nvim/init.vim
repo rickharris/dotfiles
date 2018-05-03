@@ -1,5 +1,5 @@
 let mapleader = ";"
-:let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+set termguicolors
 
 set number "line numbers
 set autoread "reload changed files automatically
@@ -33,7 +33,7 @@ endif
 
 call plug#begin('~/.config/nvim/plugged')
 Plug 'tpope/vim-sensible'
-Plug 'icymind/NeoSolarized'
+Plug 'lifepillar/vim-solarized8'
 Plug 'tpope/vim-commentary'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'cloudhead/neovim-fuzzy'
@@ -45,13 +45,15 @@ Plug 'steelsojka/deoplete-flow'
 Plug 'pangloss/vim-javascript', {'for': ['javascript', 'javascript.jsx']}
 Plug 'mxw/vim-jsx', {'for': ['javascript', 'javascript.jsx']}
 Plug 'fatih/vim-go'
-" Plug 'neomake/neomake'
-" Plug 'benjie/neomake-local-eslint.vim'
-" Plug 'christoomey/vim-tmux-navigator'
-" Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'rking/ag.vim'
 call plug#end()
 
-colorscheme NeoSolarized
+set bg=dark
+let g:solarized_statusline = "low"
+colorscheme solarized8_flat
+
 nnoremap <leader>t :FuzzyOpen<CR>
 
 let g:ale_fixers = {
@@ -60,6 +62,7 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 let g:ale_open_list = 1
+let g:ale_completion_enabled = 1
 
 let g:deoplete#enable_at_startup = 1
 " deoplete tab-complete
@@ -78,8 +81,3 @@ endif
 
 let g:javascript_plugin_flow = 1
 let g:jsx_ext_required = 0
-
-" autocmd! BufWritePost * Neomake
-" let g:neomake_javascript_enabled_makers = ['eslint', 'flow']
-" let g:go_fmt_command = "goimports"
-" let g:tern#filetypes = ['javascript.jsx']

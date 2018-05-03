@@ -29,12 +29,11 @@ cask 'opera'
 cask 'alfred'
 cask 'docker'
 cask 'google-chrome'
-cask 'hyper'
 cask 'sketch'
-cask 'atom'
 cask 'dropbox'
-cask 'hammerspoon'
 cask 'slack'
+cask 'karabiner-elements'
+cask 'iterm2'
 
 mas 'Annotate',      id: 918207447
 mas 'Fantastical 2', id: 975937182
