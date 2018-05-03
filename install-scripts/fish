@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if ! sudo grep -q /usr/local/bin/fish "/etc/shells"; then
+  echo '/usr/local/bin/fish' | sudo tee -a /etc/shells
+fi
+
+if [ "$SHELL" != "/usr/local/bin/fish" ]; then
+  chsh -s /usr/local/bin/fish
+fi

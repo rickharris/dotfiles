@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 linkables=(
-  config/nvim/init.vim
+  config/fish/config.fish
   config/karabiner/karabiner.json
+  config/nvim/init.vim
   gitconfig
   tmux.conf
   tmuxinator
-  zshrc
 )
 
 echo -e "\nCreating symlinks..."

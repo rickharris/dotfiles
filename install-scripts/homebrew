@@ -12,3 +12,6 @@ brew bundle
 
 echo -e "\nInstalling python support for neovim..."
 pip3 install --upgrade neovim
+
+ln -s /usr/local/bin/nvim /usr/local/bin/vi
+ln -s /usr/local/bin/nvim /usr/local/bin/vim

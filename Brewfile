@@ -19,8 +19,6 @@ brew 'tree'
 brew 'wget'
 brew 'wifi-password'
 brew 'yarn'
-brew 'zsh'
-brew 'zplug'
 
 cask '1password'
 cask 'encryptme'
