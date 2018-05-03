@@ -12,3 +12,4 @@ $dir/install-scripts/go
 $dir/install-scripts/gems
 $dir/install-scripts/ssh
 $dir/install-scripts/tmux
+$dir/install-scripts/iterm2
