@@ -34,6 +34,7 @@ cask 'dropbox'
 cask 'slack'
 cask 'karabiner-elements'
 cask 'iterm2'
+cask 'spectacle'
 
 mas 'Annotate',      id: 918207447
 mas 'Fantastical 2', id: 975937182
