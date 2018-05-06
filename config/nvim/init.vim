@@ -44,13 +44,12 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'steelsojka/deoplete-flow'
 Plug 'pangloss/vim-javascript', {'for': ['javascript', 'javascript.jsx']}
 Plug 'mxw/vim-jsx', {'for': ['javascript', 'javascript.jsx']}
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'rking/ag.vim'
 call plug#end()
 
-set bg=dark
 let g:solarized_statusline = "low"
 colorscheme solarized8_flat
 
@@ -61,7 +60,6 @@ let g:ale_fixers = {
 \   'go': ['goimports'],
 \}
 let g:ale_fix_on_save = 1
-let g:ale_open_list = 1
 let g:ale_completion_enabled = 1
 
 let g:deoplete#enable_at_startup = 1
