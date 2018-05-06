@@ -6,3 +6,5 @@ if test (which go)
 end
 
 alias git-clean="git branch --merged master | grep -v \"\* master\" | xargs -n 1 git branch -d"
+alias mux="tmuxinator"
+set pure_symbol_prompt "∴"
