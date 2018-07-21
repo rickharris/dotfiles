@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 if [ "$SHELL" != "/usr/local/bin/fish" ]; then
   if ! sudo grep -q /usr/local/bin/fish "/etc/shells"; then

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # source http://stratus3d.com/blog/2015/02/28/sync-iterm2-profile-with-dotfiles-repository/
+set -e
 
 # Specify the preferences directory
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$HOME/src/github.com/rickharris/dotfiles/config/iterm2"

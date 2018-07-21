@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 dir=$HOME/src/github.com/rickharris/dotfiles
 if [ ! -d $dir ]
@@ -16,3 +17,4 @@ $dir/install-scripts/gems
 $dir/install-scripts/ssh
 $dir/install-scripts/tmux
 $dir/install-scripts/iterm2
+$dir/install-scripts/vscode

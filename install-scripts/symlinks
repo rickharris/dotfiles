@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
+set -e
 
 linkables=(
   config/fish/config.fish
-  config/karabiner/karabiner.json
   config/nvim/init.vim
   gitconfig
   tmux.conf
