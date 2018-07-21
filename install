@@ -18,3 +18,4 @@ $dir/install-scripts/ssh
 $dir/install-scripts/tmux
 $dir/install-scripts/iterm2
 $dir/install-scripts/vscode
+$dir/install-scripts/hammerspoon

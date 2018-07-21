@@ -35,6 +35,7 @@ cask 'iterm2'
 cask 'authy'
 cask 'abstract'
 cask 'visual-studio-code'
+cask 'hammerspoon'
 
 mas 'Annotate',      id: 918207447
 mas 'Fantastical 2', id: 975937182
