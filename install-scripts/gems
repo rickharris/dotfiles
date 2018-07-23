@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-if test ! $(which rubocop)
-then
-  echo -e "\nInstalling rubocop..."
-  gem install rubocop
-fi
-
-if test ! $(which tmuxinator)
-then
-  echo -e "\nInstalling tmuxinator..."
-  gem install tmuxinator
-fi
-
+gems=(
+  debride
+  fasterer
+  reek
+  rubocop
+  ruby-lint
+  tmuxinator
+)
+for gem in "${gems[@]}"; do
+  if test ! $(which $gem)
+  then
+    echo -e "\nInstalling $gem..."
+    gem install $gem
+  fi
+done
