@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AllowClipboardAccess</key>
+	<false/>
 	<key>AppleAntiAliasingThreshold</key>
 	<integer>1</integer>
 	<key>AppleScrollAnimationEnabled</key>
@@ -59,12 +61,16 @@
 	</data>
 	<key>NSTableView Supports v2 KeyBingingTable</key>
 	<true/>
+	<key>NSWindow Frame SUUpdateAlert</key>
+	<string>650 498 620 392 0 0 1920 1057 </string>
 	<key>NSWindow Frame SharedPreferences</key>
-	<string>269 368 928 394 0 0 1280 800 </string>
+	<string>661 443 928 394 0 0 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 0</key>
-	<string>103 69 1090 687 0 0 1280 778 </string>
+	<string>0 0 1920 1057 0 0 1920 1057 </string>
 	<key>NSWindow Frame iTerm Window 1</key>
-	<string>152 50 1090 687 0 0 1280 777 </string>
+	<string>1920 57 1440 863 1920 57 1440 877 </string>
+	<key>NSWindow Frame iTerm Window 2</key>
+	<string>1937 104 1423 687 1920 57 1440 877 </string>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
@@ -253,13 +259,13 @@
 			<key>Background Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.21176470588235294</real>
+				<real>0.8901960784313725</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.16862745098039217</real>
+				<real>0.96470588235294119</real>
 				<key>Red Component</key>
-				<real>0.0</real>
+				<real>0.99215686274509807</real>
 			</dict>
 			<key>Background Image Location</key>
 			<string></string>
@@ -283,32 +289,32 @@
 			<key>Bold Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.63137254901960782</real>
+				<real>0.45882352941176469</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.63137254901960782</real>
+				<real>0.43137254901960786</real>
 				<key>Red Component</key>
-				<real>0.57647058823529407</real>
+				<real>0.34509803921568627</real>
 			</dict>
 			<key>Character Encoding</key>
 			<integer>4</integer>
 			<key>Close Sessions On End</key>
 			<true/>
 			<key>Columns</key>
-			<integer>120</integer>
+			<integer>160</integer>
 			<key>Command</key>
 			<string></string>
 			<key>Cursor Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.58823529411764708</real>
+				<real>0.51372549019607838</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.58039215686274515</real>
+				<real>0.4823529411764706</real>
 				<key>Red Component</key>
-				<real>0.51372549019607838</real>
+				<real>0.396078431372549</real>
 			</dict>
 			<key>Cursor Guide Color</key>
 			<dict>
@@ -326,13 +332,13 @@
 			<key>Cursor Text Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.25882352941176473</real>
+				<real>0.83529411764705885</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.21176470588235294</real>
+				<real>0.90980392156862744</real>
 				<key>Red Component</key>
-				<real>0.027450980392156862</real>
+				<real>0.93333333333333335</real>
 			</dict>
 			<key>Custom Command</key>
 			<string>No</string>
@@ -349,13 +355,13 @@
 			<key>Foreground Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.58823529411764708</real>
+				<real>0.51372549019607838</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.58039215686274515</real>
+				<real>0.4823529411764706</real>
 				<key>Red Component</key>
-				<real>0.51372549019607838</real>
+				<real>0.396078431372549</real>
 			</dict>
 			<key>Guid</key>
 			<string>2BFAEED7-7C2A-414C-83E5-248A79A473AA</string>
@@ -683,7 +689,7 @@
 			<key>Right Option Key Sends</key>
 			<integer>0</integer>
 			<key>Rows</key>
-			<integer>30</integer>
+			<integer>40</integer>
 			<key>Screen</key>
 			<integer>-1</integer>
 			<key>Scrollback Lines</key>
@@ -691,24 +697,24 @@
 			<key>Selected Text Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.63137254901960782</real>
+				<real>0.45882352941176469</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.63137254901960782</real>
+				<real>0.43137254901960786</real>
 				<key>Red Component</key>
-				<real>0.57647058823529407</real>
+				<real>0.34509803921568627</real>
 			</dict>
 			<key>Selection Color</key>
 			<dict>
 				<key>Blue Component</key>
-				<real>0.25882352941176473</real>
+				<real>0.83529411764705885</real>
 				<key>Color Space</key>
 				<string>sRGB</string>
 				<key>Green Component</key>
-				<real>0.21176470588235294</real>
+				<real>0.90980392156862744</real>
 				<key>Red Component</key>
-				<real>0.027450980392156862</real>
+				<real>0.93333333333333335</real>
 			</dict>
 			<key>Send Code When Idle</key>
 			<false/>
@@ -756,6 +762,10 @@
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>
 	<integer>0</integer>
+	<key>NoSyncPermissionToShowTip</key>
+	<false/>
+	<key>NoSyncSuppressClipboardAccessDeniedWarning</key>
+	<true/>
 	<key>NoSyncTimeOfFirstLaunchOfVersionWithTip</key>
 	<real>553836995.75795305</real>
 	<key>OnlyWhenMoreTabs</key>
@@ -806,13 +816,13 @@
 	<key>SUHasLaunchedBefore</key>
 	<true/>
 	<key>SULastCheckTime</key>
-	<date>2018-07-21T03:55:31Z</date>
+	<date>2018-08-27T18:49:15Z</date>
 	<key>SUSendProfileInfo</key>
 	<false/>
 	<key>ShowNewOutputIndicator</key>
 	<false/>
 	<key>TabStyle</key>
-	<integer>1</integer>
+	<integer>2</integer>
 	<key>UseBorder</key>
 	<false/>
 	<key>WindowNumber</key>
@@ -820,6 +830,6 @@
 	<key>WordCharacters</key>
 	<string>/-+\~_.</string>
 	<key>iTerm Version</key>
-	<string>3.1.7</string>
+	<string>3.2.0</string>
 </dict>
 </plist>

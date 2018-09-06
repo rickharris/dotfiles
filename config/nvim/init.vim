@@ -45,7 +45,7 @@ Plug 'steelsojka/deoplete-flow'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
-set bg=dark
+set bg=light
 let g:solarized_statusline = "low"
 colorscheme solarized8_flat
 
