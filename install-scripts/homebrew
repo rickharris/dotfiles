@@ -4,7 +4,7 @@ set -e
 if test ! $(which brew)
 then
   echo -e "\nInstalling Homebrew..."
-  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
 echo -e "\nInstalling homebrew bundle..."

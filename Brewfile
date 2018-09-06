@@ -4,6 +4,7 @@ tap 'neovim/neovim'
 
 brew 'awscli'
 brew 'dep'
+brew 'fish'
 brew 'fzf'
 brew 'git'
 brew 'git-extras'
