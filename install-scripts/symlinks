@@ -2,6 +2,7 @@
 set -e
 
 linkables=(
+  config/antibody/plugins.sh
   config/fish/config.fish
   config/nvim/init.vim
   gitconfig
