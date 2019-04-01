@@ -40,12 +40,14 @@ Plug 'sheerun/vim-polyglot'
 Plug 'simnalamburt/vim-mundo'
 Plug 'w0rp/ale'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'wokalski/autocomplete-flow'
 Plug 'zchee/deoplete-go', { 'do': 'make'}
-Plug 'steelsojka/deoplete-flow'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
-let g:solarized_statusline = "low"
+set background=light
 colorscheme solarized8_flat
 
 nnoremap <leader>t :FZF<CR>
@@ -70,11 +72,10 @@ autocmd  FileType fzf set laststatus=0 noshowmode noruler
 
 let g:ale_fixers = {
 \   'go': ['goimports'],
-\   'javascript': ['prettier'],
+\   'javascript': ['eslint'],
 \   'ruby': ['rubocop'],
 \}
 let g:ale_fix_on_save = 1
-let g:ale_completion_enabled = 1
 nnoremap <leader>an :ALENextWrap<cr>
 nnoremap <leader>ap :ALEPreviousWrap<cr>
 
@@ -83,15 +84,14 @@ let g:deoplete#enable_at_startup = 1
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
 autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
-let local_flow = finddir('node_modules', '.;') . '/.bin/flow'
-if matchstr(local_flow, "^\/\\w") == ''
-    let local_flow= getcwd() . "/" . local_flow
-endif
-if executable(local_flow)
-  let g:deoplete#sources#flow#flow_bin = local_flow
-endif
-
 let g:javascript_plugin_flow = 1
 let g:jsx_ext_required = 0
 
 nnoremap <Leader>u :MundoToggle<CR>
+
+" make FZF respect gitignore if `ag` is installed
+if (executable('ag'))
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+endif
+
+map <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
