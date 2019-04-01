@@ -13,6 +13,6 @@ for gem in "${gems[@]}"; do
   if test ! $(which $gem)
   then
     echo -e "\nInstalling $gem..."
-    gem install $gem
+    sudo gem install $gem
   fi
 done

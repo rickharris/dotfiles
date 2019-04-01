@@ -9,6 +9,7 @@ linkables=(
   gitconfig
   tmux.conf
   tmuxinator
+  zshrc
 )
 
 echo -e "\nCreating symlinks..."
