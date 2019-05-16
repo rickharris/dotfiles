@@ -40,3 +40,5 @@ bindkey '^[[B' history-substring-search-down
 if [ -f ~/.zshrc.local ]; then
   . ~/.zshrc.local
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
