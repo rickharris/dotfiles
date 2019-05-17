@@ -1,6 +1,0 @@
-name: abstract/desktop
-root: ~/src/github.com/goabstract/desktop
-
-windows:
-  - shell:
-  - server: yarn && yarn start

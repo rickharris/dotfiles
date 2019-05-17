@@ -7,7 +7,6 @@ gems=(
   reek
   rubocop
   ruby-lint
-  tmuxinator
 )
 for gem in "${gems[@]}"; do
   if test ! $(which $gem)

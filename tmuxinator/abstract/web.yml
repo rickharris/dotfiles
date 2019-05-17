@@ -1,6 +1,0 @@
-name: abstract/web
-root: ~/src/github.com/goabstract/web
-
-windows:
-  - shell:
-  - server: yarn && yarn start

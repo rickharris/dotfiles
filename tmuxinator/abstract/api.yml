@@ -1,7 +1,0 @@
-name: abstract/api
-root: ~/src/github.com/goabstract/api
-
-windows:
-  - shell:
-  - console: docker-compose run --rm api bin/rails c
-  - server: docker-compose up

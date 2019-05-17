@@ -8,7 +8,6 @@ linkables=(
   config/nvim/init.vim
   gitconfig
   tmux.conf
-  tmuxinator
   zshrc
 )
 

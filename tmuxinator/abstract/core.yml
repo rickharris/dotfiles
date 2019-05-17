@@ -1,6 +1,0 @@
-name: abstract/core
-root: ~/src/github.com/goabstract/ui-core
-
-windows:
-  - shell:
-  - server: yarn && yarn start
