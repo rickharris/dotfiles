@@ -2,6 +2,7 @@ export ZPLUG_HOME=/usr/local/opt/zplug
 export EDITOR="nvim"
 export PURE_PROMPT_SYMBOL="∴"
 export PATH="$PATH:$HOME/bin"
+export HISTFILE=$HOME/.zsh_history
 
 if test $(which go)
 then
