@@ -94,7 +94,7 @@ nnoremap <Leader>u :MundoToggle<CR>
 
 " make FZF respect gitignore if `ag` is installed
 if (executable('ag'))
-  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore ".git *.scss.flow" -g ""'
 endif
 
 map <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>

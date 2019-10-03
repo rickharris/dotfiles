@@ -3,9 +3,8 @@
 [alias]
   st = status
   ci = commit
-  br = branch
   co = checkout
-  df = diff
+  br = "!sh -c \"git checkout $(git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads | fzf | cut -f2)\""
 [core]
   editor = vim
 [include]

@@ -38,6 +38,11 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
+function killport (){
+  lsof -i tcp:"$1" -t | xargs kill -9
+  lsof -i tcp:"$1" -t 2>/dev/null >/dev/null || printf "killed processes on port %s\n" "$1"
+}
+
 if [ -f ~/.zshrc.local ]; then
   . ~/.zshrc.local
 fi
