@@ -73,14 +73,32 @@ autocmd! FileType fzf
 autocmd  FileType fzf set laststatus=0 noshowmode noruler
       \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
-let g:ale_fixers = {
-\   'go': ['goimports'],
-\   'javascript': ['eslint'],
-\   'ruby': ['rubocop'],
-\}
 let g:ale_fix_on_save = 1
+let g:ale_sign_column_always = 1
 nnoremap <leader>an :ALENextWrap<cr>
 nnoremap <leader>ap :ALEPreviousWrap<cr>
+
+let g:ale_fixers = {
+      \   'javascript': ['eslint'],
+      \   'typescriptreact': ['eslint'],
+      \}
+
+function! SetupEnvironment()
+  let l:path = expand('%:p')
+  if l:path =~ '/Users/rick/src/github.com/goabstract'
+    let b:ale_linters = {
+          \   'javascript': ['eslint', 'flow', 'flow-language-server'],
+          \}
+    let b:ale_fixers = {
+          \   'css': ['stylelint'],
+          \   'scss': ['stylelint'],
+          \   'go': ['goimports'],
+          \   'javascript': ['eslint'],
+          \   'ruby': ['rubocop'],
+          \}
+  endif
+endfunction
+autocmd! BufReadPost,BufNewFile * call SetupEnvironment()
 
 let g:deoplete#enable_at_startup = 1
 " deoplete tab-complete
@@ -98,3 +116,4 @@ if (executable('ag'))
 endif
 
 map <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+let g:bufExplorerShowRelativePath = 1
