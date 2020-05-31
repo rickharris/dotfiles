@@ -361,7 +361,7 @@
 			<key>Disable Window Resizing</key>
 			<true/>
 			<key>Flashing Bell</key>
-			<true/>
+			<false/>
 			<key>Foreground Color</key>
 			<dict>
 				<key>Blue Component</key>
@@ -733,7 +733,7 @@
 			<key>Show Status Bar</key>
 			<false/>
 			<key>Silence Bell</key>
-			<true/>
+			<false/>
 			<key>Status Bar Layout</key>
 			<dict>
 				<key>advanced configuration</key>
@@ -830,7 +830,7 @@
 	<key>NoSyncInstallationId</key>
 	<string>2F322C81-EA63-4F25-94D4-2A06368DFA45</string>
 	<key>NoSyncLaunchExperienceControllerRunCount</key>
-	<integer>207</integer>
+	<integer>208</integer>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile</key>
 	<true/>
 	<key>NoSyncNeverRemindPrefsChangesLostForFile_selection</key>

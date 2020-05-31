@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+brew install qmk/qmk/qmk
+qmk setup rickharris/qmk_firmware -y

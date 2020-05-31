@@ -5,6 +5,7 @@ export PATH="$PATH:$HOME/bin"
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=10000
+export QMK_HOME=$HOME/src/github.com/rickharris/qmk_firmware
 
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE
