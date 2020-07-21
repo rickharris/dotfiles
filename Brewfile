@@ -1,9 +1,5 @@
-tap 'caskroom/cask'
-tap 'caskroom/versions'
 tap 'neovim/neovim'
-tap 'getantibody/tap'
 
-brew 'antibody'
 brew 'awscli'
 brew 'dep'
 brew 'fzf'
@@ -22,17 +18,16 @@ brew 'tree'
 brew 'wget'
 brew 'wifi-password'
 brew 'yarn'
+brew 'zplug'
 brew 'zsh'
 
 cask '1password'
-cask 'encryptme'
 cask 'firefox'
 cask 'opera'
 cask 'alfred'
 cask 'docker'
 cask 'google-chrome'
 cask 'sketch'
-cask 'dropbox'
 cask 'slack'
 cask 'iterm2'
 cask 'authy'
@@ -42,10 +37,9 @@ cask 'hammerspoon'
 cask 'kitty'
 
 mas 'Annotate',      id: 918207447
-mas 'Fantastical 2', id: 975937182
+mas 'Fantastical',   id: 975937182
 mas 'iA Writer',     id: 775737590
-mas 'Simplenote',    id: 692867256
-mas 'Tweetbot',      id: 557168941
+mas 'Bear',          id: 1091189122
 # Defer installing xcode outside of the script, it takes too long to be
 # blocking.
 # mas 'Xcode',         id: 497799835

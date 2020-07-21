@@ -8,7 +8,6 @@ then
 fi
 
 echo -e "\nInstalling homebrew bundle..."
-brew tap Homebrew/bundle
 brew bundle
 
 echo -e "\nInstalling python support for neovim..."
