@@ -81,6 +81,7 @@ nnoremap <leader>ap :ALEPreviousWrap<cr>
 let g:ale_fixers = {
       \   'javascript': ['eslint'],
       \   'typescriptreact': ['eslint'],
+      \   'ruby': ['rubocop'],
       \}
 
 function! SetupEnvironment()

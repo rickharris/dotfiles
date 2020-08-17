@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+rbenv install -s 2.6.3
+rbenv global 2.6.3
+
 gems=(
+  bundler
+  rake
   debride
   fasterer
   reek
@@ -12,6 +17,6 @@ for gem in "${gems[@]}"; do
   if test ! $(which $gem)
   then
     echo -e "\nInstalling $gem..."
-    sudo gem install $gem
+    gem install $gem
   fi
 done

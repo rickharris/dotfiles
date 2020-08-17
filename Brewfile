@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 tap 'neovim/neovim'
 
 brew 'awscli'
@@ -11,7 +13,8 @@ brew 'jq'
 brew 'n'
 brew 'neovim'
 brew 'python3'
-brew 'ruby'
+brew 'rbenv'
+brew 'ruby-build'
 brew 'the_silver_searcher'
 brew 'tmux'
 brew 'tree'
@@ -36,10 +39,10 @@ cask 'visual-studio-code'
 cask 'hammerspoon'
 cask 'kitty'
 
-mas 'Annotate',      id: 918207447
-mas 'Fantastical',   id: 975937182
-mas 'iA Writer',     id: 775737590
-mas 'Bear',          id: 1091189122
+mas 'Annotate',      id: 918_207_447
+mas 'Fantastical',   id: 975_937_182
+mas 'iA Writer',     id: 775_737_590
+mas 'Bear',          id: 1_091_189_122
 # Defer installing xcode outside of the script, it takes too long to be
 # blocking.
 # mas 'Xcode',         id: 497799835

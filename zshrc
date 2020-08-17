@@ -59,3 +59,6 @@ if [ -f ~/.zshrc.local ]; then
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
