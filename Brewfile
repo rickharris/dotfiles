@@ -34,6 +34,7 @@ cask 'authy'
 cask 'abstract'
 cask 'visual-studio-code'
 cask 'hammerspoon'
+cask 'zoomus'
 
 mas 'AdGuard for Safari', id: 1_440_147_259
 mas 'Annotate',           id: 918_207_447
