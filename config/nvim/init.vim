@@ -50,7 +50,7 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
-set background=light
+set bg="light"
 colorscheme solarized8_flat
 
 nnoremap <leader>t :FZF<CR>
@@ -86,7 +86,7 @@ let g:ale_fixers = {
 
 function! SetupEnvironment()
   let l:path = expand('%:p')
-  if l:path =~ '/Users/rick/src/github.com/goabstract'
+  if l:path =~ '/Users/rickharris/src/github.com/goabstract'
     let b:ale_linters = {
           \   'javascript': ['eslint', 'flow', 'flow-language-server'],
           \}

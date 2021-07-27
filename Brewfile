@@ -2,8 +2,10 @@
 
 tap 'neovim/neovim'
 
+brew 'bat'
 brew 'gh'
 brew 'git'
+brew 'git-delta'
 brew 'git-extras'
 brew 'go'
 brew 'hub'
@@ -35,6 +37,7 @@ cask 'abstract'
 cask 'visual-studio-code'
 cask 'hammerspoon'
 cask 'zoomus'
+cask 'kap'
 
 mas 'AdGuard for Safari', id: 1_440_147_259
 mas 'Annotate',           id: 918_207_447

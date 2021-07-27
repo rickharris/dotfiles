@@ -2,4 +2,4 @@
 set -e
 
 brew install qmk/qmk/qmk
-qmk setup rickharris/qmk_firmware -y
+qmk setup --home $HOME/src/github.com/rickharris/qmk_firmware -y rickharris/qmk_firmware
