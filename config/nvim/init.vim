@@ -86,7 +86,7 @@ let g:ale_fixers = {
 
 function! SetupEnvironment()
   let l:path = expand('%:p')
-  if l:path =~ '/Users/rickharris/src/github.com/goabstract'
+  if l:path =~ '/Users/rick/src/github.com/goabstract'
     let b:ale_linters = {
           \   'javascript': ['eslint', 'flow', 'flow-language-server'],
           \}
