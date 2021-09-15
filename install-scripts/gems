@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-rbenv install -s 2.6.3
-rbenv global 2.6.3
+rbenv install -s 2.7.3
+rbenv global 2.7.3
 
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"

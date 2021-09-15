@@ -1,4 +1,4 @@
-export ZPLUG_HOME=/usr/local/opt/zplug
+export ZPLUG_HOME=/opt/homebrew/opt/zplug
 export EDITOR="nvim"
 export PURE_PROMPT_SYMBOL="∴"
 export PATH="$PATH:$HOME/bin"
@@ -6,6 +6,8 @@ export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=10000
 export QMK_HOME=$HOME/src/github.com/rickharris/qmk_firmware
+export N_PREFIX=$HOME/.n
+export PATH=$N_PREFIX/bin:$PATH
 
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE

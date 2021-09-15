@@ -15,10 +15,10 @@ pip3 install --upgrade neovim
 
 if [[ ! -f /usr/local/bin/vi ]]
 then
-  ln -s /usr/local/bin/nvim /usr/local/bin/vi
+  sudo ln -s /opt/homebrew/bin/nvim /usr/local/bin/vi
 fi
 
 if [[ ! -f /usr/local/bin/vim ]]
 then
-  ln -s /usr/local/bin/nvim /usr/local/bin/vim
+  sudo ln -s /opt/homebrew/bin/nvim /usr/local/bin/vim
 fi
