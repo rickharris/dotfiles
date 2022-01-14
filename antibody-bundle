@@ -1,3 +1,0 @@
-#!/bin/bash
-
-antibody bundle < zsh_plugins.txt > config/antibody/plugins.sh

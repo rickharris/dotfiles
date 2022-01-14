@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-# Disable press-and-hold so vim-mode works
-defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false

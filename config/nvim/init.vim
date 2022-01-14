@@ -80,26 +80,10 @@ nnoremap <leader>ap :ALEPreviousWrap<cr>
 
 let g:ale_fixers = {
       \   'javascript': ['eslint'],
+      \   'typescript': ['eslint'],
       \   'typescriptreact': ['eslint'],
       \   'ruby': ['rubocop'],
       \}
-
-function! SetupEnvironment()
-  let l:path = expand('%:p')
-  if l:path =~ '/Users/rick/src/github.com/goabstract'
-    let b:ale_linters = {
-          \   'javascript': ['eslint', 'flow', 'flow-language-server'],
-          \}
-    let b:ale_fixers = {
-          \   'css': ['stylelint'],
-          \   'scss': ['stylelint'],
-          \   'go': ['goimports'],
-          \   'javascript': ['eslint'],
-          \   'ruby': ['rubocop'],
-          \}
-  endif
-endfunction
-autocmd! BufReadPost,BufNewFile * call SetupEnvironment()
 
 let g:deoplete#enable_at_startup = 1
 " deoplete tab-complete
