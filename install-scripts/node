@@ -4,4 +4,3 @@ set -e
 export N_PREFIX=$HOME/.n
 export PATH=$N_PREFIX/bin:$PATH
 npm install -g n
-n 12

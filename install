@@ -14,5 +14,5 @@ $dir/install-scripts/homebrew
 $dir/install-scripts/zsh
 $dir/install-scripts/tmux
 $dir/install-scripts/iterm2
-$dir/install-scripts/hammerspoon
-$dir/install-scripts/qmk
+$dir/install-scripts/keyboard
+$dir/install-scripts/node
