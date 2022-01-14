@@ -1,25 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ ! -d $HOME/.ssh/controlmasters ]]
-then
-  umask 077; mkdir -p $HOME/.ssh/controlmasters
-fi
-
-if [[ ! -f $HOME/.ssh/config ]]
-then
-echo "Host *
-  IgnoreUnknown UseKeychain
-  UseKeychain true
-  ControlPath ~/.ssh/controlmasters/%r@%h:%p
-  ControlMaster auto
-  ControlPersist 4h
-
-Host github.com
-  ControlPersist 2m
-" > $HOME/.ssh/config
-fi
-
 if [[ ! -f $HOME/.ssh/id_ed25519 ]]
 then
   echo -e "\nCreating an ssh key..."
