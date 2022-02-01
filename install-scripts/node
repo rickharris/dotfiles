@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-export N_PREFIX=$HOME/.n
-export PATH=$N_PREFIX/bin:$PATH
-npm install -g n
+if test ! $(which nvm); then
+  echo -e "\nInstalling nvm…"
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+fi
