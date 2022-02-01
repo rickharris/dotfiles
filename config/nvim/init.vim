@@ -50,8 +50,8 @@ Plug 'zchee/deoplete-go', { 'do': 'make'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
-set background=dark
-autocmd vimenter * ++nested colorscheme solarized8
+set bg="light"
+colorscheme solarized8_flat
 
 nnoremap <leader>t :FZF<CR>
 let g:fzf_colors =
