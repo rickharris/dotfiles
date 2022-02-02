@@ -67,8 +67,7 @@ function! Colorscheme()
 endfunction
 
 autocmd vimenter * ++nested call Colorscheme()
-autocmd Signal SIGUSR1 call Colorscheme()
-
+autocmd Signal SIGUSR1 call Colorscheme() "launchctl script will send this signal on theme change
 
 nnoremap <leader>t :FZF<CR>
 let g:fzf_colors =
