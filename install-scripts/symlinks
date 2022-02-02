@@ -2,7 +2,6 @@
 set -e
 
 linkables=(
-  config/coc
   config/bat/config
   config/nvim/init.vim
   gitconfig
@@ -23,7 +22,7 @@ for path in "${linkables[@]}"; do
   if [ -e $target ]; then
     echo "~${target#$HOME} exists, skipping."
   else
-    echo "~${target#$HOME} created."
     ln -s $source $target
+    echo "~${target#$HOME} created."
   fi
 done

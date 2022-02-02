@@ -17,3 +17,4 @@ $dir/install-scripts/iterm2
 $dir/install-scripts/neovim
 $dir/install-scripts/keyboard
 $dir/install-scripts/node
+$dir/install-scripts/dark-mode-notifier

@@ -34,7 +34,7 @@ brew install bat \
   zsh \
   1password \
   firefox \
-  iterm2 \
+  homebrew/cask-versions/iterm2-beta \
   homebrew/cask-drivers/logitech-options
 
 echo -e "\nInstalling python support for neovim…"
