@@ -29,6 +29,9 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+" Use coc for language server completions
+let g:ale_disable_lsp = 1
+
 call plug#begin('~/.config/nvim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
@@ -42,16 +45,15 @@ Plug 'jlanzarotta/bufexplorer'
 Plug 'sheerun/vim-polyglot'
 Plug 'simnalamburt/vim-mundo'
 Plug 'w0rp/ale'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
-Plug 'wokalski/autocomplete-flow'
-Plug 'zchee/deoplete-go', { 'do': 'make'}
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 set bg="light"
-colorscheme solarized8_flat
+autocmd vimenter * ++nested colorscheme solarized8_flat
 
 nnoremap <leader>t :FZF<CR>
 let g:fzf_colors =
@@ -79,25 +81,19 @@ nnoremap <leader>an :ALENextWrap<cr>
 nnoremap <leader>ap :ALEPreviousWrap<cr>
 
 let g:ale_fixers = {
-      \   'javascript': ['eslint'],
-      \   'typescript': ['eslint'],
-      \   'typescriptreact': ['eslint'],
+      \   'javascript': ['eslint', 'prettier'],
+      \   'typescript': ['eslint', 'prettier'],
+      \   'typescriptreact': ['eslint', 'prettier'],
       \   'ruby': ['rubocop'],
       \}
 
-let g:deoplete#enable_at_startup = 1
-" deoplete tab-complete
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-
-let g:javascript_plugin_flow = 1
 let g:jsx_ext_required = 0
 
 nnoremap <Leader>u :MundoToggle<CR>
 
 " make FZF respect gitignore if `ag` is installed
 if (executable('ag'))
-  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore ".git *.scss.flow" -g ""'
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore ".git" -g ""'
 endif
 
 map <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>

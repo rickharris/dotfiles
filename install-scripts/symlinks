@@ -2,6 +2,8 @@
 set -e
 
 linkables=(
+  config/coc
+  config/bat/config
   config/nvim/init.vim
   gitconfig
   tmux.conf
