@@ -52,7 +52,25 @@ Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
-set bg="light"
+autocmd Signal SIGUSR1 call AutoDarkOrLight()
+
+function! AutoDarkOrLight()
+  let s:mode = systemlist("defaults read -g AppleInterfaceStyle")[0]
+
+  if s:mode ==? "dark"
+    let s:new_bg = "dark"
+  else
+    let s:new_bg = "light"
+  endif
+
+  if &background !=? s:new_bg
+    let &background = s:new_bg
+  endif
+
+  redraw
+endfunction
+
+call AutoDarkOrLight()
 autocmd vimenter * ++nested colorscheme solarized8_flat
 
 nnoremap <leader>t :FZF<CR>
