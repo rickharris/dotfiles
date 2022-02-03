@@ -4,6 +4,7 @@ set -e
 linkables=(
   config/bat/config
   config/nvim/init.vim
+  config/nvim/coc-settings.json
   gitconfig
   tmux.conf
   zshrc
