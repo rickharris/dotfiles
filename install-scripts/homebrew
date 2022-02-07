@@ -26,6 +26,7 @@ brew install bat \
   neovim \
   python3 \
   ripgrep \
+  rust \
   the_silver_searcher \
   tmux \
   wget \

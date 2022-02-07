@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-nvim --headless +PlugInstall +qall
+if [ ! -f $HOME/.local/bin/lvim ]
+then
+  bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+fi
