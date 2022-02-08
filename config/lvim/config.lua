@@ -13,7 +13,10 @@ vim.opt.relativenumber = true
 lvim.log.level = "warn"
 lvim.format_on_save = true
 vim.opt.signcolumn = "yes"
+vim.opt.background = "dark"
 lvim.colorscheme = "tokyonight"
+
+vim.cmd([[ autocmd FileType dashboard IndentBlanklineDisable ]])
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = ";"
@@ -59,9 +62,13 @@ lvim.leader = ";"
 lvim.builtin.dashboard.active = true
 lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
-lvim.builtin.terminal.open_mapping = [[<c-\>]]
+lvim.builtin.terminal.open_mapping = [[<leader>t]]
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.show_icons.git = 0
+
+local components = require("lvim.core.lualine.components")
+lvim.builtin.lualine.sections.lualine_b = { "%f %h%w%m%r" }
+lvim.builtin.lualine.sections.lualine_c = { components.branch, components.diff }
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -109,6 +116,8 @@ local formatters = require("lvim.lsp.null-ls.formatters")
 formatters.setup({
 	{ command = "eslint_d" },
 	{ command = "prettier" },
+	{ command = "stylelint" },
+	{ command = "rubocop" },
 	{ command = "shfmt" },
 	{ command = "stylua" },
 	--   { command = "black", filetypes = { "python" } },
@@ -128,6 +137,9 @@ formatters.setup({
 local linters = require("lvim.lsp.null-ls.linters")
 linters.setup({
 	{ command = "eslint_d" },
+	{ command = "stylelint" },
+	{ command = "rubocop" },
+	{ command = "gitlint" },
 	--   { command = "flake8", filetypes = { "python" } },
 	--   {
 	--     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
@@ -141,6 +153,12 @@ linters.setup({
 	--     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
 	--     filetypes = { "javascript", "python" },
 	--   },
+})
+
+local code_actions = require("lvim.lsp.null-ls.code_actions")
+code_actions.setup({
+	{ name = "eslint_d" },
+	{ name = "gitsigns" },
 })
 
 -- Additional Plugins
