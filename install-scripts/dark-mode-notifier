@@ -4,23 +4,19 @@ set -e
 bin=bin/dark-mode-notifier
 launchagent=$HOME/Library/LaunchAgents/is.rick.dark-mode-notifier.plist
 
-if [[ ! -f $bin ]]
-then
-  swiftc dark-mode-notifier.swift -o $bin
+if [[ ! -f $bin ]]; then
+	swiftc dark-mode-notifier.swift -o $bin
 fi
 
-if [[ ! -d /usr/local/bin ]]
-then
-  sudo mkdir /usr/local/bin
+if [[ ! -d /usr/local/bin ]]; then
+	sudo mkdir /usr/local/bin
 fi
 
-if [[ ! -f /usr/local/bin/dark-mode-notifier ]]
-then
-  sudo cp $bin /usr/local/bin/
+if [[ ! -f /usr/local/bin/dark-mode-notifier ]]; then
+	sudo cp $bin /usr/local/bin/
 fi
 
-if [[ ! -f $launchagent ]]
-then
-  cp ./is.rick.dark-mode-notifier.plist $launchagent
-  launchctl load $launchagent
+if [[ ! -f $launchagent ]]; then
+	cp ./is.rick.dark-mode-notifier.plist $launchagent
+	launchctl load $launchagent
 fi

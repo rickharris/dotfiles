@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ ! -f $HOME/.ssh/id_ed25519 ]]
-then
-  echo -e "\nCreating an ssh key..."
-  ssh-keygen -t ed25519
-  ssh-add -K $HOME/.ssh/id_ed25519
+if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
+	echo -e "\nCreating an ssh key…"
+	ssh-keygen -t ed25519
+	ssh-add -K $HOME/.ssh/id_ed25519
 fi

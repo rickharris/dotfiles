@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-if test ! $(which nvm); then
-  echo -e "\nInstalling nvm…"
-  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+if [ ! -d $HOME/.nvm ]; then
+	echo -e "\nInstalling nvm…"
+	wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+fi
+
+if test ! $(which node); then
+	nvm install --lts
+	nvm use --lts
+fi
+
+if test ! $(which eslint_d); then
+	npm i -g eslint_d
 fi

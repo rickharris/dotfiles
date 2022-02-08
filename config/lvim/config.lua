@@ -12,7 +12,7 @@ vim.opt.relativenumber = true
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-vim.opt.background = "dark"
+vim.opt.signcolumn = "yes"
 lvim.colorscheme = "tokyonight"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
@@ -107,9 +107,10 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require("lvim.lsp.null-ls.formatters")
 formatters.setup({
-	{ command = "stylua" },
-	{ command = "eslint" },
+	{ command = "eslint_d" },
 	{ command = "prettier" },
+	{ command = "shfmt" },
+	{ command = "stylua" },
 	--   { command = "black", filetypes = { "python" } },
 	--   { command = "isort", filetypes = { "python" } },
 	--   {
@@ -126,7 +127,7 @@ formatters.setup({
 -- -- set additional linters
 local linters = require("lvim.lsp.null-ls.linters")
 linters.setup({
-	{ command = "eslint" },
+	{ command = "eslint_d" },
 	--   { command = "flake8", filetypes = { "python" } },
 	--   {
 	--     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration

@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
-if [ ! -f $HOME/.local/bin/lvim ]
-then
-  bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+if [ ! -f $HOME/.local/bin/lvim ]; then
+	bash <(curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh)
+fi
+
+if [ ! -d $HOME/.config/lvim ]; then
+	echo "Can't link lunarvim custom settings, lunarvim hasn't been installed yet."
+else
+	if [ -f $HOME/.config/lvim/config.lua ]; then
+		echo "Backing up existing lunarvim config…"
+		mv $HOME/.config/lvim/config.lua $HOME/.config/lvim/config.lua.bak
+	fi
+	echo "Linking lunarvim config…"
+	ln -s $PWD/config/lvim/config.lua $HOME/.config/lvim/config.lua
 fi
