@@ -8,15 +8,14 @@ an executable
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 vim.opt.relativenumber = true
+vim.opt.list = true
+vim.opt.listchars = "eol:↵,lead:·,tab:· "
 
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
 vim.opt.signcolumn = "yes"
-vim.opt.background = "dark"
 lvim.colorscheme = "tokyonight"
-
-vim.cmd([[ autocmd FileType dashboard IndentBlanklineDisable ]])
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = ";"
@@ -63,6 +62,7 @@ lvim.builtin.dashboard.active = true
 lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.terminal.open_mapping = [[<leader>t]]
+lvim.builtin.terminal.insert_mappings = false
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.show_icons.git = 0
 
@@ -164,7 +164,7 @@ code_actions.setup({
 -- Additional Plugins
 lvim.plugins = {
 	{ "folke/tokyonight.nvim" },
-	{ "lukas-reineke/indent-blankline.nvim" },
+	{ "ishan9299/nvim-solarized-lua" },
 	--     {
 	--       "folke/trouble.nvim",
 	--       cmd = "TroubleToggle",
