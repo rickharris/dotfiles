@@ -22,6 +22,7 @@ then
   export GOPATH=$HOME
 fi
 
+alias ls="ls -G"
 alias vi="lvim"
 alias vim="lvim"
 
