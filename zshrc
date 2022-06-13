@@ -22,9 +22,9 @@ then
 fi
 
 alias ls="ls -G"
-alias vi="nvim"
-alias vim="nvim"
-export EDITOR="nvim"
+alias vi="lvim"
+alias vim="lvim"
+export EDITOR="lvim"
 
 source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"

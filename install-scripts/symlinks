@@ -3,8 +3,7 @@ set -e
 
 linkables=(
 	config/bat/config
-	config/nvim/init.vim
-	config/nvim/coc-settings.json
+	config/lvim/config.lua
 	gitconfig
 	tmux.conf
 	zshrc
