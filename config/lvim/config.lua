@@ -9,6 +9,7 @@ an executable
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
 -- general
+vim.o.clipboard = ""
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.colorscheme = "tokyonight"
@@ -18,7 +19,7 @@ lvim.colorscheme = "tokyonight"
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+-- lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 -- unmap a default keymapping
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
@@ -42,6 +43,10 @@ lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 --   },
 -- }
 
+lvim.builtin.telescope.on_config_done = function(telescope)
+	pcall(telescope.load_extension, "neoclip")
+end
+
 -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 lvim.builtin.which_key.mappings["t"] = {
@@ -53,6 +58,13 @@ lvim.builtin.which_key.mappings["t"] = {
 	l = { "<cmd>Trouble loclist<cr>", "LocationList" },
 	w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
 }
+
+lvim.builtin.which_key.mappings["b"] = {
+	e = { "<cmd>Telescope buffers sort_mru=1 layout=vertical<cr>", "Buffer Explorer" },
+	o = { "<cmd>:BWipeout other<cr>", "Close other buffers" },
+}
+
+lvim.builtin.which_key.mappings["s"]["s"] = { "<cmd>Telescope neoclip layout=vertical<cr>", "Yank History" }
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -168,6 +180,19 @@ lvim.plugins = {
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
+	},
+	{ "kazhala/close-buffers.nvim" },
+	{
+		"AckslD/nvim-neoclip.lua",
+		requires = {
+			{ "tami5/sqlite.lua", module = "sqlite" },
+			{ "nvim-telescope/telescope.nvim" },
+		},
+		config = function()
+			require("neoclip").setup({
+				enable_persistent_history = true,
+			})
+		end,
 	},
 }
 
