@@ -24,6 +24,7 @@ brew install bat \
 	go \
 	hub \
 	jq \
+	lazygit \
 	neovim \
 	python3 \
 	ripgrep \
