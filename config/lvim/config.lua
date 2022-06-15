@@ -205,6 +205,7 @@ lvim.plugins = {
 	},
 	{ "windwp/nvim-spectre", requires = { "nvim-lua/plenary.nvim" } },
 	{ "kdheepak/lazygit.nvim" },
+	{ "tpope/vim-surround" },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
