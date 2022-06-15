@@ -1,3 +1,4 @@
 .netrwhist
 .DS_STORE
 bin/dark-mode-notifier
+config/nvim/plugin
