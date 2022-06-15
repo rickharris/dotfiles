@@ -20,6 +20,7 @@ brew install bat \
 	git \
 	git-delta \
 	git-extras \
+	gnu-sed \
 	go \
 	hub \
 	jq \

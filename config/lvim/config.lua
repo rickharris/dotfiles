@@ -42,13 +42,30 @@ lvim.leader = "space"
 --     ["<C-k>"] = actions.move_selection_previous,
 --   },
 -- }
-
+lvim.builtin.telescope.defaults = {
+	layout_strategy = "vertical",
+}
 lvim.builtin.telescope.on_config_done = function(telescope)
+	pcall(telescope.load_extension, "lazygit")
 	pcall(telescope.load_extension, "neoclip")
 end
 
 -- Use which-key to add extra bindings with the leader-key prefix
--- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
+lvim.builtin.which_key.mappings["b"] = {
+	e = { "<cmd>Telescope buffers sort_mru=1 theme=ivy previewer=false<cr>", "Buffer Explorer" },
+	o = { "<cmd>:BWipeout other<cr>", "Close other buffers" },
+}
+
+lvim.builtin.which_key.mappings["g"]["g"] = { "<cmd>LazyGit<cr>", "LazyGit" }
+
+lvim.builtin.which_key.mappings["s"]["s"] = { "<cmd>Telescope neoclip layout=vertical<cr>", "Yank History" }
+lvim.builtin.which_key.mappings["s"]["e"] = {
+	function()
+		require("spectre").open()
+	end,
+	"Find and Replace",
+}
+
 lvim.builtin.which_key.mappings["t"] = {
 	name = "+Trouble",
 	r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -56,21 +73,13 @@ lvim.builtin.which_key.mappings["t"] = {
 	d = { "<cmd>Trouble document_diagnostics<cr>", "Diagnostics" },
 	q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
 	l = { "<cmd>Trouble loclist<cr>", "LocationList" },
-	w = { "<cmd>Trouble workspace_diagnostics<cr>", "Wordspace Diagnostics" },
+	w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
 }
-
-lvim.builtin.which_key.mappings["b"] = {
-	e = { "<cmd>Telescope buffers sort_mru=1 layout=vertical<cr>", "Buffer Explorer" },
-	o = { "<cmd>:BWipeout other<cr>", "Close other buffers" },
-}
-
-lvim.builtin.which_key.mappings["s"]["s"] = { "<cmd>Telescope neoclip layout=vertical<cr>", "Yank History" }
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.bufferline.active = false
 lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
@@ -194,6 +203,8 @@ lvim.plugins = {
 			})
 		end,
 	},
+	{ "windwp/nvim-spectre", requires = { "nvim-lua/plenary.nvim" } },
+	{ "kdheepak/lazygit.nvim" },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
