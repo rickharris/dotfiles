@@ -37,7 +37,7 @@ brew install bat \
 	yarn \
 	zplug \
 	zsh \
-	1password \
+	1password7 \
 	firefox \
 	homebrew/cask-versions/iterm2-beta \
 	homebrew/cask-drivers/logitech-options
