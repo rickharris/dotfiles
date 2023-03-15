@@ -11,7 +11,7 @@ an executable
 -- general
 vim.o.clipboard = ""
 lvim.log.level = "warn"
-lvim.format_on_save = true
+lvim.format_on_save.enabled = true
 lvim.colorscheme = "tokyonight"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
@@ -19,7 +19,9 @@ lvim.colorscheme = "tokyonight"
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
--- lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+-- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
+-- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
@@ -42,22 +44,20 @@ lvim.leader = "space"
 --     ["<C-k>"] = actions.move_selection_previous,
 --   },
 -- }
-lvim.builtin.telescope.defaults = {
-	layout_strategy = "vertical",
-}
 lvim.builtin.telescope.on_config_done = function(telescope)
-	pcall(telescope.load_extension, "lazygit")
 	pcall(telescope.load_extension, "neoclip")
 end
+
+-- Change theme settings
+-- lvim.builtin.theme.options.dim_inactive = true
+-- lvim.builtin.theme.options.style = "storm"
 
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings["b"] = {
 	e = { "<cmd>Telescope buffers sort_mru=1 theme=ivy previewer=false<cr>", "Buffer Explorer" },
 	o = { "<cmd>:BWipeout other<cr>", "Close other buffers" },
 }
-
-lvim.builtin.which_key.mappings["g"]["g"] = { "<cmd>LazyGit<cr>", "LazyGit" }
-
+lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 lvim.builtin.which_key.mappings["s"]["s"] = { "<cmd>Telescope neoclip layout=vertical<cr>", "Yank History" }
 lvim.builtin.which_key.mappings["s"]["e"] = {
 	function()
@@ -65,7 +65,6 @@ lvim.builtin.which_key.mappings["s"]["e"] = {
 	end,
 	"Find and Replace",
 }
-
 lvim.builtin.which_key.mappings["t"] = {
 	name = "+Trouble",
 	r = { "<cmd>Trouble lsp_references<cr>", "References" },
@@ -80,7 +79,6 @@ lvim.builtin.which_key.mappings["t"] = {
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
@@ -103,12 +101,26 @@ lvim.builtin.treesitter.ensure_installed = {
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
-lvim.builtin.treesitter.highlight.enabled = true
+lvim.builtin.treesitter.highlight.enable = true
 
 -- generic LSP settings
 
+-- -- make sure server will always be installed even if the server is in skipped_servers list
+-- lvim.lsp.installer.setup.ensure_installed = {
+--     "sumneko_lua",
+--     "jsonls",
+-- }
+-- -- change UI setting of `LspInstallInfo`
+-- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
+-- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
+-- lvim.lsp.installer.setup.ui.border = "rounded"
+-- lvim.lsp.installer.setup.ui.keymaps = {
+--     uninstall_server = "d",
+--     toggle_server_expand = "o",
+-- }
+
 -- ---@usage disable automatic installation of servers
--- lvim.lsp.automatic_servers_installation = false
+-- lvim.lsp.installer.setup.automatic_installation = false
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
@@ -117,8 +129,8 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- require("lvim.lsp.manager").setup("pyright", opts)
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
--- ---`:LvimInfo` lists which server(s) are skiipped for the current filetype
--- vim.tbl_map(function(server)
+-- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
+-- lvim.lsp.automatic_configuration.skipped_servers = vim.tbl_filter(function(server)
 --   return server ~= "emmet_ls"
 -- end, lvim.lsp.automatic_configuration.skipped_servers)
 
@@ -141,17 +153,17 @@ formatters.setup({
 	{ command = "rubocop" },
 	{ command = "shfmt" },
 	{ command = "stylua" },
-	-- { command = "black", filetypes = { "python" } },
-	-- { command = "isort", filetypes = { "python" } },
-	-- {
-	--   -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-	--   command = "prettier",
-	--   ---@usage arguments to pass to the formatter
-	--   -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-	--   extra_args = { "--print-with", "100" },
-	--   ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
-	--   filetypes = { "typescript", "typescriptreact" },
-	-- },
+	--   { command = "black", filetypes = { "python" } },
+	--   { command = "isort", filetypes = { "python" } },
+	--   {
+	--     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+	--     command = "prettier",
+	--     ---@usage arguments to pass to the formatter
+	--     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+	--     extra_args = { "--print-with", "100" },
+	--     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+	--     filetypes = { "typescript", "typescriptreact" },
+	--   },
 })
 
 -- set additional linters
@@ -161,19 +173,19 @@ linters.setup({
 	{ command = "stylelint" },
 	{ command = "rubocop" },
 	{ command = "gitlint" },
-	-- { command = "flake8", filetypes = { "python" } },
-	-- {
-	--   -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-	--   command = "shellcheck",
-	--   ---@usage arguments to pass to the formatter
-	--   -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-	--   extra_args = { "--severity", "warning" },
-	-- },
-	-- {
-	--   command = "codespell",
-	--   ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
-	--   filetypes = { "javascript", "python" },
-	-- },
+	--   { command = "flake8", filetypes = { "python" } },
+	--   {
+	--     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+	--     command = "shellcheck",
+	--     ---@usage arguments to pass to the formatter
+	--     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+	--     extra_args = { "--severity", "warning" },
+	--   },
+	--   {
+	--     command = "codespell",
+	--     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+	--     filetypes = { "javascript", "python" },
+	--   },
 })
 
 local code_actions = require("lvim.lsp.null-ls.code_actions")
@@ -216,6 +228,7 @@ lvim.plugins = {
 			})
 		end,
 	},
+	{ "gpanders/editorconfig.nvim" },
 }
 
 vim.keymap.set("n", "p", "<Plug>(YankyPutAfter)", {})
