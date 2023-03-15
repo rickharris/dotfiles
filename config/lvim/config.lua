@@ -12,7 +12,9 @@ an executable
 vim.o.clipboard = ""
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = true
-lvim.colorscheme = "tokyonight"
+vim.o.bg = "light"
+lvim.builtin.theme.name = "tokyonight"
+lvim.colorscheme = "solarized"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -197,7 +199,6 @@ code_actions.setup({
 -- Additional Plugins
 lvim.plugins = {
 	{ "ishan9299/nvim-solarized-lua" },
-	{ "folke/tokyonight.nvim" },
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
@@ -229,6 +230,25 @@ lvim.plugins = {
 		end,
 	},
 	{ "gpanders/editorconfig.nvim" },
+	{
+		"f-person/auto-dark-mode.nvim",
+		config = function()
+			local auto_dark_mode = require("auto-dark-mode")
+
+			auto_dark_mode.setup({
+				update_interval = 1000,
+				set_dark_mode = function()
+					vim.api.nvim_set_option("background", "dark")
+					vim.cmd("colorscheme solarized")
+				end,
+				set_light_mode = function()
+					vim.api.nvim_set_option("background", "light")
+					vim.cmd("colorscheme solarized")
+				end,
+			})
+			auto_dark_mode.init()
+		end,
+	},
 }
 
 vim.keymap.set("n", "p", "<Plug>(YankyPutAfter)", {})
