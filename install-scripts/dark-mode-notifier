@@ -17,6 +17,7 @@ if [[ ! -f /usr/local/bin/dark-mode-notifier ]]; then
 fi
 
 if [[ ! -f $launchagent ]]; then
+	mkdir -p $(dirname $launchagent)
 	cp ./is.rick.dark-mode-notifier.plist $launchagent
 	launchctl load $launchagent
 fi
