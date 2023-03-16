@@ -1,7 +1,6 @@
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
-export EDITOR="nvim"
 export PURE_PROMPT_SYMBOL="∴"
-export PATH="$PATH:$HOME/bin"
+export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=10000
@@ -22,8 +21,10 @@ then
   export GOPATH=$HOME
 fi
 
-alias vi="nvim"
-alias vim="nvim"
+alias ls="ls -G"
+alias vi="lvim"
+alias vim="lvim"
+export EDITOR="lvim"
 
 source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"

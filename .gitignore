@@ -1,3 +1,4 @@
 .netrwhist
 .DS_STORE
-ssh/config
+bin/dark-mode-notifier
+config/nvim/plugin

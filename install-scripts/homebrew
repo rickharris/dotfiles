@@ -2,40 +2,45 @@
 set -e
 
 if test ! $(which brew); then
-  echo -e "\nInstalling Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+	echo -e "\nInstalling Homebrew…"
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-  if [[ ! -f $HOME/.zprofile ]]; then
-    touch $HOME/.zprofile
-  fi
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>/Users/rick/.zprofile
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+	if [[ ! -f $HOME/.zprofile ]]; then
+		touch $HOME/.zprofile
+	fi
+	echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>/Users/rick/.zprofile
+	eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 echo -e "\nInstalling homebrew dependencies…"
 brew tap neovim/neovim
 brew install bat \
-  fzf \
-  gh \
-  git \
-  git-delta \
-  git-extras \
-  go \
-  hub \
-  jq \
-  neovim \
-  python3 \
-  ripgrep \
-  the_silver_searcher \
-  tmux \
-  wget \
-  yarn \
-  zplug \
-  zsh \
-  1password \
-  firefox \
-  iterm2 \
-  homebrew/cask-drivers/logitech-options
+	fzf \
+	gh \
+	git \
+	git-delta \
+	git-extras \
+	gnu-sed \
+	go \
+	hub \
+	jq \
+	lazygit \
+	neovim \
+	python3 \
+	ripgrep \
+	rust \
+	shfmt \
+	stylua \
+	the_silver_searcher \
+	tmux \
+	wget \
+	yarn \
+	zplug \
+	zsh \
+	1password7 \
+	firefox \
+	homebrew/cask-versions/iterm2-beta \
+	homebrew/cask-drivers/logitech-options
 
 echo -e "\nInstalling python support for neovim…"
 pip3 install --upgrade neovim

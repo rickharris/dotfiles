@@ -2,26 +2,28 @@
 set -e
 
 linkables=(
-  config/nvim/init.vim
-  gitconfig
-  tmux.conf
-  zshrc
+	config/bat/config
+	config/lvim/config.lua
+	config/nvim
+	gitconfig
+	tmux.conf
+	zshrc
 )
 
-echo -e "\nCreating symlinks..."
+echo -e "\nCreating symlinks…"
 for path in "${linkables[@]}"; do
-  source="$PWD/$path"
-  target="$HOME/.$path"
-  targetdir=$(dirname $target)
+	source="$PWD/$path"
+	target="$HOME/.$path"
+	targetdir=$(dirname $target)
 
-  if [ ! -d $targetdir ]; then
-    mkdir -p $targetdir
-  fi
+	if [ ! -d $targetdir ]; then
+		mkdir -p $targetdir
+	fi
 
-  if [ -e $target ]; then
-    echo "~${target#$HOME} exists, skipping."
-  else
-    echo "~${target#$HOME} created."
-    ln -s $source $target
-  fi
+	if [ -e $target ]; then
+		echo "~${target#$HOME} exists, skipping."
+	else
+		ln -s $source $target
+		echo "~${target#$HOME} created."
+	fi
 done

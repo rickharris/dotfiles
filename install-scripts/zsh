@@ -2,9 +2,9 @@
 set -e
 
 if [ "$SHELL" != "/opt/homebrew/bin/zsh" ]; then
-  if ! sudo grep -q /opt/homebrew/bin/zsh "/etc/shells"; then
-    echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
-  fi
+	if ! sudo grep -q /opt/homebrew/bin/zsh "/etc/shells"; then
+		echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
+	fi
 
-  chsh -s /opt/homebrew/bin/zsh
+	chsh -s /opt/homebrew/bin/zsh
 fi

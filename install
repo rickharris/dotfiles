@@ -2,9 +2,8 @@
 set -e
 
 dir=$HOME/src/github.com/rickharris/dotfiles
-if [ ! -d $dir ]
-then
-  git clone https://github.com/rickharris/dotfiles.git $dir
+if [ ! -d $dir ]; then
+	git clone https://github.com/rickharris/dotfiles.git $dir
 fi
 cd $dir
 
@@ -16,3 +15,4 @@ $dir/install-scripts/tmux
 $dir/install-scripts/iterm2
 $dir/install-scripts/keyboard
 $dir/install-scripts/node
+$dir/install-scripts/dark-mode-notifier
