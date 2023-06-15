@@ -1917,11 +1917,11 @@
 			<key>Name</key>
 			<string>Default</string>
 			<key>Non Ascii Font</key>
-			<string>Monaco 12</string>
+			<string>UbuntuMonoNF 14</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>LetterGothicMonoNerdFontComplete- 16</string>
+			<string>LetterGothicMonoNF 16</string>
 			<key>Option Key Sends</key>
 			<integer>0</integer>
 			<key>Prompt Before Closing 2</key>
@@ -2087,7 +2087,7 @@
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
-			<false/>
+			<true/>
 			<key>Use Separate Colors for Light and Dark Mode</key>
 			<true/>
 			<key>Use Tab Color</key>

@@ -4,6 +4,7 @@ set -e
 linkables=(
 	config/bat/config
 	config/lvim/config.lua
+	config/lvim/nlsp-settings
 	config/nvim
 	gitconfig
 	tmux.conf
