@@ -15,6 +15,7 @@ fi
 echo -e "\nInstalling homebrew dependencies…"
 brew tap neovim/neovim
 brew install bat \
+	bash \
 	fzf \
 	gh \
 	git \
@@ -40,7 +41,7 @@ brew install bat \
 	1password7 \
 	firefox \
 	homebrew/cask-versions/iterm2-beta \
-	homebrew/cask-drivers/logitech-options
+	homebrew/cask/logitech-options
 
 echo -e "\nInstalling python support for neovim…"
 pip3 install --upgrade neovim

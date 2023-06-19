@@ -4,17 +4,31 @@
 -- Discord: https://discord.com/invite/Xb9B4Ny
 vim.o.clipboard = ""
 lvim.format_on_save.enabled = true
-lvim.colorscheme = "solarized"
 
+local colorscheme = "tokyonight"
+lvim.colorscheme = colorscheme
+
+lvim.builtin.telescope.defaults.prompt_prefix = lvim.icons.ui.ChevronRight .. " "
+lvim.builtin.telescope.defaults.selection_caret = lvim.icons.ui.Triangle .. " "
+lvim.builtin.telescope.theme = "ivy"
 lvim.builtin.telescope.on_config_done = function(telescope)
 	pcall(telescope.load_extension, "neoclip")
 end
 
 lvim.builtin.which_key.mappings["b"] = {
-	e = { "<cmd>Telescope buffers sort_mru=1 ignore_current_buffer=1 color_devicons=0<cr>", "Buffer Explorer" },
+	e = {
+		"<cmd>Telescope buffers sort_mru=1 ignore_current_buffer=1 color_devicons=0<cr>",
+		"Buffer Explorer",
+	},
 	o = { "<cmd>:BWipeout other<cr>", "Close other buffers" },
 }
 lvim.builtin.which_key.mappings["d"] = { "<cmd>TroubleToggle workspace_diagnostics<cr>", "Trouble" }
+lvim.builtin.which_key.mappings["f"] = {
+	function()
+		require("lvim.core.telescope.custom-finders").find_project_files({ previewer = true })
+	end,
+	"Find File",
+}
 lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 lvim.builtin.which_key.mappings["ss"] = { "<cmd>Telescope neoclip layout=vertical<cr>", "Yank History" }
 lvim.builtin.which_key.mappings["se"] = {
@@ -23,8 +37,6 @@ lvim.builtin.which_key.mappings["se"] = {
 	end,
 	"Find and Replace",
 }
-
-lvim.builtin.bufferline.active = false
 
 local formatters = require("lvim.lsp.null-ls.formatters")
 formatters.setup({
@@ -50,9 +62,9 @@ code_actions.setup({
 	{ name = "gitsigns" },
 })
 
--- Additional Plugins
 lvim.plugins = {
 	{ "ishan9299/nvim-solarized-lua" },
+	{ "folke/tokyonight.nvim" },
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
@@ -84,25 +96,25 @@ lvim.plugins = {
 		end,
 	},
 	{ "gpanders/editorconfig.nvim" },
-	{
-		"f-person/auto-dark-mode.nvim",
-		config = function()
-			local auto_dark_mode = require("auto-dark-mode")
+	-- {
+	-- 	"f-person/auto-dark-mode.nvim",
+	-- 	config = function()
+	-- 		local auto_dark_mode = require("auto-dark-mode")
 
-			auto_dark_mode.setup({
-				update_interval = 1000,
-				set_dark_mode = function()
-					vim.api.nvim_set_option("background", "dark")
-					vim.cmd("colorscheme solarized")
-				end,
-				set_light_mode = function()
-					vim.api.nvim_set_option("background", "light")
-					vim.cmd("colorscheme solarized")
-				end,
-			})
-			auto_dark_mode.init()
-		end,
-	},
+	-- 		auto_dark_mode.setup({
+	-- 			update_interval = 1000,
+	-- 			set_dark_mode = function()
+	-- 				vim.api.nvim_set_option("background", "dark")
+	-- 				vim.cmd("colorscheme " + colorscheme)
+	-- 			end,
+	-- 			set_light_mode = function()
+	-- 				vim.api.nvim_set_option("background", "light")
+	-- 				vim.cmd("colorscheme " + colorscheme)
+	-- 			end,
+	-- 		})
+	-- 		auto_dark_mode.init()
+	-- 	end,
+	-- },
 }
 
 vim.keymap.set("n", "p", "<Plug>(YankyPutAfter)", {})
