@@ -61,7 +61,7 @@ code_actions.setup({
 })
 
 lvim.plugins = {
-	{ "ishan9299/nvim-solarized-lua" },
+	{ "rickharris/nvim-solarized-lua" },
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
