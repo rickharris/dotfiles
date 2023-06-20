@@ -4,9 +4,7 @@
 -- Discord: https://discord.com/invite/Xb9B4Ny
 vim.o.clipboard = ""
 lvim.format_on_save.enabled = true
-
-local colorscheme = "tokyonight"
-lvim.colorscheme = colorscheme
+lvim.colorscheme = "solarized"
 
 lvim.builtin.telescope.defaults.prompt_prefix = lvim.icons.ui.ChevronRight .. " "
 lvim.builtin.telescope.defaults.selection_caret = lvim.icons.ui.Triangle .. " "
@@ -64,7 +62,6 @@ code_actions.setup({
 
 lvim.plugins = {
 	{ "ishan9299/nvim-solarized-lua" },
-	{ "folke/tokyonight.nvim" },
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
@@ -96,25 +93,12 @@ lvim.plugins = {
 		end,
 	},
 	{ "gpanders/editorconfig.nvim" },
-	-- {
-	-- 	"f-person/auto-dark-mode.nvim",
-	-- 	config = function()
-	-- 		local auto_dark_mode = require("auto-dark-mode")
-
-	-- 		auto_dark_mode.setup({
-	-- 			update_interval = 1000,
-	-- 			set_dark_mode = function()
-	-- 				vim.api.nvim_set_option("background", "dark")
-	-- 				vim.cmd("colorscheme " + colorscheme)
-	-- 			end,
-	-- 			set_light_mode = function()
-	-- 				vim.api.nvim_set_option("background", "light")
-	-- 				vim.cmd("colorscheme " + colorscheme)
-	-- 			end,
-	-- 		})
-	-- 		auto_dark_mode.init()
-	-- 	end,
-	-- },
+	{
+		"cormacrelf/dark-notify",
+		config = function()
+			require("dark_notify").run()
+		end,
+	},
 }
 
 vim.keymap.set("n", "p", "<Plug>(YankyPutAfter)", {})

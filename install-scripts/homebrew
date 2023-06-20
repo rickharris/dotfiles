@@ -16,6 +16,7 @@ echo -e "\nInstalling homebrew dependencies…"
 brew tap neovim/neovim
 brew install bat \
 	bash \
+	cormacrelf/tap/dark-notify \
 	fzf \
 	gh \
 	git \
