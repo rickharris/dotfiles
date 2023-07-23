@@ -4,7 +4,7 @@
 -- Discord: https://discord.com/invite/Xb9B4Ny
 vim.o.clipboard = ""
 lvim.format_on_save.enabled = true
-lvim.colorscheme = "solarized"
+lvim.colorscheme = "tokyonight"
 
 lvim.builtin.telescope.defaults.prompt_prefix = lvim.icons.ui.ChevronRight .. " "
 lvim.builtin.telescope.defaults.selection_caret = lvim.icons.ui.Triangle .. " "
@@ -62,6 +62,8 @@ code_actions.setup({
 
 lvim.plugins = {
 	{ "rickharris/nvim-solarized-lua" },
+	{ "folke/tokyonight.nvim" },
+	{ "rose-pine/neovim", name = "rose-pine" },
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
@@ -96,7 +98,16 @@ lvim.plugins = {
 	{
 		"cormacrelf/dark-notify",
 		config = function()
-			require("dark_notify").run()
+			require("dark_notify").run({
+				schemes = {
+					dark = {
+						colorscheme = "tokyonight",
+					},
+					light = {
+						colorscheme = "rose-pine-dawn",
+					},
+				},
+			})
 		end,
 	},
 }
