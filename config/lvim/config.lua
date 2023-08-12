@@ -63,7 +63,10 @@ code_actions.setup({
 lvim.plugins = {
 	{ "rickharris/nvim-solarized-lua" },
 	{ "folke/tokyonight.nvim" },
-	{ "rose-pine/neovim", name = "rose-pine" },
+	{
+		"rose-pine/neovim",
+		name = "rose-pine"
+	},
 	{
 		"folke/trouble.nvim",
 		cmd = "TroubleToggle",
@@ -72,7 +75,10 @@ lvim.plugins = {
 	{
 		"AckslD/nvim-neoclip.lua",
 		dependencies = {
-			{ "tami5/sqlite.lua", module = "sqlite" },
+			{
+				"tami5/sqlite.lua",
+				module = "sqlite"
+			},
 			{ "nvim-telescope/telescope.nvim" },
 		},
 		config = function()
@@ -81,7 +87,10 @@ lvim.plugins = {
 			})
 		end,
 	},
-	{ "windwp/nvim-spectre", dependencies = { "nvim-lua/plenary.nvim" } },
+	{
+		"windwp/nvim-spectre",
+		dependencies = { "nvim-lua/plenary.nvim" }
+	},
 	{ "kdheepak/lazygit.nvim" },
 	{ "tpope/vim-surround" },
 	{
