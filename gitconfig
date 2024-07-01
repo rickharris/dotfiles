@@ -13,3 +13,5 @@
 [user]
 	name = Rick Harris
 	email = rickharris@users.noreply.github.com
+[init]
+	defaultBranch = main

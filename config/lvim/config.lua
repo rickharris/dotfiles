@@ -65,7 +65,7 @@ lvim.plugins = {
 	{ "folke/tokyonight.nvim" },
 	{
 		"rose-pine/neovim",
-		name = "rose-pine"
+		name = "rose-pine",
 	},
 	{
 		"folke/trouble.nvim",
@@ -77,7 +77,7 @@ lvim.plugins = {
 		dependencies = {
 			{
 				"tami5/sqlite.lua",
-				module = "sqlite"
+				module = "sqlite",
 			},
 			{ "nvim-telescope/telescope.nvim" },
 		},
@@ -89,7 +89,7 @@ lvim.plugins = {
 	},
 	{
 		"windwp/nvim-spectre",
-		dependencies = { "nvim-lua/plenary.nvim" }
+		dependencies = { "nvim-lua/plenary.nvim" },
 	},
 	{ "kdheepak/lazygit.nvim" },
 	{ "tpope/vim-surround" },
