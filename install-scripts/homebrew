@@ -39,10 +39,10 @@ brew install bat \
 	yarn \
 	zplug \
 	zsh \
-	1password7 \
+	1password \
 	firefox \
-	homebrew/cask-versions/iterm2-beta \
-	homebrew/cask/logitech-options
+	iterm2 \
+	visual-studio-code
 
 echo -e "\nInstalling python support for neovim…"
 pip3 install --upgrade neovim
