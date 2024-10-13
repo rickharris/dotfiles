@@ -3,7 +3,7 @@ set -e
 
 dir=$HOME/src/github.com/rickharris/dotfiles
 if [ ! -d $dir ]; then
-	git clone https://github.com/rickharris/dotfiles.git $dir
+  git clone https://github.com/rickharris/dotfiles.git $dir
 fi
 cd $dir
 

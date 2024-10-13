@@ -4,10 +4,10 @@ set -e
 launchagent=$HOME/Library/LaunchAgents/is.rick.dark-mode-notifier.plist
 
 if [[ -f /usr/local/bin/dark-mode-notifier ]]; then
-	sudo rm /usr/local/bin/dark-mode-notifier
+  sudo rm /usr/local/bin/dark-mode-notifier
 fi
 
 if [[ -f $launchagent ]]; then
-	launchctl remove $launchagent
-	rm $launchagent
+  launchctl remove $launchagent
+  rm $launchagent
 fi

@@ -2,12 +2,12 @@
 set -e
 
 if [[ ! -d $HOME/.tmux/plugins/tpm ]]; then
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm && ~/.tmux/plugins/tpm/bin/install_plugins
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm && ~/.tmux/plugins/tpm/bin/install_plugins
 fi
 
 # Fix ncurses version of tmux-256color used in tmux
 if ! infocmp -x tmux-256color 1>/dev/null 2>/dev/null; then
-	echo "Installing proper version of tmux-256color…"
-	wget -O /tmp/tmux-256color https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color
-	/usr/bin/tic -x /tmp/tmux-256color
+  echo "Installing proper version of tmux-256color…"
+  wget -O /tmp/tmux-256color https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color
+  /usr/bin/tic -x /tmp/tmux-256color
 fi
