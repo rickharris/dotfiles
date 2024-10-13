@@ -7,5 +7,4 @@ if [ ! -d $HOME/.config/lazyvim ]; then
   ln -s $PWD/config/lazyvim/lua/config/lazy.lua ~/.config/lazyvim/lua/config/lazy.lua
   ln -s $PWD/config/lazyvim/lua/plugins/conform.lua ~/.config/lazyvim/lua/plugins/confirm.lua
   ln -s $PWD/config/lazyvim/lua/plugins/mason.lua ~/.config/lazyvim/lua/plugins/mason.lua
-  ln -s $PWD/config/lazyvim/lua/plugins/nvim-lint.lua ~/.config/lazyvim/lua/plugins/nvim-lint.lua
 fi
