@@ -14,7 +14,8 @@ fi
 
 echo -e "\nInstalling homebrew dependencies…"
 brew tap neovim/neovim
-brew install bat \
+brew install ast-grep \
+  bat \
   bash \
   cormacrelf/tap/dark-notify \
   fzf \

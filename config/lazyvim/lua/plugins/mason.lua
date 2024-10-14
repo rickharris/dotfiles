@@ -2,7 +2,12 @@ return {
   {
     "williamboman/mason.nvim",
     opts = {
-      ensure_installed = { "prettierd", "stylelint", "stylelint-lsp" },
+      ensure_installed = {
+        "ast-grep",
+        "prettierd",
+        "stylelint",
+        "stylelint-lsp",
+      },
     },
   },
 }
