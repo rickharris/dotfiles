@@ -10,11 +10,9 @@ link_file() {
 if [ ! -d $HOME/.config/lazyvim ]; then
   git clone https://github.com/LazyVim/starter ~/.config/lazyvim
   rm ~/.config/lazyvim/lua/config/lazy.lua
-  rm ~/.config/lazyvim/lua/config/keymaps.lua
 fi
 
 link_file config/lazyvim/lua/config/lazy.lua
-link_file config/lazyvim/lua/config/keymaps.lua
 link_file config/lazyvim/lua/plugins/colorscheme.lua
 link_file config/lazyvim/lua/plugins/conform.lua
 link_file config/lazyvim/lua/plugins/mason.lua
