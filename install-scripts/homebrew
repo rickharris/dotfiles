@@ -33,6 +33,7 @@ brew install ast-grep \
   ripgrep \
   rust \
   shfmt \
+  starship \
   stylua \
   the_silver_searcher \
   tmux \

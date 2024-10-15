@@ -5,6 +5,7 @@ linkables=(
   config/bat/config
   config/lvim/config.lua
   config/nvim
+  config/starship.toml
   gitconfig
   tmux.conf
   zshrc
