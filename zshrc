@@ -1,4 +1,5 @@
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
+export PURE_PROMPT_SYMBOL="∴"
 export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=50000
@@ -31,6 +32,7 @@ zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-completions"
 zplug "plugins/z", from:oh-my-zsh
 zplug "mafredri/zsh-async", from:github
+zplug "sindresorhus/pure", use:"pure.zsh", from:github, as:theme
 
 # Install packages that have not been installed yet
 if ! zplug check --verbose; then
@@ -64,5 +66,3 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-eval "$(starship init zsh)"
