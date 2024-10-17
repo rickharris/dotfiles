@@ -12,7 +12,7 @@ return {
         schemes = {
           dark = {
             bg = "dark",
-            colorscheme = "tokyonight-moon",
+            colorscheme = "tokyonight-storm",
           },
           light = {
             bg = "light",
