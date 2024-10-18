@@ -13,7 +13,4 @@ if [ ! -d $HOME/.config/lazyvim ]; then
 fi
 
 link_file config/lazyvim/lua/config/lazy.lua
-link_file config/lazyvim/lua/plugins/colorscheme.lua
-link_file config/lazyvim/lua/plugins/conform.lua
-link_file config/lazyvim/lua/plugins/mason.lua
-link_file config/lazyvim/lua/plugins/vim-tmux-navigator.lua
+link_file config/lazyvim/lua/plugins
