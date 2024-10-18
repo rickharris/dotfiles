@@ -43,7 +43,8 @@ brew install ast-grep \
   1password \
   firefox \
   iterm2 \
-  visual-studio-code
+  visual-studio-code \
+  wezterm
 
 echo -e "\nInstalling python support for neovim…"
 pip3 install --upgrade neovim
