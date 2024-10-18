@@ -1,6 +1,4 @@
 return {
-  { "RRethy/base16-nvim" },
-  { "projekt0n/github-nvim-theme", name = "github-theme" },
   { "EdenEast/nightfox.nvim" },
   { "calind/selenized.nvim" },
   {
