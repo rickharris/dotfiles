@@ -3,11 +3,6 @@ return {
     "tokyonight.nvim",
     opts = {
       style = "storm",
-      styles = {
-        sidebars = "transparent",
-        floats = "transparent",
-      },
-      transparent = true,
     },
   },
   -- { "EdenEast/nightfox.nvim" },
