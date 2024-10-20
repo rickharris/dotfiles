@@ -27,10 +27,11 @@ then
   export GOPATH=$HOME
 fi
 
+export NVIM_APPNAME="lazyvim"
+export EDITOR="nvim"
+alias vi="$EDITOR"
+alias vim="$EDITOR"
 alias ls="ls -G"
-alias vi="NVIM_APPNAME=lazyvim nvim"
-alias vim="vi"
-export EDITOR="vi"
 
 source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"
