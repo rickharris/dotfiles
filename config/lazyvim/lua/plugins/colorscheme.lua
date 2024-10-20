@@ -57,7 +57,7 @@ return {
           },
           light = {
             bg = "light",
-            colorscheme = "solarized",
+            colorscheme = "dawnfox",
           },
         },
       })
