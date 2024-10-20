@@ -1,4 +1,12 @@
 return {
+  { "EdenEast/nightfox.nvim" },
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    opts = {
+      dark_variant = "moon",
+    },
+  },
   {
     "maxmx03/solarized.nvim",
     opts = {
