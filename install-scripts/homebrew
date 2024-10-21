@@ -10,40 +10,32 @@ if test ! $(which brew); then
   fi
   echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>/Users/rick/.zprofile
   eval "$(/opt/homebrew/bin/brew shellenv)"
+  brew completions link
 fi
 
 echo -e "\nInstalling homebrew dependencies…"
 brew tap neovim/neovim
-brew install ast-grep \
+brew install asdf \
+  ast-grep \
   bat \
-  bash \
   fzf \
   gh \
   git \
-  git-delta \
   git-extras \
   gnu-sed \
-  go \
   hub \
   jq \
   lazygit \
   neovim \
-  python3 \
   ripgrep \
-  rust \
   shfmt \
-  stylua \
+  stow \
   the_silver_searcher \
   tmux \
   wget \
-  yarn \
   zplug \
-  zsh \
   1password \
   firefox \
   iterm2 \
   visual-studio-code \
   wezterm
-
-echo -e "\nInstalling python support for neovim…"
-pip3 install --upgrade neovim

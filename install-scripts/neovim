@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-link_file() {
-  if [ ! -f $HOME/.$1 ]; then
-    ln -s "$PWD/$1" "$HOME/.$1"
-  fi
-}
-
 if [ ! -d $HOME/.config/lazyvim ]; then
   git clone https://github.com/LazyVim/starter ~/.config/lazyvim
   rm ~/.config/lazyvim/lua/config/lazy.lua
+  rm -rf ~/.config/lazyvim/lua/config/plugins/
 fi
-
-link_file config/lazyvim/lua/config/lazy.lua
-link_file config/lazyvim/lua/plugins
