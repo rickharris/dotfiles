@@ -1,3 +1,3 @@
 # Dotfiles
 
-bash <(curl -s https://raw.githubusercontent.com/rickharris/dotfiles/master/install)
+bash <(curl -s https://raw.githubusercontent.com/rickharris/dotfiles/master/setup.sh)
