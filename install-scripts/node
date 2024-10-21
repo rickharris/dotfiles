@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
-asdf install nodejs latest
-asdf global nodejs latest
-corepack enable
-asdf reshim nodejs

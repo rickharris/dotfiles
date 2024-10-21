@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false

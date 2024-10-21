@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-echo -e "\nCreating symlinks…"
-stow --verbose --target=$HOME --restow dotfiles
