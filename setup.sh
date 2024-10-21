@@ -34,32 +34,7 @@ if test ! $(which brew); then
   brew completions link
 fi
 
-echo -e "\nInstalling homebrew dependencies…"
-brew tap neovim/neovim
-brew install asdf \
-  ast-grep \
-  bat \
-  fzf \
-  gh \
-  git \
-  git-extras \
-  gnu-sed \
-  hub \
-  jq \
-  lazygit \
-  neovim \
-  ripgrep \
-  shfmt \
-  stow \
-  the_silver_searcher \
-  tmux \
-  wget \
-  zplug \
-  1password \
-  firefox \
-  iterm2 \
-  visual-studio-code \
-  wezterm
+brew bundle check || brew bundle --no-lock
 
 if [ ! -d $HOME/.config/lazyvim ]; then
   git clone https://github.com/LazyVim/starter ~/.config/lazyvim
