@@ -17,7 +17,6 @@ brew tap neovim/neovim
 brew install ast-grep \
   bat \
   bash \
-  cormacrelf/tap/dark-notify \
   fzf \
   gh \
   git \

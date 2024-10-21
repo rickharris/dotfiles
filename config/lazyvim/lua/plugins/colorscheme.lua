@@ -1,5 +1,32 @@
+--!strict
+
+---@class Colorschemes
+---@field dark string
+---@field light string
+
+---@type Colorschemes
+local colorschemes = {
+  dark = "tokyonight",
+  light = "dawnfox",
+}
+
+---@param bg "dark" | "light"
+local set_colorscheme = function(bg)
+  vim.api.nvim_set_option_value("background", bg, {})
+  vim.cmd("colorscheme " .. colorschemes[bg])
+end
+
 return {
-  { "EdenEast/nightfox.nvim" },
+  {
+    "EdenEast/nightfox.nvim",
+    opts = {
+      options = {
+        styles = {
+          comments = "italic",
+        },
+      },
+    },
+  },
   {
     "rose-pine/neovim",
     name = "rose-pine",
@@ -45,22 +72,21 @@ return {
     },
   },
   {
-    "cormacrelf/dark-notify",
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require("dark_notify").run({
-        schemes = {
-          dark = {
-            bg = "dark",
-            colorscheme = "tokyonight-storm",
-          },
-          light = {
-            bg = "light",
-            colorscheme = "dawnfox",
-          },
-        },
-      })
-    end,
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = colorschemes.light,
+    },
+  },
+  {
+    "f-person/auto-dark-mode.nvim",
+    opts = {
+      update_interval = 1000,
+      set_dark_mode = function()
+        set_colorscheme("dark")
+      end,
+      set_light_mode = function()
+        set_colorscheme("light")
+      end,
+    },
   },
 }
