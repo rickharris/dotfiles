@@ -34,7 +34,7 @@ if test ! $(which brew); then
   brew completions link
 fi
 
-brew bundle check || brew bundle --no-lock
+brew bundle check --no-upgrade || brew bundle --no-lock --no-upgrade
 
 if [ ! -d $HOME/.config/lazyvim ]; then
   git clone https://github.com/LazyVim/starter ~/.config/lazyvim
