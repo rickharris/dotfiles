@@ -6,8 +6,10 @@ return {
   { import = "lazyvim.plugins.extras.editor.overseer" },
   { import = "lazyvim.plugins.extras.editor.refactoring" },
   { import = "lazyvim.plugins.extras.lang.json" },
+  { import = "lazyvim.plugins.extras.lang.markdown" },
   { import = "lazyvim.plugins.extras.lang.toml" },
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.linting.eslint" },
   { import = "lazyvim.plugins.extras.util.octo" },
+  { import = "lazyvim.plugins.extras.vscode" },
 }
