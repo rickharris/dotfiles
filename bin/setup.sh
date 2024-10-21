@@ -1,6 +1,20 @@
 #!/usr/bin/env sh
 set -e
 
+# Install hombrew first, which will download also download Command Line Tools
+# for Xcode.
+if test ! $(which brew); then
+  echo -e "\nInstalling Homebrew…"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+  if [[ ! -f $HOME/.zprofile ]]; then
+    touch $HOME/.zprofile
+  fi
+  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>/Users/rick/.zprofile
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  brew completions link
+fi
+
 dir=$HOME/src/github.com/rickharris/dotfiles
 if [ ! -d $dir ]; then
   echo -e "\nDownloading dotfiles repo…"
@@ -20,18 +34,6 @@ if [[ ! -d $HOME/.keyboard ]]; then
   pushd ~/.keyboard
   ./script/setup
   popd
-fi
-
-if test ! $(which brew); then
-  echo -e "\nInstalling Homebrew…"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-  if [[ ! -f $HOME/.zprofile ]]; then
-    touch $HOME/.zprofile
-  fi
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>/Users/rick/.zprofile
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-  brew completions link
 fi
 
 brew bundle check --no-upgrade || brew bundle --no-lock --no-upgrade
