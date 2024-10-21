@@ -18,6 +18,7 @@ brew 'stow'
 brew 'the_silver_searcher'
 brew 'tmux'
 brew 'wget'
+brew 'zoxide'
 brew 'zplug'
 
 cask '1password'

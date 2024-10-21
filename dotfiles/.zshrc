@@ -32,12 +32,12 @@ export EDITOR="nvim"
 alias vi="$EDITOR"
 alias vim="$EDITOR"
 alias ls="ls -G"
+alias cd="z"
 
 source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-completions"
-zplug "plugins/z", from:oh-my-zsh
 zplug "mafredri/zsh-async", from:github
 zplug "romkatv/powerlevel10k", as:theme, depth:1
 
@@ -72,6 +72,8 @@ fi
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
+
+eval "$(zoxide init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
