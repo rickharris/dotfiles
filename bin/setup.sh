@@ -36,12 +36,6 @@ fi
 
 brew bundle check --no-upgrade || brew bundle --no-lock --no-upgrade
 
-if [ ! -d $HOME/.config/lazyvim ]; then
-  git clone https://github.com/LazyVim/starter ~/.config/lazyvim
-  rm ~/.config/lazyvim/lua/config/lazy.lua
-  rm -rf ~/.config/lazyvim/lua/config/plugins/
-fi
-
 stow --verbose --target=$HOME --restow dotfiles
 
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$HOME/.config/iterm2"
