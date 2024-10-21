@@ -27,7 +27,6 @@ then
   export GOPATH=$HOME
 fi
 
-export NVIM_APPNAME="lazyvim"
 export EDITOR="nvim"
 alias vi="$EDITOR"
 alias vim="$EDITOR"
