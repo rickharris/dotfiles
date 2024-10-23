@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
+# Try to load homebrew in case it has been installed already but the script
+# failed and needs to be re-run. This keeps us from re-installing homebrew.
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Install hombrew first, which will download also download Command Line Tools
 # for Xcode.
 if test ! $(which brew); then
@@ -43,6 +47,7 @@ stow --verbose --target=$HOME --restow dotfiles
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$HOME/.config/iterm2"
 defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
 asdf install nodejs latest
 asdf global nodejs latest
