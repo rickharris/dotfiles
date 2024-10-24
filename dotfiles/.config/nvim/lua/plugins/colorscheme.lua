@@ -19,6 +19,7 @@ end
 return {
   {
     "EdenEast/nightfox.nvim",
+    lazy = true,
     opts = {
       options = {
         styles = {
@@ -30,12 +31,23 @@ return {
   {
     "rose-pine/neovim",
     name = "rose-pine",
+    lazy = true,
     opts = {
+      light_variant = "dawn",
       dark_variant = "moon",
+
+      styles = {
+        italic = false,
+      },
+
+      highlight_groups = {
+        Comment = { italic = true },
+      },
     },
   },
   {
     "maxmx03/solarized.nvim",
+    lazy = true,
     opts = {
       palette = "solarized", -- solarized (default) | selenized
       variant = "winter", -- "spring" | "summer" | "autumn" | "winter" (default)
