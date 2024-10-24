@@ -10,6 +10,7 @@ return {
   { import = "lazyvim.plugins.extras.lang.toml" },
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.linting.eslint" },
+  { import = "lazyvim.plugins.extras.test.core" },
   { import = "lazyvim.plugins.extras.util.octo" },
   { import = "lazyvim.plugins.extras.vscode" },
 }
