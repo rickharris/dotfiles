@@ -85,23 +85,30 @@ if test ! $(which brew); then
   brew completions link
 fi
 
-dir=$HOME/src/github.com/rickharris/dotfiles
-if [ ! -d $dir ]; then
-  echo -e "\nDownloading dotfiles repo…"
-  git clone https://github.com/rickharris/dotfiles.git $dir
-fi
-cd $dir
-
 if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
   echo -e "\nCreating an ssh key…"
   ssh-keygen -t ed25519
-  ssh-add -K $HOME/.ssh/id_ed25519
+  ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
 fi
 
-if [[ ! -d $HOME/.keyboard ]]; then
-  echo -e "\nInstalling keyboard customizations…"
-  git clone https://github.com/jasonrudolph/keyboard.git ~/.keyboard
-  pushd ~/.keyboard
+if test ! $(which gh); then
+  brew install gh
+fi
+
+if ! gh auth status >/dev/null; then
+  gh auth login --git-protocol=ssh --hostname=github.com --web
+fi
+
+dotfiles=$HOME/src/github.com/rickharris/dotfiles
+if [ ! -d $dotfiles ]; then
+  gh repo clone rickharris/dotfiles $dotfiles
+fi
+cd $dotfiles
+
+keyboard=$HOME/src/github.com/jasonrudolph/keyboard
+if [[ ! -d $keyboard ]]; then
+  gh repo clone jasonrudolph/keyboard $keyboard
+  pushd $keyboard
   ./script/setup
   popd
 fi
