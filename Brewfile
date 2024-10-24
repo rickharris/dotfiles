@@ -10,6 +10,7 @@ brew 'gnu-sed'
 brew 'hub'
 brew 'jq'
 brew 'lazygit'
+brew 'mas'
 brew 'neovim'
 brew 'ripgrep'
 brew 'shfmt'
@@ -25,3 +26,9 @@ cask 'firefox'
 cask 'iterm2'
 cask 'visual-studio-code'
 cask 'wezterm'
+
+mas "1Password for Safari", id: 1569813296
+mas "AdGuard for Safari", id: 1440147259
+mas "Bear", id: 1091189122
+mas "Hush", id: 1544743900
+mas "Parcel", id: 639968404
