@@ -110,16 +110,23 @@ if [[ ! -d $keyboard ]]; then
   popd
 fi
 
-brew bundle check --no-upgrade || brew bundle --no-lock --no-upgrade
+if ! brew bundle check --no-upgrade >/dev/null; then
+  brew bundle --no-lock --no-upgrade
+fi
 
-stow --verbose --target=$HOME --restow dotfiles
+stow --target=$HOME --restow dotfiles
 
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$PWD/iterm2"
 defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
-asdf install nodejs latest
-asdf global nodejs latest
-corepack enable
-asdf reshim nodejs
+if ! asdf plugin list | grep nodejs >/dev/null; then
+  asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
+fi
+
+if ! node -v >/dev/null 2>&1; then
+  asdf install nodejs latest
+  asdf global nodejs latest
+  corepack enable
+  asdf reshim nodejs
+fi
