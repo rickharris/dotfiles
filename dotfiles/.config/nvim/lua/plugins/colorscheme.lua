@@ -18,8 +18,7 @@ local colorschemes = {
 
 return {
   {
-    "EdenEast/nightfox.nvim",
-    lazy = true,
+    "rickharris/nightfox.nvim",
     opts = {
       options = {
         styles = {
