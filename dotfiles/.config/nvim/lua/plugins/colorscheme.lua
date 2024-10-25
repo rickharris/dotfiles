@@ -18,11 +18,20 @@ local colorschemes = {
 
 return {
   {
-    "rickharris/nightfox.nvim",
+    "EdenEast/nightfox.nvim",
     opts = {
       options = {
         styles = {
           comments = "italic",
+        },
+      },
+      palettes = {
+        dawnfox = {
+          yellow = {
+            base = "#b07627",
+            bright = "#b37e35",
+            dim = "#a66c1b",
+          },
         },
       },
     },
