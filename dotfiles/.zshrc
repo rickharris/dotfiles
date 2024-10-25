@@ -64,8 +64,9 @@ fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
+export ASDF_NODEJS_AUTO_ENABLE_COREPACK=true
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 eval "$(zoxide init zsh)"
 

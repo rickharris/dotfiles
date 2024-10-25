@@ -127,6 +127,4 @@ fi
 if ! node -v >/dev/null 2>&1; then
   asdf install nodejs latest
   asdf global nodejs latest
-  corepack enable
-  asdf reshim nodejs
 fi
