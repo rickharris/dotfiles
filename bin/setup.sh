@@ -32,6 +32,9 @@ defaults write com.apple.dock show-recents -bool false
 # Finder defaults to column view
 defaults write com.apple.finder "FXPreferredViewStyle" -string "clmv" && killall Finder
 
+# New Finder windows open home folder
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+
 # Safari Developer Menu
 defaults write com.apple.Safari IncludeDevelopMenu -bool true
 
