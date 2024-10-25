@@ -24,6 +24,7 @@ brew 'zplug'
 cask '1password'
 cask 'firefox'
 cask 'iterm2'
+cask 'kitty'
 cask 'visual-studio-code'
 cask 'wezterm'
 
