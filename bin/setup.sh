@@ -119,17 +119,11 @@ if [ ! -d $dotfiles ]; then
 fi
 cd $dotfiles
 
-keyboard=$HOME/src/github.com/jasonrudolph/keyboard
-if [[ ! -d $keyboard ]]; then
-  gh repo clone jasonrudolph/keyboard $keyboard
-  pushd $keyboard
-  ./script/setup
-  popd
-fi
-
 if ! brew bundle check --no-upgrade >/dev/null; then
   brew bundle --no-lock --no-upgrade
 fi
+
+open /Applications/Karabiner-Elements.app
 
 stow --target=$HOME --restow dotfiles
 

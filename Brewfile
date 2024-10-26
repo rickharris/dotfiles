@@ -23,6 +23,7 @@ brew 'zplug'
 
 cask '1password'
 cask 'firefox'
+cask 'karabiner-elements'
 cask 'iterm2'
 cask 'kitty'
 cask 'visual-studio-code'
