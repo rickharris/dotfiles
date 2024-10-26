@@ -6,7 +6,7 @@ dotfiles=$HOME/src/github.com/rickharris/dotfiles
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-setup_git() {
+install() {
   # Install hombrew first, which will download also download Command Line Tools
   # for Xcode.
   if test ! $(which brew); then
@@ -31,47 +31,38 @@ setup_git() {
     brew install gh
   fi
 
-  if ! gh auth status >/dev/null; then
+  if ! gh auth status --hostname github.com >/dev/null; then
     gh auth login --git-protocol=ssh --hostname=github.com --web
   fi
-}
 
-clone_repo() {
   if [ ! -d $dotfiles ]; then
     gh repo clone rickharris/dotfiles $dotfiles
   fi
-}
 
-bundle() {
   if ! brew bundle check --no-upgrade --file=$dotfiles/Brewfile >/dev/null; then
     brew bundle --no-lock --no-upgrade --file=$dotfiles/Brewfile
   fi
 
-  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
-  defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
-
+  # On first install, open up Karabiner-Elements so that it can set itself up
+  # and ask for the permissions that it need. After that some form of karabiner
+  # should be running and this step can be skipped.
   if ! ps aux | grep karabiner | grep -v grep >/dev/null; then
     open /Applications/Karabiner-Elements.app
+  fi
+
+  if ! asdf plugin list | grep nodejs >/dev/null; then
+    asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
   fi
 }
 
 link() {
   stow --dir $dotfiles --target=$HOME --restow dotfiles
+  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
+  defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
+
 }
 
-install_node() {
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-  if ! asdf plugin list | grep nodejs >/dev/null; then
-    asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
-  fi
-
-  if ! node -v >/dev/null 2>&1; then
-    asdf install nodejs latest
-    asdf global nodejs latest
-  fi
-}
-
-prefs() {
+preferences() {
   # Enable Safari Developer Menu
   # Used as a check for full disk access
   if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true; then
@@ -155,32 +146,32 @@ EOF
   defaults write NSGlobalDomain NSProviderIdentifier -string "com.duckduckgo"
 }
 
+if [ $# -eq 0 ]; then
+  install
+  link
+  preferences
+  exit
+fi
+
+print_help() {
+  printf "%s\n\n" "Run scripts related to your dotfiles repo."
+  printf "%s\t%s\n" "dot        " "Run all scripts in the proper order"
+  printf "%s\t%s\n" "dot install" "Install dependencies"
+  printf "%s\t%s\n" "dot link   " "Link dotfiles the correct location"
+  printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
+}
+
 case $1 in
-bundle)
-  bundle
-  ;;
-git)
-  setup_git
+install)
+  install
   ;;
 link)
   link
   ;;
-node)
-  install_node
-  ;;
 prefs)
-  prefs
-  ;;
-setup)
-  setup_git
-  clone_repo
+  preferences
   ;;
 *)
-  setup_git
-  clone_repo
-  bundle
-  link
-  install_node
-  prefs
+  print_help
   ;;
 esac
