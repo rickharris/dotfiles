@@ -1,11 +1,16 @@
 #!/usr/bin/env sh
 set -e
 
-echo "
+# Enable Safari Developer Menu
+# Used as a check for full disk access
+if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true; then
+  echo <<-EOF
 Before running this script, enable Full Disk Access for your terminal.
 
 https://support.apple.com/guide/mac-help/change-privacy-security-settings-on-mac-mchl211c911f/mac
-"
+EOF
+  exit 1
+fi
 
 # Many things taken from https://mths.be/macos
 
@@ -48,9 +53,6 @@ defaults write com.apple.finder "FXPreferredViewStyle" -string "clmv" && killall
 
 # New Finder windows open home folder
 defaults write com.apple.finder NewWindowTarget -string "PfHm"
-
-# Safari Developer Menu
-defaults write com.apple.Safari IncludeDevelopMenu -bool true
 
 # Ask for location only once per website
 # 0 = deny everything
@@ -123,12 +125,16 @@ if ! brew bundle check --no-upgrade >/dev/null; then
   brew bundle --no-lock --no-upgrade
 fi
 
-open /Applications/Karabiner-Elements.app
-
-stow --target=$HOME --restow dotfiles
-
 defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$PWD/iterm2"
 defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
+
+if ! ps aux | grep karabiner | grep -v grep >/dev/null; then
+  open /Applications/Karabiner-Elements.app
+  osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/Karabiner-Elements.app", hidden:true}' >/dev/null
+
+fi
+
+stow --target=$HOME --restow dotfiles
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 if ! asdf plugin list | grep nodejs >/dev/null; then
