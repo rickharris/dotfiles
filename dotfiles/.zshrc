@@ -6,13 +6,10 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
-export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 export HISTFILE=$HOME/.zsh_history
 export HISTSIZE=50000
 export SAVEHIST=10000
-export QMK_HOME=$HOME/src/github.com/rickharris/qmk_firmware
-export N_PREFIX=$HOME/.n
-export PATH=$N_PREFIX/bin:$PATH
 
 ## History command configuration
 setopt extended_history       # record timestamp of command in HISTFILE
