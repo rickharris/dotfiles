@@ -23,6 +23,20 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 defaults write NSGlobalDomain KeyRepeat -int 2
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
+# Window resizing keyboard shortcuts
+#
+# | command                      | keys  |
+# | -----------------------------| ----- |
+# | Window->Center               | ⌘ ⌃ C |
+# | Window->Fill                 | ⌘ ⌃ ↩ |
+# | Window->Move & Resize->Left  | ⌘ ⌃ ← |
+# | Window->Move & Resize->Right | ⌘ ⌃ → |
+
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add '\033Window\033Center' -string '@^c'
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add '\033Window\033Fill' -string '@^↩'
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add '\033Window\033Move & Resize\033Left' -string '@^←'
+defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add '\033Window\033Move & Resize\033Right' -string '@^→'
+
 # Hide Dock
 defaults write com.apple.dock autohide -bool true
 
