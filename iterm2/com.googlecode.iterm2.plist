@@ -2031,7 +2031,7 @@
 			<key>ASCII Anti Aliased</key>
 			<true/>
 			<key>ASCII Ligatures</key>
-			<true/>
+			<false/>
 			<key>Ambiguous Double Width</key>
 			<false/>
 			<key>Ansi 0 Color</key>
@@ -3479,7 +3479,7 @@
 			<key>Use Italic Font</key>
 			<true/>
 			<key>Use Non-ASCII Font</key>
-			<true/>
+			<false/>
 			<key>Use Separate Colors for Light and Dark Mode</key>
 			<true/>
 			<key>Use Tab Color</key>
