@@ -41,6 +41,13 @@ install() {
 
   if ! brew bundle check --no-upgrade --file=$dotfiles/Brewfile >/dev/null; then
     brew bundle --no-lock --no-upgrade --file=$dotfiles/Brewfile
+
+    # Fix permissions issue with homebrew and zsh-completions
+    # https://formulae.brew.sh/formula/zsh-completions
+    permissions=$(stat -f "%SMp %SLp" $HOMEBREW_PREFIX/share)
+    if [[ $permissions =~ 'w' ]]; then
+      chmod go-w $HOMEBREW_PREFIX/share
+    fi
   fi
 
   # On first install, open up Karabiner-Elements so that it can set itself up
