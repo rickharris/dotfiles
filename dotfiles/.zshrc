@@ -16,6 +16,9 @@ FPATH=$HOME/.local/share/zsh/site-functions:$FPATH
 autoload -Uz compinit
 compinit
 
+# Use vi mode
+bindkey -v
+
 export PATH="$PATH:$HOME/.local/bin"
 export EDITOR="nvim"
 alias vi="$EDITOR"
