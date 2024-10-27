@@ -1,0 +1,14 @@
+#compdef _dot dot
+
+_dot() {
+  _arguments -C "1: :->cmds"
+
+  case "$state" in
+  cmds)
+    _values "dot command" \
+      "install[Install dependencies]" \
+      "link[Link dotfiles the correct location]" \
+      "prefs[Set system and app preferences]"
+    ;;
+  esac
+}
