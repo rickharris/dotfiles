@@ -11,10 +11,10 @@ local colorschemes = {
 }
 
 ------@param bg "dark" | "light"
----local set_colorscheme = function(bg)
----  vim.api.nvim_set_option_value("background", bg, {})
----  vim.cmd("colorscheme " .. colorschemes[bg])
----end
+local set_colorscheme = function(bg)
+  vim.api.nvim_set_option_value("background", bg, {})
+  vim.cmd("colorscheme " .. colorschemes[bg])
+end
 
 return {
   {
@@ -91,22 +91,22 @@ return {
       style = "storm",
     },
   },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = colorschemes.light,
-    },
-  },
   -- {
-  --   "f-person/auto-dark-mode.nvim",
+  --   "LazyVim/LazyVim",
   --   opts = {
-  --     update_interval = 1000,
-  --     set_dark_mode = function()
-  --       set_colorscheme("dark")
-  --     end,
-  --     set_light_mode = function()
-  --       set_colorscheme("light")
-  --     end,
+  --     colorscheme = colorschemes.light,
   --   },
   -- },
+  {
+    "f-person/auto-dark-mode.nvim",
+    opts = {
+      update_interval = 1000,
+      set_dark_mode = function()
+        set_colorscheme("dark")
+      end,
+      set_light_mode = function()
+        set_colorscheme("light")
+      end,
+    },
+  },
 }
