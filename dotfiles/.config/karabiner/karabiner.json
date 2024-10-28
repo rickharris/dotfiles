@@ -5,11 +5,11 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Tap Caps Lock for ESC or Hold for Control",
+                        "description": "Tap Left Control for ESC or Hold for Control",
                         "manipulators": [
                             {
                                 "from": {
-                                    "key_code": "caps_lock",
+                                    "key_code": "left_control",
                                     "modifiers": { "optional": ["any"] }
                                 },
                                 "to": [
@@ -301,7 +301,6 @@
                     }
                 ]
             },
-            "devices": [],
             "fn_function_keys": [
                 {
                     "from": { "key_code": "f1" },
@@ -354,6 +353,12 @@
             ],
             "name": "Default",
             "selected": true,
+            "simple_modifications": [
+                {
+                    "from": { "key_code": "caps_lock" },
+                    "to": [{ "key_code": "left_control" }]
+                }
+            ],
             "virtual_hid_keyboard": {
                 "caps_lock_delay_milliseconds": 0,
                 "country_code": 0,
