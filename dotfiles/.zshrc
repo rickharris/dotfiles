@@ -1,9 +1,32 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# Enable Powerlevel10k instant prompt. Should stay close to the top of
+# ~/.zshrc. Initialization code that may require console input (password
+# prompts, [y/n] confirmations, etc.) must go above this block; everything else
+# may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+# Use vi mode
+bindkey -v
+# And also a beam as the cursor
+echo -ne '\e[5 q'
+
+# Callback for vim mode change
+function zle-keymap-select () {
+  if [ $KEYMAP = vicmd ]; then
+    # Set block cursor
+    echo -ne '\e[1 q'
+  else
+    # Set beam cursor
+    echo -ne '\e[5 q'
+  fi
+}
+
+# Bind the callback
+zle -N zle-keymap-select
+
+# Reduce latency when pressing <Esc>
+export KEYTIMEOUT=1
 
 source $(brew --prefix)/share/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -15,9 +38,6 @@ fi
 FPATH=$HOME/.local/share/zsh/site-functions:$FPATH
 autoload -Uz compinit
 compinit
-
-# Use vi mode
-bindkey -v
 
 export PATH="$PATH:$HOME/.local/bin"
 export EDITOR="nvim"
