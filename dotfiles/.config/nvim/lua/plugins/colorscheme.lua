@@ -6,17 +6,25 @@
 
 ---@type Colorschemes
 local colorschemes = {
-  dark = "tokyonight",
+  dark = "terafox",
   light = "dawnfox",
 }
 
-------@param bg "dark" | "light"
+---@param bg "dark" | "light"
 local set_colorscheme = function(bg)
   vim.api.nvim_set_option_value("background", bg, {})
   vim.cmd("colorscheme " .. colorschemes[bg])
 end
 
 return {
+  {
+    "catppuccin/nvim",
+    lazy = true,
+    name = "catppuccin",
+    opts = {
+      flavour = "macchiato",
+    },
+  },
   {
     "EdenEast/nightfox.nvim",
     opts = {
@@ -91,12 +99,12 @@ return {
       style = "storm",
     },
   },
-  -- {
-  --   "LazyVim/LazyVim",
-  --   opts = {
-  --     colorscheme = colorschemes.light,
-  --   },
-  -- },
+  {
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = colorschemes.light,
+    },
+  },
   {
     "f-person/auto-dark-mode.nvim",
     opts = {
