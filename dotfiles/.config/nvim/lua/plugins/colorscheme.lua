@@ -99,12 +99,12 @@ return {
       style = "storm",
     },
   },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = colorschemes.light,
-    },
-  },
+  -- {
+  --   "LazyVim/LazyVim",
+  --   opts = {
+  --     colorscheme = colorschemes.light,
+  --   },
+  -- },
   {
     "f-person/auto-dark-mode.nvim",
     opts = {
