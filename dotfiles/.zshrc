@@ -48,5 +48,9 @@ export ASDF_NODEJS_AUTO_ENABLE_COREPACK=true
 eval "$(zoxide init zsh)"
 source <(fzf --zsh)
 
+if [ -f ~/.zshrc.local ]; then
+  . ~/.zshrc.local
+fi
+
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
