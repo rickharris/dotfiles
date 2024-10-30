@@ -2,3 +2,4 @@
 .DS_STORE
 
 **/karabiner/automatic_backups
+dotfiles/.config/nvim/lazyvim.json

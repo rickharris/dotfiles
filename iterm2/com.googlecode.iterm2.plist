@@ -2523,6 +2523,8 @@
 	<string>2BFAEED7-7C2A-414C-83E5-248A79A473AA</string>
 	<key>EnableDivisionView</key>
 	<true/>
+	<key>EnableProxyIcon</key>
+	<true/>
 	<key>HapticFeedbackForEsc</key>
 	<false/>
 	<key>HideActivityIndicator</key>
@@ -3779,7 +3781,7 @@
 			<key>Non-ASCII Ligatures</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>LetterGothicMonoNFM 18</string>
+			<string>LetterGothicMonoNFM 16</string>
 			<key>Option Key Sends</key>
 			<integer>0</integer>
 			<key>Prompt Before Closing 2</key>
