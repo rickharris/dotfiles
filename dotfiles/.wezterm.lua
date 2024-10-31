@@ -19,8 +19,8 @@ wezterm.on("window-config-reloaded", function(window)
     window:set_config_overrides(overrides)
   end
 end)
-config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
-config.font_size = 16
+-- config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
+config.font_size = 15
 
 -- Window customizations
 config.enable_tab_bar = false
