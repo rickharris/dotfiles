@@ -20,7 +20,7 @@ wezterm.on("window-config-reloaded", function(window)
   end
 end)
 config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
-config.font_size = 18
+config.font_size = 16
 
 -- Window customizations
 config.enable_tab_bar = false
