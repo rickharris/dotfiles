@@ -1,6 +1,8 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
+config.front_end = "WebGpu"
+
 -- Colors and fonts
 local function scheme_for_appearance(appearance)
   if appearance:find("Dark") then
@@ -19,8 +21,8 @@ wezterm.on("window-config-reloaded", function(window)
     window:set_config_overrides(overrides)
   end
 end)
--- config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
-config.font_size = 15
+config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
+config.font_size = 18
 
 -- Window customizations
 config.enable_tab_bar = false
