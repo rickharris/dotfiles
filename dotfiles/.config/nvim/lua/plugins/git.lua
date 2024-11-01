@@ -15,7 +15,12 @@ return {
   {
     "NeogitOrg/neogit",
     lazy = true,
-    cmd = "Neogit",
+    cmd = {
+      "Neogit",
+      "NeogitCommit",
+      "NeogitLogCurrent",
+      "NeogitResetState",
+    },
     keys = {
       { "<leader>gg", "<cmd>Neogit<CR>", desc = "Neogit" },
     },
