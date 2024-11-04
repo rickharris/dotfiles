@@ -6,4 +6,10 @@ return {
     build = ":MasonUpdate",
     opts = {},
   },
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    opts = {
+      ensure_installed = { "stylua" },
+    },
+  },
 }
