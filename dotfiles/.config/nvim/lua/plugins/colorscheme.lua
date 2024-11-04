@@ -10,11 +10,11 @@ local colorschemes = {
   light = "dawnfox",
 }
 
----@param bg "dark" | "light"
-local set_colorscheme = function(bg)
-  vim.api.nvim_set_option_value("background", bg, {})
-  vim.cmd("colorscheme " .. colorschemes[bg])
-end
+------@param bg "dark" | "light"
+---local set_colorscheme = function(bg)
+---  vim.api.nvim_set_option_value("background", bg, {})
+---  vim.cmd("colorscheme " .. colorschemes[bg])
+---end
 
 return {
   {
@@ -27,6 +27,7 @@ return {
   },
   {
     "EdenEast/nightfox.nvim",
+    lazy = true,
     opts = {
       options = {
         styles = {
@@ -107,22 +108,22 @@ return {
     dependencies = "rktjmp/lush.nvim",
     lazy = true,
   },
-  -- {
-  --   "LazyVim/LazyVim",
-  --   opts = {
-  --     colorscheme = colorschemes.light,
-  --   },
-  -- },
   {
-    "f-person/auto-dark-mode.nvim",
+    "LazyVim/LazyVim",
     opts = {
-      update_interval = 1000,
-      set_dark_mode = function()
-        set_colorscheme("dark")
-      end,
-      set_light_mode = function()
-        set_colorscheme("light")
-      end,
+      colorscheme = colorschemes.dark,
     },
   },
+  -- {
+  --   "f-person/auto-dark-mode.nvim",
+  --   opts = {
+  --     update_interval = 1000,
+  --     set_dark_mode = function()
+  --       set_colorscheme("dark")
+  --     end,
+  --     set_light_mode = function()
+  --       set_colorscheme("light")
+  --     end,
+  --   },
+  -- },
 }
