@@ -96,9 +96,6 @@ return {
   },
   {
     "tokyonight.nvim",
-    opts = {
-      style = "storm",
-    },
   },
   {
     "zenbones-theme/zenbones.nvim",
