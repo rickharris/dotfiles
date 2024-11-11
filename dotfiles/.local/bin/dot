@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
@@ -9,14 +9,16 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 install() {
   # Install hombrew first, which will download also download Command Line Tools
   # for Xcode.
-  if test ! $(which brew); then
+  if test ! "$(which brew)"; then
     echo -e "\nInstalling Homebrew…"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
     if [[ ! -f $HOME/.zprofile ]]; then
-      touch $HOME/.zprofile
+      touch "$HOME"/.zprofile
     fi
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>$HOME/.zprofile
+    # We don't want shellenv to be run
+    # shellcheck disable=SC2016
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>"$HOME"/.zprofile
     eval "$(/opt/homebrew/bin/brew shellenv)"
     brew completions link
   fi
@@ -24,10 +26,10 @@ install() {
   if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
     echo -e "\nCreating an ssh key…"
     ssh-keygen -t ed25519
-    ssh-add --apple-use-keychain $HOME/.ssh/id_ed25519
+    ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
   fi
 
-  if test ! $(which gh); then
+  if test ! "$(which gh)"; then
     brew install gh
   fi
 
@@ -35,25 +37,25 @@ install() {
     gh auth login --git-protocol=ssh --hostname=github.com --web
   fi
 
-  if [ ! -d $dotfiles ]; then
-    gh repo clone rickharris/dotfiles $dotfiles
+  if [ ! -d "$dotfiles" ]; then
+    gh repo clone rickharris/dotfiles "$dotfiles"
   fi
 
-  if ! brew bundle check --no-upgrade --file=$dotfiles/Brewfile >/dev/null; then
-    brew bundle --no-lock --no-upgrade --file=$dotfiles/Brewfile
+  if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
+    brew bundle --no-lock --no-upgrade --file="$dotfiles"/Brewfile
 
     # Fix permissions issue with homebrew and zsh-completions
     # https://formulae.brew.sh/formula/zsh-completions
-    permissions=$(stat -f "%SMp %SLp" $HOMEBREW_PREFIX/share)
+    permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
     if [[ $permissions =~ 'w' ]]; then
-      chmod go-w $HOMEBREW_PREFIX/share
+      chmod go-w "$HOMEBREW_PREFIX"/share
     fi
   fi
 
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
   # should be running and this step can be skipped.
-  if ! ps aux | grep karabiner | grep -v grep >/dev/null; then
+  if ! pgrep karabiner | grep -v grep >/dev/null; then
     open /Applications/Karabiner-Elements.app
   fi
 
@@ -63,7 +65,7 @@ install() {
 }
 
 link() {
-  stow --dir $dotfiles --target=$HOME --restow dotfiles
+  stow --dir "$dotfiles" --target="$HOME" --restow dotfiles
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
   defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
 
@@ -73,7 +75,7 @@ preferences() {
   # Enable Safari Developer Menu
   # Used as a check for full disk access
   if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true; then
-    echo <<-EOF
+    cat <<-EOF
 Before running this script, enable Full Disk Access for your terminal.
 
 https://support.apple.com/guide/mac-help/change-privacy-security-settings-on-mac-mchl211c911f/mac
