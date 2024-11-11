@@ -94,6 +94,9 @@ EOF
   defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
   defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
+  # Mouse: Increase tracking speed
+  defaults write NSGlobalDomain com.apple.mouse.scaling -float "2"
+
   # Fast key repeat
   defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
   defaults write NSGlobalDomain KeyRepeat -int 2
