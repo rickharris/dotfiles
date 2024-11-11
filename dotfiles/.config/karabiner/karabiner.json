@@ -5,6 +5,58 @@
             "complex_modifications": {
                 "rules": [
                     {
+                        "conditions": [
+                            {
+                                "identifiers": [
+                                    {
+                                        "product_id": 45085,
+                                        "vendor_id": 1133
+                                    }
+                                ],
+                                "type": "device_if"
+                            }
+                        ],
+                        "description": "Mouse button4 to back (Command + [)",
+                        "manipulators": [
+                            {
+                                "from": { "pointing_button": "button4" },
+                                "to": [
+                                    {
+                                        "key_code": "open_bracket",
+                                        "modifiers": ["left_command"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "conditions": [
+                            {
+                                "identifiers": [
+                                    {
+                                        "product_id": 45085,
+                                        "vendor_id": 1133
+                                    }
+                                ],
+                                "type": "device_if"
+                            }
+                        ],
+                        "description": "Mouse button5 to forward (Command + ])",
+                        "manipulators": [
+                            {
+                                "from": { "pointing_button": "button5" },
+                                "to": [
+                                    {
+                                        "key_code": "close_bracket",
+                                        "modifiers": ["left_command"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Tap Left Control for ESC or Hold for Control",
                         "manipulators": [
                             {
@@ -310,6 +362,37 @@
                         "vendor_id": 51716
                     },
                     "ignore": false
+                },
+                {
+                    "identifiers": {
+                        "is_pointing_device": true,
+                        "product_id": 45085,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false,
+                    "simple_modifications": [
+                        {
+                            "from": { "pointing_button": "button3" },
+                            "to": [{ "apple_vendor_keyboard_key_code": "mission_control" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": true,
+                        "product_id": 5704,
+                        "vendor_id": 33668
+                    },
+                    "ignore": false
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 5704,
+                        "vendor_id": 33668
+                    },
+                    "ignore": true
                 }
             ],
             "fn_function_keys": [
