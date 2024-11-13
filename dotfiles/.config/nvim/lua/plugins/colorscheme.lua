@@ -6,7 +6,7 @@
 
 ---@type Colorschemes
 local colorschemes = {
-  dark = "tokyonight",
+  dark = "catppuccin",
   light = "dawnfox",
 }
 
@@ -21,8 +21,28 @@ return {
     "catppuccin/nvim",
     lazy = true,
     name = "catppuccin",
+    ---@module "catppuccin"
+    ---@type CatppuccinOptions
     opts = {
       flavour = "macchiato",
+      custom_highlights = function()
+        local tokyo = require("tokyonight.colors.moon")
+        local util = require("tokyonight.util")
+        local visual_bg = util.blend_bg(tokyo.blue0, 0.5)
+
+        return {
+          Comment = {
+            fg = tokyo.comment,
+          },
+          Normal = {
+            bg = tokyo.bg,
+          },
+          Visual = {
+            bg = visual_bg,
+            style = {},
+          },
+        }
+      end,
     },
   },
   {
