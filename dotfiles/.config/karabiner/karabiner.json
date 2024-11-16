@@ -393,6 +393,23 @@
                         "vendor_id": 33668
                     },
                     "ignore": true
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": true,
+                        "product_id": 77,
+                        "vendor_id": 20562
+                    },
+                    "ignore": false
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "product_id": 77,
+                        "vendor_id": 20562
+                    },
+                    "ignore": true
                 }
             ],
             "fn_function_keys": [
