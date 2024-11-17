@@ -9,7 +9,7 @@ return {
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     opts = {
-      ensure_installed = { "stylua" },
+      ensure_installed = { "lua-language-server", "stylua" },
     },
   },
 }

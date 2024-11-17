@@ -14,7 +14,6 @@ return {
       require("nvim-treesitter.query_predicates")
     end,
     cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
-    ---@type TSConfig
     opts = {
       ensure_installed = {
         "lua",
