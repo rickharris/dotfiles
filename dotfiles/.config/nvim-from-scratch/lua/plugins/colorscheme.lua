@@ -1,10 +1,12 @@
+---@module 'lazy'
+---@type LazySpec
 return {
   {
-    "folke/tokyonight.nvim",
+    "EdenEast/nightfox.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd([[colorscheme tokyonight-storm]])
+      vim.cmd([[colorscheme terafox]])
     end,
   },
 }

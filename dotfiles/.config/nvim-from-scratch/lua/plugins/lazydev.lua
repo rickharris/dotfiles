@@ -1,3 +1,5 @@
+---@module "lazy"
+---@type LazySpec
 return {
   {
     "folke/lazydev.nvim",
@@ -22,4 +24,3 @@ return {
     end,
   },
 }
-
