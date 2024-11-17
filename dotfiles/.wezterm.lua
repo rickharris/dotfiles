@@ -1,33 +1,25 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
+config.color_scheme = "terafox"
 config.front_end = "WebGpu"
 
--- Colors and fonts
-local function scheme_for_appearance(appearance)
-  if appearance:find("Dark") then
-    return "tokyonight_storm"
-  else
-    return "dawnfox"
-  end
-end
+-- config.font_size = 18
+-- config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
 
-wezterm.on("window-config-reloaded", function(window)
-  local overrides = window:get_config_overrides() or {}
-  local appearance = window:get_appearance()
-  local scheme = scheme_for_appearance(appearance)
-  if overrides.color_scheme ~= scheme then
-    overrides.color_scheme = scheme
-    window:set_config_overrides(overrides)
-  end
-end)
-config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
-config.font_size = 18
+config.font_size = 16
+config.font = wezterm.font("Maple Mono")
+config.harfbuzz_features = {
+  "cv01=1",
+  "cv04=1",
+  "ss01=1",
+  "ss02=1",
+  "ss03=1",
+  "ss05=1",
+}
+config.line_height = 1.05
 
--- Window customizations
-config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
--- config.window_background_opacity = 0.8
--- config.macos_window_background_blur = 50
+config.hide_tab_bar_if_only_one_tab = true
 
 return config

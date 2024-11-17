@@ -24,5 +24,15 @@ return {
     keys = {
       { "<leader>gg", "<cmd>Neogit<CR>", desc = "Neogit" },
     },
+    ---@module 'neogit'
+    ---@type NeogitConfig
+    opts = {
+      signs = {
+        -- { CLOSED, OPENED }
+        hunk = { "", "" },
+        item = { "", "" },
+        section = { "", "" },
+      },
+    },
   },
 }

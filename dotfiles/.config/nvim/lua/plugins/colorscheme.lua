@@ -6,27 +6,48 @@
 
 ---@type Colorschemes
 local colorschemes = {
-  dark = "tokyonight",
+  dark = "terafox",
   light = "dawnfox",
 }
 
----@param bg "dark" | "light"
-local set_colorscheme = function(bg)
-  vim.api.nvim_set_option_value("background", bg, {})
-  vim.cmd("colorscheme " .. colorschemes[bg])
-end
+------@param bg "dark" | "light"
+---local set_colorscheme = function(bg)
+---  vim.api.nvim_set_option_value("background", bg, {})
+---  vim.cmd("colorscheme " .. colorschemes[bg])
+---end
 
 return {
   {
     "catppuccin/nvim",
     lazy = true,
     name = "catppuccin",
+    ---@module "catppuccin"
+    ---@type CatppuccinOptions
     opts = {
       flavour = "macchiato",
+      custom_highlights = function()
+        local tokyo = require("tokyonight.colors.moon")
+        local util = require("tokyonight.util")
+        local visual_bg = util.blend_bg(tokyo.blue0, 0.5)
+
+        return {
+          Comment = {
+            fg = tokyo.comment,
+          },
+          Normal = {
+            bg = tokyo.bg,
+          },
+          Visual = {
+            bg = visual_bg,
+            style = {},
+          },
+        }
+      end,
     },
   },
   {
     "EdenEast/nightfox.nvim",
+    lazy = true,
     opts = {
       options = {
         styles = {
@@ -95,9 +116,6 @@ return {
   },
   {
     "tokyonight.nvim",
-    opts = {
-      style = "storm",
-    },
   },
   {
     "zenbones-theme/zenbones.nvim",
@@ -107,22 +125,22 @@ return {
     dependencies = "rktjmp/lush.nvim",
     lazy = true,
   },
-  -- {
-  --   "LazyVim/LazyVim",
-  --   opts = {
-  --     colorscheme = colorschemes.light,
-  --   },
-  -- },
   {
-    "f-person/auto-dark-mode.nvim",
+    "LazyVim/LazyVim",
     opts = {
-      update_interval = 1000,
-      set_dark_mode = function()
-        set_colorscheme("dark")
-      end,
-      set_light_mode = function()
-        set_colorscheme("light")
-      end,
+      colorscheme = colorschemes.dark,
     },
   },
+  -- {
+  --   "f-person/auto-dark-mode.nvim",
+  --   opts = {
+  --     update_interval = 1000,
+  --     set_dark_mode = function()
+  --       set_colorscheme("dark")
+  --     end,
+  --     set_light_mode = function()
+  --       set_colorscheme("light")
+  --     end,
+  --   },
+  -- },
 }

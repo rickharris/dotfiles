@@ -30,6 +30,7 @@ brew 'zoxide'
 
 cask '1password'
 cask 'firefox'
+cask 'font-maple'
 cask 'karabiner-elements'
 cask 'iterm2'
 cask 'kitty'
