@@ -63,6 +63,27 @@ return {
           },
         },
       },
+      groups = {
+        all = {
+          NeogitHunkHeader = { fg = "fg3", bg = "bg2" },
+          NeogitHunkHeaderHighlight = { fg = "diag.info", bg = "diag_bg.info" },
+          NeogitHunkHeaderCursor = { fg = "diag_bg.info", bg = "diag.info" },
+
+          NeogitDiffContextHighlight = { fg = "fg0", bg = "bg2" },
+
+          NeogitDiffDelete = { fg = "palette.red.dim", bg = "diff.delete" },
+          NeogitDiffDeleteHighlight = {
+            fg = "palette.red",
+            bg = "diff.delete",
+          },
+
+          NeogitDiffAdd = { fg = "palette.green.dim", bg = "diff.add" },
+          NeogitDiffAddHighlight = {
+            fg = "palette.green",
+            bg = "diff.add",
+          },
+        },
+      },
     },
   },
   {
