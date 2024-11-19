@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
-config.color_scheme = "terafox"
+config.color_scheme = "catppuccin-macchiato"
 config.front_end = "WebGpu"
 
 -- config.font_size = 18

@@ -6,7 +6,7 @@
 
 ---@type Colorschemes
 local colorschemes = {
-  dark = "terafox",
+  dark = "catppuccin",
   light = "dawnfox",
 }
 
