@@ -7,8 +7,8 @@ config.front_end = "WebGpu"
 -- config.font_size = 18
 -- config.font = wezterm.font("LetterGothicMono Nerd Font Mono")
 
-config.font_size = 16
-config.font = wezterm.font("Maple Mono")
+config.font_size = 15
+config.font = wezterm.font("Maple Mono NF")
 config.harfbuzz_features = {
   "cv01=1",
   "cv04=1",
