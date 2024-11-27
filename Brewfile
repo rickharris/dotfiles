@@ -26,6 +26,7 @@ brew 'wget'
 brew 'zsh-completions'
 brew 'zsh-history-substring-search'
 brew 'zsh-syntax-highlighting'
+brew 'zsh-vi-mode'
 brew 'zoxide'
 
 cask '1password'
