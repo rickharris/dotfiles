@@ -34,9 +34,6 @@ return {
           Comment = {
             fg = tokyo.comment,
           },
-          Normal = {
-            bg = tokyo.bg,
-          },
           Visual = {
             bg = visual_bg,
             style = {},
