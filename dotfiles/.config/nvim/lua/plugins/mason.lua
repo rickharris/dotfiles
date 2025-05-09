@@ -1,6 +1,7 @@
 return {
   {
     "williamboman/mason.nvim",
+    version = "^1.0.0",
     opts = {
       ensure_installed = {
         "ast-grep",
@@ -13,4 +14,5 @@ return {
       },
     },
   },
+  { "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
 }
