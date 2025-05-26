@@ -1,15 +1,15 @@
 return {
   "neovim/nvim-lspconfig",
   opts = {
-    -- TODO: Remove this when https://github.com/LazyVim/LazyVim/issues/5861 is
-    -- fixed
-    --
-    -- Taken from
-    -- https://github.com/iainlane/dotfiles/commit/1abe290bfe071b92a806eea62abadbab18ee63c3
-    --
-    -- A copy of LazyVim's setup function with one change (marked inline) to fix
-    -- auto-fixing on neovim 0.11.
     setup = {
+      -- TODO: Remove this when https://github.com/LazyVim/LazyVim/issues/5861 is
+      -- fixed
+      --
+      -- Taken from
+      -- https://github.com/iainlane/dotfiles/commit/1abe290bfe071b92a806eea62abadbab18ee63c3
+      --
+      -- A copy of LazyVim's setup function with one change (marked inline) to fix
+      -- auto-fixing on neovim 0.11.
       eslint = function()
         local function get_client(buf)
           return LazyVim.lsp.get_clients({ name = "eslint", bufnr = buf })[1]
@@ -51,6 +51,14 @@ return {
 
         -- register the formatter with LazyVim
         LazyVim.format.register(formatter)
+      end,
+
+      -- Disable vtsls formatting
+      vtsls = function()
+        LazyVim.lsp.on_attach(function(client)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        end, "vtsls")
       end,
     },
   },
