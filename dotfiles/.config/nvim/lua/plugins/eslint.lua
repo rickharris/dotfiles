@@ -52,14 +52,6 @@ return {
         -- register the formatter with LazyVim
         LazyVim.format.register(formatter)
       end,
-
-      -- Disable vtsls formatting
-      vtsls = function()
-        LazyVim.lsp.on_attach(function(client)
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.documentRangeFormattingProvider = false
-        end, "vtsls")
-      end,
     },
   },
 }
