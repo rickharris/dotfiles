@@ -1,6 +1,13 @@
+---@module 'lazy'
+---@type LazySpec
 return {
-  ---@module 'lazy'
-  ---@type LazySpec
+  {
+    "folke/snacks.nvim",
+    keys = {
+      { "<leader>e", false },
+      { "<leader>E", false },
+    },
+  },
   {
     "stevearc/oil.nvim",
     keys = {
