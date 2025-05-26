@@ -3,8 +3,6 @@
 ---@class Colorschemes
 ---@field dark string
 ---@field light string
-
----@type Colorschemes
 local colorschemes = {
   dark = "tokyonight",
   light = "dawnfox",
@@ -125,12 +123,12 @@ return {
     dependencies = "rktjmp/lush.nvim",
     lazy = true,
   },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = colorschemes.dark,
-    },
-  },
+  -- {
+  --   "LazyVim/LazyVim",
+  --   opts = {
+  --     colorscheme = colorschemes.dark,
+  --   },
+  -- },
   -- {
   --   "f-person/auto-dark-mode.nvim",
   --   opts = {
