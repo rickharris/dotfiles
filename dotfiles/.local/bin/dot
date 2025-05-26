@@ -42,7 +42,7 @@ install() {
   fi
 
   if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
-    brew bundle --no-lock --no-upgrade --file="$dotfiles"/Brewfile
+    brew bundle --no-upgrade --file="$dotfiles"/Brewfile
 
     # Fix permissions issue with homebrew and zsh-completions
     # https://formulae.brew.sh/formula/zsh-completions
