@@ -22,12 +22,13 @@
   diffFilter = delta --color-only
 
 [merge]
-    conflictstyle = diff3
+    conflictstyle = zdiff3
 
 [delta]
   line-numbers = true
   navigate = true
-  syntax-theme = ansi
+  syntax-theme = tokyonight_moon
 
 [include]
+  path = ~/.config/delta/tokyonight_moon.gitconfig
   path = ~/.gitconfig.local
