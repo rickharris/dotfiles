@@ -18,8 +18,10 @@ compinit
 
 export PATH="$PATH:$HOME/.local/bin"
 export EDITOR="nvim"
-alias vi="$EDITOR"
-alias vim="$EDITOR"
+export NVIM_APPNAME=lazyvim
+
+alias vi='$EDITOR'
+alias vim='$EDITOR'
 alias ls="eza --icons --git"
 alias cd="z"
 
