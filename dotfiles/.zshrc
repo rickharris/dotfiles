@@ -40,6 +40,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:
 
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 export ASDF_NODEJS_AUTO_ENABLE_COREPACK=true
+export COREPACK_ENABLE_AUTO_PIN=0
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 eval "$(zoxide init zsh)"
