@@ -16,9 +16,10 @@ FPATH=$HOME/.local/share/zsh/site-functions:$FPATH
 autoload -Uz compinit
 compinit
 
-export PATH="$PATH:$HOME/.local/bin"
 export EDITOR="nvim"
+export EZA_CONFIG_DIR="$HOME/.config/eza"
 export NVIM_APPNAME=lazyvim
+export PATH="$PATH:$HOME/.local/bin"
 
 alias vi='$EDITOR'
 alias vim='$EDITOR'
