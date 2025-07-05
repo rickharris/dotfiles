@@ -37,9 +37,6 @@ setopt share_history          # share command history data
 # case-insensitive,partial-word and then substring completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
 export ASDF_NODEJS_AUTO_ENABLE_COREPACK=true
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
@@ -51,6 +48,13 @@ if [ -f ~/.zshrc.local ]; then
   . ~/.zshrc.local
 fi
 
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-# source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
+function zvm_before_init() {
+  zvm_bindkey viins '^[[A' history-beginning-search-backward
+  zvm_bindkey viins '^[[B' history-beginning-search-forward
+  zvm_bindkey vicmd '^[[A' history-beginning-search-backward
+  zvm_bindkey vicmd '^[[B' history-beginning-search-forward
+}
