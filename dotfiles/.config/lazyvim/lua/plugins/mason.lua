@@ -7,6 +7,7 @@ return {
         "css-lsp",
         "cssmodules-language-server",
         "css-variables-language-server",
+        "deno",
         "stylelint",
         "stylelint-lsp",
       },
