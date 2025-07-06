@@ -6,7 +6,11 @@ return {
   --- @module 'snacks'
   --- @type snacks.Config
   opts = {
+    notifier = {
+      enabled = true,
+    },
     picker = {
+      enabled = true,
       sources = {
         files = {
           hidden = true,
