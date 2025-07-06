@@ -1,3 +1,4 @@
+--- @type LazySpec
 return {
   "folke/snacks.nvim",
   priority = 1000,
@@ -5,10 +6,21 @@ return {
   --- @module 'snacks'
   --- @type snacks.Config
   opts = {
-    picker = {}
+    picker = {
+      sources = {
+        files = {
+          hidden = true,
+        },
+      },
+    },
   },
   keys = {
-    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
+    {
+      "<leader><space>",
+      function()
+        Snacks.picker.smart()
+      end,
+      desc = "Smart Find Files",
+    },
   },
 }
-
