@@ -73,7 +73,7 @@ install() {
 }
 
 link() {
-  stow --dir "$dotfiles" --target="$HOME" --restow dotfiles
+  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles home
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
   defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
 
