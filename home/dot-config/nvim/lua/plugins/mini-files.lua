@@ -1,7 +1,8 @@
+--- @type LazySpec
 return {
   {
-    'echasnovski/mini.files',
-    version = '*',
+    "echasnovski/mini.files",
+    version = "*",
     opts = {
       windows = {
         preview = false,
@@ -16,5 +17,5 @@ return {
         desc = "Open mini.files (Directory of Current File)",
       },
     },
-  }
+  },
 }
