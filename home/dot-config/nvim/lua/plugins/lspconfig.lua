@@ -3,6 +3,20 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function(_, opts)
+      vim.diagnostic.config({
+        virtual_text = {
+          prefix = "●",
+        },
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = "󰅚 ",
+            [vim.diagnostic.severity.WARN] = "󰀪 ",
+            [vim.diagnostic.severity.INFO] = "󰋽 ",
+            [vim.diagnostic.severity.HINT] = "󰌶 ",
+          },
+        },
+      })
+
       for server, server_opts in pairs(opts.servers) do
         vim.lsp.config(server, server_opts)
       end
