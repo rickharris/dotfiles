@@ -4,6 +4,7 @@ return {
   opts = {
     options = {
       globalstatus = true,
+      disabled_filetypes = { statusline = { "snacks_dashboard" } },
       component_separators = { left = "", right = "" },
       section_separators = { left = "", right = "" },
     },
