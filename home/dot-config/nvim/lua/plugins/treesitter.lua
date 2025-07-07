@@ -3,7 +3,7 @@ return {
   "nvim-treesitter/nvim-treesitter",
   version = "*",
   build = ":TSUpdate",
-  cmd = { "TSUpdateSync", "TSUpdate", "TSInstall", "TSConfigInfo" },
+  lazy = false,
   opts_extend = { "ensure_installed" },
   --- @module 'nvim-treesitter'
   --- @type TSConfig
