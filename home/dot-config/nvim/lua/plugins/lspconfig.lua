@@ -18,6 +18,13 @@ return {
       })
 
       for server, server_opts in pairs(opts.servers) do
+        local has_blink, blink = pcall(require, "blink.cmp")
+
+        if has_blink then
+          server_opts.capabilities =
+            blink.get_lsp_capabilities(server_opts.capabilities)
+        end
+
         vim.lsp.config(server, server_opts)
       end
 
@@ -43,9 +50,6 @@ return {
         end,
       })
     end,
-    dependencies = {
-      { "j-hui/fidget.nvim", opts = {} },
-    },
   },
   {
     "mason-org/mason-lspconfig.nvim",
