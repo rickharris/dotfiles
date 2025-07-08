@@ -9,6 +9,9 @@ return {
     dashboard = {
       enabled = true,
     },
+    indent = {
+      enabled = true,
+    },
     notifier = {
       enabled = true,
     },
@@ -19,6 +22,9 @@ return {
           hidden = true,
         },
       },
+    },
+    statuscolumn = {
+      enabled = true,
     },
   },
   keys = {
