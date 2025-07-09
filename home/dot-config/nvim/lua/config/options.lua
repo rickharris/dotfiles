@@ -7,6 +7,7 @@ vim.opt.showmode = false
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 2
+vim.opt.splitright = true
 vim.opt.tabstop = 2
 vim.opt.undofile = true
 vim.opt.undolevels = 10000
