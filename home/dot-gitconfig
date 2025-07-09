@@ -27,8 +27,7 @@
 [delta]
   line-numbers = true
   navigate = true
-  syntax-theme = tokyonight_moon
+  syntax-theme = ansi
 
 [include]
-  path = ~/.config/delta/tokyonight_moon.gitconfig
   path = ~/.gitconfig.local

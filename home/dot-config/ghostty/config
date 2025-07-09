@@ -1,5 +1,7 @@
 font-family = Maple Mono NF
-font-size = 16
+font-size = 15
+font-thicken = true
+font-thicken-strength = 0
 
 # Maple Mono font customization
 # Remove gaps in symbols
@@ -9,4 +11,5 @@ font-feature = cv61
 # Support arbitrary bracketed ligatures, e.g. [info]
 font-feature = ss03
 
-theme = tokyonight_moon
+
+theme = dark:tokyonight_moon,light:dawnfox

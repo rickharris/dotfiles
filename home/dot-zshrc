@@ -17,7 +17,6 @@ autoload -Uz compinit
 compinit
 
 export EDITOR="nvim"
-export EZA_CONFIG_DIR="$HOME/.config/eza"
 export NVIM_APPNAME=lazyvim
 export PATH="$PATH:$HOME/.local/bin"
 
