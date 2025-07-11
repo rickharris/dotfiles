@@ -2,6 +2,6 @@
 return {
   "zbirenbaum/copilot.lua",
   cmd = "Copilot",
-  event = "InsertEnter",
+  event = "BufReadPost",
   config = true,
 }
