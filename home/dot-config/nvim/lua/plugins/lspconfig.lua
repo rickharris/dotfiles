@@ -2,6 +2,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    event = { "BufReadPost", "BufNewFile", "BufWritePre" },
     config = function(_, opts)
       vim.diagnostic.config({
         virtual_text = {
@@ -30,14 +31,5 @@ return {
 
       vim.lsp.enable(vim.tbl_keys(opts.servers))
     end,
-  },
-  {
-    "mason-org/mason-lspconfig.nvim",
-    opts_extend = { "ensure_installed" },
-    opts = {},
-    dependencies = {
-      { "mason-org/mason.nvim", opts = {} },
-      "neovim/nvim-lspconfig",
-    },
   },
 }
