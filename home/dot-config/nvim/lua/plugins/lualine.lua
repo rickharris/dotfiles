@@ -1,6 +1,7 @@
 ---@type LazySpec
 return {
   "nvim-lualine/lualine.nvim",
+  event = "VeryLazy",
   opts = {
     options = {
       globalstatus = true,
@@ -19,5 +20,4 @@ return {
       lualine_x = { "diff", "filetype" },
     },
   },
-  dependencies = { "mini.icons" },
 }

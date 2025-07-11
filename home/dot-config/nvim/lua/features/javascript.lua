@@ -13,11 +13,11 @@ return {
     },
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
     optional = true,
     opts = {
       ensure_installed = {
-        "eslint",
+        "eslint-lsp",
         "vtsls",
       },
     },

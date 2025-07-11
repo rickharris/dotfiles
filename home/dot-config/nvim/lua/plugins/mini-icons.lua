@@ -1,4 +1,4 @@
 ---@type LazySpec
 return {
-  { "echasnovski/mini.icons", version = "*" },
+  { "echasnovski/mini.icons", version = "*", lazy = true },
 }
