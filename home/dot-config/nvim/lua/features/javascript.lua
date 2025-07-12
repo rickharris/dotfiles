@@ -41,4 +41,19 @@ return {
       },
     },
   },
+  {
+
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = {
+      "nvim-neotest/neotest-jest",
+    },
+    opts = function()
+      return {
+        adapters = {
+          require("neotest-jest"),
+        },
+      }
+    end,
+  },
 }
