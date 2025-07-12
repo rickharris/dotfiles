@@ -7,7 +7,35 @@ return {
   ---@type snacks.Config
   opts = {
     dashboard = {
-      enabled = true,
+      preset = {
+        header = [[
+                               __                
+  ___     ___    ___   __  __ /\_\    ___ ___    
+ / _ `\  / __`\ / __`\/\ \/\ \\/\ \  / __` __`\  
+/\ \/\ \/\  __//\ \_\ \ \ \_/ |\ \ \/\ \/\ \/\ \ 
+\ \_\ \_\ \____\ \____/\ \___/  \ \_\ \_\ \_\ \_\
+ \/_/\/_/\/____/\/___/  \/__/    \/_/\/_/\/_/\/_/]],
+        keys = {
+          {
+            desc = "Find files",
+            icon = " ",
+            label = "SPC SPC",
+            action = "<leader><leader>",
+          },
+          {
+            desc = "Search and replace",
+            icon = " ",
+            label = "SPC s",
+            action = "<leader>s",
+          },
+          {
+            desc = "Git",
+            icon = " ",
+            label = "SPC gg",
+            action = "<leader>gg",
+          },
+        },
+      },
     },
     indent = {
       enabled = true,
@@ -39,6 +67,13 @@ return {
         Snacks.picker.smart()
       end,
       desc = "Smart Find Files",
+    },
+    {
+      "<leader>fi",
+      function()
+        Snacks.picker.icons()
+      end,
+      desc = "Find Icon",
     },
     {
       "<leader>go",
