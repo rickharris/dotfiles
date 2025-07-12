@@ -4,6 +4,7 @@ return {
   opts = {
     spec = {
       { "<leader>g", group = "Git" },
+      { "<leader>t", group = "Test" },
     },
   },
 }
