@@ -1,3 +1,5 @@
+--!strict
+
 --- @type LazySpec
 return {
   {
@@ -48,12 +50,11 @@ return {
     dependencies = {
       "nvim-neotest/neotest-jest",
     },
-    opts = function()
-      return {
-        adapters = {
-          require("neotest-jest"),
-        },
-      }
-    end,
+    ---@type NeotestLazyOpts
+    opts = {
+      lazy_adapters = {
+        ["neotest-jest"] = {},
+      },
+    },
   },
 }

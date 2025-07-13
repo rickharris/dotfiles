@@ -1,3 +1,5 @@
+--!strict
+
 local run_latest_task_action = function(action)
   local overseer = require("overseer")
   local tasks = overseer.list_tasks({ recent_first = true })
@@ -46,5 +48,15 @@ return {
       },
     },
     opts = {},
+  },
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    ---@type NeotestLazyOpts
+    opts = {
+      lazy_consumers = {
+        overseer = "neotest.consumers.overseer",
+      },
+    },
   },
 }
