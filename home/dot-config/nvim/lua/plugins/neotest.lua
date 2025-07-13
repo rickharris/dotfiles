@@ -1,3 +1,9 @@
+--!strict
+
+---@class (partial) NeotestLazyOpts: neotest.Config
+---@field lazy_adapters table<string, table> | nil
+---@field lazy_consumers table<string, string> | nil
+
 ---@type LazySpec
 return {
   {
@@ -5,8 +11,24 @@ return {
     dependencies = {
       "nvim-neotest/nvim-nio",
     },
-    opts_extend = { "adapters" },
-    opts = {},
+    ---@param opts NeotestLazyOpts
+    config = function(_, opts)
+      opts.adapters = opts.adapters or {}
+      if opts.lazy_adapters then
+        for name, config in pairs(opts.lazy_adapters) do
+          table.insert(opts.adapters, require(name)(config))
+        end
+      end
+
+      opts.consumers = opts.consumers or {}
+      if opts.lazy_consumers then
+        for key, name in pairs(opts.lazy_consumers) do
+          opts.consumers[key] = require(name)
+        end
+      end
+
+      require("neotest").setup(opts)
+    end,
     keys = {
       {
         "<leader>tt",
