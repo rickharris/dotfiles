@@ -69,6 +69,20 @@ return {
       desc = "Smart Find Files",
     },
     {
+      "<leader>bd",
+      function()
+        Snacks.bufdelete()
+      end,
+      desc = "Delete buffer",
+    },
+    {
+      "<leader>be",
+      function()
+        Snacks.picker.buffers()
+      end,
+      desc = "Buffer explorer",
+    },
+    {
       "<leader>fi",
       function()
         Snacks.picker.icons()
@@ -109,6 +123,21 @@ return {
       "<cmd>close<cr>",
       mode = "t",
       desc = "Hide Terminal",
+    },
+  },
+  specs = {
+    {
+      "akinsho/bufferline.nvim",
+      optional = true,
+      ---@module 'bufferline'
+      ---@class (partial) bufferline.Config
+      opts = {
+        options = {
+          close_command = function(n)
+            Snacks.bufdelete(n)
+          end,
+        },
+      },
     },
   },
 }
