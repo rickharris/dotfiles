@@ -30,6 +30,7 @@ return {
   },
   {
     "stevearc/conform.nvim",
+    optional = true,
     ---@module 'conform'
     ---@type conform.setupOpts
     opts = {
@@ -40,7 +41,7 @@ return {
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
+    optional = true,
     ft = { "markdown" },
-    opts = {},
   },
 }
