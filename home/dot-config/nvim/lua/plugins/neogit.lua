@@ -10,6 +10,11 @@ return {
   keys = {
     { "<leader>gg", "<cmd>Neogit<CR>", desc = "Neogit" },
     {
+      "<leader>gc",
+      "<cmd>NeogitCommit<cr>",
+      desc = "Commit",
+    },
+    {
       "<leader>gl",
       "<cmd>NeogitLogCurrent<cr>",
       desc = "Log file",
