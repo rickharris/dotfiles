@@ -24,6 +24,7 @@ alias vi='$EDITOR'
 alias vim='$EDITOR'
 alias ls="eza --icons --git"
 alias cd="z"
+alias update-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
 
 export HISTSIZE=50000
 export SAVEHIST=10000
