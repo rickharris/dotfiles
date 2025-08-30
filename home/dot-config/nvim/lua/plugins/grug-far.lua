@@ -11,7 +11,9 @@ return {
       "<leader>s",
       function()
         ---@type grug.far.OptionsOverride
-        local opts = {}
+        local opts = {
+          visualSelectionUsage = "operate-within-range",
+        }
 
         if vim.bo.filetype == "snacks_dashboard" then
           -- When triggered from the dashboard, open grug-far in the current window.
