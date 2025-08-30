@@ -18,7 +18,7 @@ compinit
 
 export EDITOR="nvim"
 export NVIM_APPNAME=lazyvim
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$(brew --prefix rustup)/bin:$PATH:$HOME/.local/bin"
 
 alias vi='$EDITOR'
 alias vim='$EDITOR'
