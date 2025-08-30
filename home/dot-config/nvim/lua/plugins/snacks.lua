@@ -55,13 +55,6 @@ return {
   },
   keys = {
     {
-      "<leader><space>",
-      function()
-        Snacks.picker.smart()
-      end,
-      desc = "Smart Find Files",
-    },
-    {
       "<leader>/",
       function()
         Snacks.picker.grep()
