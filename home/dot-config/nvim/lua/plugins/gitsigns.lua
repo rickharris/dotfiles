@@ -38,18 +38,18 @@ return {
       end, "First Git Hunk")
 
       -- Actions
-      map("n", "<leader>gs", gitsigns.stage_hunk, "Stage hunk")
-      map("n", "<leader>gr", gitsigns.reset_hunk, "Reset hunk")
+      map("n", "<leader>gb", gitsigns.blame, "Blame")
 
+      map("n", "<leader>gs", gitsigns.stage_hunk, "Stage hunk")
       map("v", "<leader>gs", function()
         gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
       end, "Stage hunk")
+      map("n", "<leader>gS", gitsigns.stage_buffer, "Stage buffer")
 
+      map("n", "<leader>gr", gitsigns.reset_hunk, "Reset hunk")
       map("v", "<leader>gr", function()
         gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
       end, "Reset hunk")
-
-      map("n", "<leader>gS", gitsigns.stage_buffer, "Stage buffer")
       map("n", "<leader>gR", gitsigns.reset_buffer, "Reset buffer")
 
       -- Text object

@@ -48,6 +48,34 @@ return {
               { desc = "Go to definition" }
             )
           end
+
+          vim.keymap.set("n", "]e", function()
+            vim.diagnostic.jump({
+              count = 1,
+              severity = vim.diagnostic.severity.ERROR,
+            })
+          end, { desc = "Go to next diagnostic error" })
+
+          vim.keymap.set("n", "[e", function()
+            vim.diagnostic.jump({
+              count = -1,
+              severity = vim.diagnostic.severity.ERROR,
+            })
+          end, { desc = "Go to previous diagnostic error" })
+
+          vim.keymap.set("n", "]w", function()
+            vim.diagnostic.jump({
+              count = 1,
+              severity = vim.diagnostic.severity.WARN,
+            })
+          end, { desc = "Go to next diagnostic warning" })
+
+          vim.keymap.set("n", "[w", function()
+            vim.diagnostic.jump({
+              count = -1,
+              severity = vim.diagnostic.severity.WARN,
+            })
+          end, { desc = "Go to previous diagnostic warning" })
         end,
       })
     end,

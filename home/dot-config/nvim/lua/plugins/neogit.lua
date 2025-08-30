@@ -1,38 +1,29 @@
 ---@type LazySpec
 return {
-  "NeogitOrg/neogit",
-  cmd = {
-    "Neogit",
-    "NeogitCommit",
-    "NeogitLogCurrent",
-    "NeogitResetState",
-  },
-  keys = {
-    { "<leader>gg", "<cmd>Neogit<CR>", desc = "Neogit" },
-    {
-      "<leader>gc",
-      "<cmd>NeogitCommit<cr>",
-      desc = "Commit",
+  {
+    "NeogitOrg/neogit",
+    cmd = {
+      "Neogit",
+      "NeogitCommit",
+      "NeogitLogCurrent",
+      "NeogitResetState",
     },
-    {
-      "<leader>gl",
-      "<cmd>NeogitLogCurrent<cr>",
-      desc = "Log file",
-      mode = { "n", "x" },
+    keys = {
+      { "<leader>gg", "<cmd>Neogit<CR>", desc = "Neogit" },
     },
-  },
-  ---@module 'neogit'
-  ---@type NeogitConfig
-  opts = {
-    signs = {
-      -- { CLOSED, OPENED }
-      hunk = { "", "" },
-      item = { "", "" },
-      section = { "", "" },
+    ---@module 'neogit'
+    ---@type NeogitConfig
+    opts = {
+      signs = {
+        -- { CLOSED, OPENED }
+        hunk = { "", "" },
+        item = { "", "" },
+        section = { "", "" },
+      },
+    },
+    dependencies = {
+      "folke/snacks.nvim",
     },
   },
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    "folke/snacks.nvim",
-  },
+  { "nvim-lua/plenary.nvim", lazy = true },
 }
