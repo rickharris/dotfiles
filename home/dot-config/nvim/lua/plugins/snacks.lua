@@ -35,6 +35,12 @@ return {
             label = "SPC gg",
             action = "<leader>gg",
           },
+          {
+            desc = "Projects",
+            icon = " ",
+            label = "SPC p",
+            action = "<leader>p",
+          },
         },
       },
     },
@@ -111,6 +117,13 @@ return {
       end,
       mode = { "n", "x" },
       desc = "Git Browse (copy)",
+    },
+    {
+      "<leader>p",
+      function()
+        Snacks.picker.projects()
+      end,
+      desc = "Projects",
     },
     {
       "<c-/>",
