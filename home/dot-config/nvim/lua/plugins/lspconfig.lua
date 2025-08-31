@@ -2,7 +2,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPost", "BufNewFile", "BufWritePre" },
+    event = "VeryLazy",
     config = function(_, opts)
       vim.diagnostic.config({
         virtual_text = {
