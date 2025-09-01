@@ -1,10 +1,12 @@
 return {
   "dmtrKovalenko/fff.nvim",
   build = "cargo build --release",
-  opts = {},
+  opts = {
+    prompt = " ",
+  },
   keys = {
     {
-      "<leader><leader>", -- try it if you didn't it is a banger keybinding for a picker
+      "<leader><leader>",
       function()
         require("fff").find_files()
       end,
