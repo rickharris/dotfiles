@@ -1,6 +1,6 @@
 --- @type LazySpec
 return {
-  "echasnovski/mini.files",
+  "nvim-mini/mini.files",
   opts = {
     mappings = {
       -- Mirror oil.nvim mappings
