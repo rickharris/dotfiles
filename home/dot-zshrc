@@ -17,7 +17,7 @@ autoload -Uz compinit
 compinit
 
 export EDITOR="nvim"
-export PATH="$(brew --prefix rustup)/bin:$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 alias vi='$EDITOR'
 alias vim='$EDITOR'
