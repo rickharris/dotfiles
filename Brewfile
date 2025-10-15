@@ -40,6 +40,7 @@ cask 'iterm2'
 cask 'kitty'
 cask 'visual-studio-code'
 cask 'wezterm'
+cask 'zen'
 
 # mas "1Password for Safari", id: 1569813296
 # mas "AdGuard for Safari", id: 1440147259
