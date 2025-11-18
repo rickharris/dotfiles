@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+set -e
+
+dotfiles=$HOME/src/github.com/rickharris/dotfiles
+extensions_file="$dotfiles/home/dot-config/cursor/extensions.txt"
+local_extensions_file="$dotfiles/home/dot-config/cursor/extensions.local.txt"
+
+# Check if cursor CLI is available
+check_cursor_cli() {
+  if ! command -v cursor >/dev/null 2>&1; then
+    echo "Error: Cursor CLI not found in PATH"
+    echo "You may need to install it from within Cursor: Command Palette > Shell Command: Install 'cursor' command in PATH"
+    exit 1
+  fi
+}
+
+# Get list of local-only extensions
+get_local_extensions() {
+  if [[ -f "$local_extensions_file" ]]; then
+    grep -v '^#' "$local_extensions_file" | grep -v '^[[:space:]]*$' || true
+  fi
+}
+
+export_extensions() {
+  check_cursor_cli
+  
+  # Create local extensions file if it doesn't exist
+  if [[ ! -f "$local_extensions_file" ]]; then
+    touch "$local_extensions_file"
+  fi
+  
+  echo "Exporting installed Cursor extensions to $extensions_file"
+  
+  # Get all installed extensions
+  all_extensions=$(cursor --list-extensions)
+  
+  # Get local extensions to exclude
+  local_exts=$(get_local_extensions)
+  
+  # Filter out local extensions
+  if [[ -n "$local_exts" ]]; then
+    echo "$all_extensions" | grep -vFf <(echo "$local_exts") > "$extensions_file" || true
+  else
+    echo "$all_extensions" > "$extensions_file"
+  fi
+  
+  synced_count=$(wc -l < "$extensions_file" | tr -d ' ')
+  local_count=$(echo "$local_exts" | grep -v '^$' | wc -l | tr -d ' ')
+  
+  echo "✓ Exported $synced_count synced extensions"
+  if [[ "$local_count" -gt 0 ]]; then
+    echo "  ($local_count local-only extensions excluded)"
+  fi
+}
+
+install_extensions() {
+  check_cursor_cli
+  
+  if [[ ! -f "$extensions_file" ]]; then
+    echo "Error: Extensions file not found at $extensions_file"
+    exit 1
+  fi
+  
+  echo "Installing Cursor extensions from $extensions_file"
+  
+  while IFS= read -r extension; do
+    # Skip empty lines and comments
+    [[ -z "$extension" || "$extension" =~ ^# ]] && continue
+    
+    echo "Installing $extension..."
+    cursor --install-extension "$extension" --force
+  done < "$extensions_file"
+  
+  echo "✓ Finished installing synced extensions"
+  echo "  (Local-only extensions are not installed from sync)"
+}
+
+add_local() {
+  local extension="$1"
+  
+  if [[ -z "$extension" ]]; then
+    echo "Error: Extension name required"
+    echo "Usage: cursor-extensions add-local <extension-id>"
+    exit 1
+  fi
+  
+  # Create file if it doesn't exist
+  if [[ ! -f "$local_extensions_file" ]]; then
+    touch "$local_extensions_file"
+  fi
+  
+  # Check if already in local list
+  if get_local_extensions | grep -qx "$extension"; then
+    echo "Extension $extension is already marked as local-only"
+    exit 0
+  fi
+  
+  echo "$extension" >> "$local_extensions_file"
+  echo "✓ Marked $extension as local-only"
+  echo "  Run 'cursor-extensions export' to update the synced list"
+}
+
+remove_local() {
+  local extension="$1"
+  
+  if [[ -z "$extension" ]]; then
+    echo "Error: Extension name required"
+    echo "Usage: cursor-extensions remove-local <extension-id>"
+    exit 1
+  fi
+  
+  if [[ ! -f "$local_extensions_file" ]]; then
+    echo "No local extensions file found"
+    exit 1
+  fi
+  
+  if ! get_local_extensions | grep -qx "$extension"; then
+    echo "Extension $extension is not in the local-only list"
+    exit 1
+  fi
+  
+  # Remove the extension from the file
+  grep -vx "$extension" "$local_extensions_file" > "$local_extensions_file.tmp"
+  mv "$local_extensions_file.tmp" "$local_extensions_file"
+  
+  echo "✓ Removed $extension from local-only list"
+  echo "  Run 'cursor-extensions export' to include it in synced list"
+}
+
+list_local() {
+  local_exts=$(get_local_extensions)
+  
+  if [[ -z "$local_exts" ]]; then
+    echo "No local-only extensions"
+  else
+    echo "Local-only extensions (not synced):"
+    echo "$local_exts"
+  fi
+}
+
+print_help() {
+  printf "%s\n\n" "Manage Cursor extensions for dotfiles sync"
+  printf "%s\t\t%s\n" "cursor-extensions export          " "Export installed extensions (excluding local-only)"
+  printf "%s\t\t%s\n" "cursor-extensions install         " "Install synced extensions from extensions.txt"
+  printf "%s\t%s\n" "cursor-extensions add-local <ext> " "Mark extension as local-only (won't sync)"
+  printf "%s\t%s\n" "cursor-extensions remove-local <ext>" "Remove extension from local-only list"
+  printf "%s\t\t%s\n" "cursor-extensions list-local      " "Show all local-only extensions"
+}
+
+case "${1:-}" in
+  export)
+    export_extensions
+    ;;
+  install)
+    install_extensions
+    ;;
+  add-local)
+    add_local "$2"
+    ;;
+  remove-local)
+    remove_local "$2"
+    ;;
+  list-local)
+    list_local
+    ;;
+  *)
+    print_help
+    ;;
+esac
+

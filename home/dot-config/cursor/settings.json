@@ -1,0 +1,65 @@
+{
+    "editor.fontSize": 15,
+    "editor.fontFamily": "Maple Mono NF, LetterGothicMono Nerd Font, Menlo, Monaco, 'Courier New', monospace",
+    "terminal.integrated.fontSize": 14,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit"
+    },
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "git.autofetch": true,
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "git.openRepositoryInParentFolders": "never",
+    "scm.inputFontSize": 16,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.requireConfig": true,
+    "deno.cacheOnSave": true,
+    "window.systemColorTheme": "auto",
+    "workbench.preferredDarkColorTheme": "Tokyo Night Storm",
+    "workbench.preferredLightColorTheme": "Solarized Light+",
+    "terminal.external.linuxExec": "xterm-256color",
+    "window.autoDetectColorScheme": true,
+    "editor.rulers": [
+        80
+    ],
+    "explorer.confirmDragAndDrop": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "terminal.integrated.profiles.osx": {
+        "tmux": {
+            "path": "bash",
+            "args": [
+                "-c",
+                "tmux new -ADs ${PWD##*/}"
+            ],
+            "icon": "terminal-tmux"
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "tmux",
+    "editor.fontLigatures": "'cv01'",
+    "terminal.integrated.fontLigatures.enabled": true,
+    "terminal.integrated.fontLigatures.featureSettings": "\"cv01\" on",
+    "github.copilot.nextEditSuggestions.enabled": true
+}
+

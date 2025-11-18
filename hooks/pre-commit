@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Pre-commit hook to manage Cursor extensions
+# Prompts for classification of new extensions
+
+set -e
+
+dotfiles="$HOME/src/github.com/rickharris/dotfiles"
+extensions_file="$dotfiles/home/dot-config/cursor/extensions.txt"
+local_extensions_file="$dotfiles/home/dot-config/cursor/extensions.local.txt"
+
+# Only run if cursor CLI is available
+if ! command -v cursor >/dev/null 2>&1; then
+  exit 0
+fi
+
+# Get currently installed extensions
+current_extensions=$(cursor --list-extensions 2>/dev/null || echo "")
+
+if [[ -z "$current_extensions" ]]; then
+  # Cursor not running or no extensions, skip
+  exit 0
+fi
+
+# Get existing synced extensions (from committed version)
+if [[ -f "$extensions_file" ]]; then
+  committed_extensions=$(cat "$extensions_file")
+else
+  committed_extensions=""
+fi
+
+# Get existing local extensions
+if [[ -f "$local_extensions_file" ]]; then
+  committed_local=$(cat "$local_extensions_file" | grep -v '^#' | grep -v '^[[:space:]]*$' || true)
+else
+  committed_local=""
+  touch "$local_extensions_file"
+fi
+
+# Combine both lists to get all known extensions
+all_known=$(printf "%s\n%s" "$committed_extensions" "$committed_local" | grep -v '^[[:space:]]*$' || true)
+
+# Find new extensions (installed but not in either list)
+new_extensions=$(comm -23 <(echo "$current_extensions" | sort) <(echo "$all_known" | sort))
+
+if [[ -n "$new_extensions" ]]; then
+  echo ""
+  echo "═══════════════════════════════════════════════════════════"
+  echo "New Cursor extensions detected!"
+  echo "═══════════════════════════════════════════════════════════"
+  echo ""
+  
+  # Track if we made any changes
+  changes_made=false
+  
+  # Ask about each new extension
+  while IFS= read -r extension; do
+    [[ -z "$extension" ]] && continue
+    
+    echo "Extension: $extension"
+    echo -n "  Sync to other machines? [Y/n]: "
+    read -r response
+    
+    # Default to yes if empty response
+    response=${response:-Y}
+    
+    if [[ "$response" =~ ^[Yy] ]]; then
+      echo "$extension" >> "$extensions_file"
+      echo "  ✓ Added to synced extensions"
+      changes_made=true
+    else
+      echo "$extension" >> "$local_extensions_file"
+      echo "  ✓ Added to local-only extensions"
+      changes_made=true
+    fi
+    echo ""
+  done <<< "$new_extensions"
+  
+  if [[ "$changes_made" = true ]]; then
+    # Re-export to ensure everything is in sync
+    # (this will filter out any local extensions from extensions.txt)
+    "$dotfiles/home/dot-local/bin/cursor-extensions" export >/dev/null 2>&1
+    
+    # Stage the updated extensions file
+    git add "$extensions_file"
+    
+    echo "═══════════════════════════════════════════════════════════"
+    echo "Extensions lists updated and staged for commit"
+    echo "═══════════════════════════════════════════════════════════"
+    echo ""
+  fi
+fi
+
+exit 0
+

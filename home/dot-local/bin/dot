@@ -70,6 +70,14 @@ install() {
   if ! asdf plugin list | grep neovim >/dev/null; then
     asdf plugin add neovim >/dev/null
   fi
+
+  # Install Cursor extensions if Cursor is installed
+  if command -v cursor >/dev/null 2>&1; then
+    if [ -f "$dotfiles/home/dot-config/cursor/extensions.txt" ]; then
+      echo -e "\nInstalling Cursor extensions…"
+      "$dotfiles/home/dot-local/bin/cursor-extensions" install
+    fi
+  fi
 }
 
 link() {
@@ -77,6 +85,29 @@ link() {
   defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
   defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
 
+  # Link Cursor settings to the Application Support directory
+  cursor_config="$HOME/Library/Application Support/Cursor/User"
+  if [ -d "$cursor_config" ]; then
+    # Backup existing files if they're not symlinks
+    for file in settings.json keybindings.json; do
+      if [ -f "$cursor_config/$file" ] && [ ! -L "$cursor_config/$file" ]; then
+        mv "$cursor_config/$file" "$cursor_config/$file.backup"
+        echo "Backed up existing $file to $file.backup"
+      fi
+    done
+    
+    # Create symlinks
+    ln -sf "$HOME/.config/cursor/settings.json" "$cursor_config/settings.json"
+    ln -sf "$HOME/.config/cursor/keybindings.json" "$cursor_config/keybindings.json"
+    echo "✓ Linked Cursor configuration"
+  fi
+
+  # Install git hooks
+  if [ -d "$dotfiles/.git" ]; then
+    mkdir -p "$dotfiles/.git/hooks"
+    ln -sf "$dotfiles/hooks/pre-commit" "$dotfiles/.git/hooks/pre-commit"
+    echo "✓ Installed git pre-commit hook"
+  fi
 }
 
 preferences() {
