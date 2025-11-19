@@ -61,11 +61,6 @@ return {
     statuscolumn = {
       enabled = true,
     },
-    terminal = {
-      win = {
-        position = "right",
-      },
-    },
   },
   keys = {
     {
@@ -124,19 +119,6 @@ return {
         Snacks.picker.projects()
       end,
       desc = "Projects",
-    },
-    {
-      "<c-/>",
-      function()
-        Snacks.terminal()
-      end,
-      desc = "Toggle Terminal",
-    },
-    {
-      "<c-/>",
-      "<cmd>close<cr>",
-      mode = "t",
-      desc = "Hide Terminal",
     },
   },
   specs = {
