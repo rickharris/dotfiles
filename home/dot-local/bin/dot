@@ -29,6 +29,38 @@ install() {
     ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
   fi
 
+  # Install 1Password early so we can access passwords during gh auth login
+  if [ ! -d "/Applications/1Password.app" ]; then
+    echo -e "\nInstalling 1Password app…"
+    brew install --cask 1password
+  fi
+
+  if test ! "$(which op)"; then
+    echo -e "\nInstalling 1Password CLI…"
+    brew install --cask 1password-cli
+  fi
+
+  # Open 1Password and wait for user to sign in
+  setup1p=$(op account list 2>/dev/null)
+  if [ -z "$setup1p" ]; then
+    while [ -z "$setup1p" ]; do
+      echo -e "\n1Password needs to be set up before continuing."
+      echo "Opening 1Password app..."
+      open -a "1Password"
+
+      cat <<-EOF
+
+	Please complete the following steps:
+	1. Sign in to your 1Password account
+	2. Enable the setting "Developer -> Integrate with 1Password CLI"
+	
+	Press Enter once you've done those things to continue...
+	EOF
+      read -r
+      setup1p=$(op account list 2>/dev/null)
+    done
+  fi
+
   if ! command -v gh >/dev/null 2>&1; then
     brew install gh
   fi
