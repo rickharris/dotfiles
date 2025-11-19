@@ -33,14 +33,9 @@ brew 'zsh-vi-mode'
 brew 'zoxide'
 
 cask '1password'
-cask 'firefox'
 cask 'font-maple-mono-nf'
 cask 'ghostty'
 cask 'karabiner-elements'
-cask 'iterm2'
-cask 'kitty'
-cask 'visual-studio-code'
-cask 'wezterm'
 cask 'zen'
 
 # mas "1Password for Safari", id: 1569813296
