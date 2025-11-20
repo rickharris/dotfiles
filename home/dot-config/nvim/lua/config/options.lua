@@ -17,3 +17,14 @@ vim.opt.splitbelow = true
 vim.opt.tabstop = 2
 vim.opt.undofile = true
 vim.opt.undolevels = 10000
+
+vim.filetype.add({
+  pattern = {
+    [".*/ghostty/config"] = "conf",
+  },
+  filename = {
+    ["Brewfile"] = "ruby",
+    ["dot-gitconfig"] = "gitconfig",
+    ["dot-zshrc"] = "zsh",
+  },
+})

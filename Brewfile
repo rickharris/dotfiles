@@ -1,5 +1,3 @@
-# vim:ft=ruby
-
 brew 'asdf'
 brew 'ast-grep'
 brew 'bat'
