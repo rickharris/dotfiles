@@ -8,13 +8,20 @@ return {
   opts = {
     prompt = " ",
   },
-  keys = {
-    {
-      "<leader><leader>",
-      function()
-        require("fff").find_files()
-      end,
-      desc = "FFFind files",
+  {
+    "madmaxieee/fff-snacks.nvim",
+    dependencies = {
+      "dmtrKovalenko/fff.nvim",
+      "folke/snacks.nvim",
     },
+    cmd = "FFFSnacks",
+    keys = {
+      {
+        "<leader><leader>",
+        "<cmd>FFFSnacks<cr>",
+        desc = "FFFind files",
+      },
+    },
+    config = true,
   },
 }
