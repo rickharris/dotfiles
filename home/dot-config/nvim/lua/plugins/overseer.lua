@@ -42,7 +42,7 @@ return {
       {
         "<leader>ro",
         function()
-          run_latest_task_action("open vsplit")
+          run_latest_task_action("open float")
         end,
         desc = "Output from latest task",
       },
