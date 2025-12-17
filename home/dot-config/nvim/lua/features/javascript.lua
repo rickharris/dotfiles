@@ -19,6 +19,7 @@ return {
     optional = true,
     opts = {
       ensure_installed = {
+        "deno",
         "eslint-lsp",
         "vtsls",
       },
@@ -29,6 +30,10 @@ return {
     optional = true,
     opts = {
       servers = {
+        denols = {
+          workspace_required = true,
+          root_markers = { "deno.json", "deno.jsonc" },
+        },
         eslint = {},
         vtsls = {
           on_attach = function(client)
