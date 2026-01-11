@@ -182,6 +182,10 @@ EOF
   # Configure DuckDuckGo as main search engine
   defaults write com.apple.Safari SearchProviderIdentifier -string "com.duckduckgo"
   defaults write NSGlobalDomain NSProviderIdentifier -string "com.duckduckgo"
+
+  # Disable video controls showing overlay on top of video when active
+  # https://underpassapp.com/news/2025/11/3.html
+  defaults write com.apple.Safari InternalDebugHostedBlurMaterialInMediaControlsEnabled -bool false
 }
 
 if [ $# -eq 0 ]; then
