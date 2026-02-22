@@ -4,4 +4,5 @@ return {
   version = "^3.0.0",
   event = "VeryLazy",
   opts = {},
+  vscode = true,
 }
