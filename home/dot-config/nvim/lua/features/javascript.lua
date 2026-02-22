@@ -7,6 +7,7 @@ return {
     optional = true,
     opts = {
       ensure_installed = {
+        "graphql",
         "javascript",
         "jsdoc",
         "tsx",
@@ -21,6 +22,7 @@ return {
       ensure_installed = {
         "deno",
         "eslint-lsp",
+        "graphql-language-service-cli",
         "vtsls",
       },
     },
@@ -35,6 +37,7 @@ return {
           root_markers = { "deno.json", "deno.jsonc" },
         },
         eslint = {},
+        graphql = {},
         vtsls = {
           on_attach = function(client)
             client.server_capabilities.documentFormattingProvider = false
