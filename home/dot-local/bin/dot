@@ -52,6 +52,8 @@ install() {
     fi
   fi
 
+  nvim --headless "+Lazy! restore" +qa >/dev/null
+
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
   # should be running and this step can be skipped.
