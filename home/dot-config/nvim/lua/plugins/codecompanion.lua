@@ -31,17 +31,18 @@ return {
     },
   },
   opts = {
-    adapters = {
-      http = {
-        copilot = function()
-          return require("codecompanion.adapters").extend("copilot", {
-            schema = {
-              model = {
-                default = "claude-sonnet-4.5",
-              },
-            },
-          })
-        end,
+    interactions = {
+      chat = {
+        adapter = {
+          name = "copilot",
+          model = "claude-sonnet-4.6",
+        },
+      },
+      inline = {
+        adapter = {
+          name = "copilot",
+          model = "claude-sonnet-4.6",
+        },
       },
     },
   },

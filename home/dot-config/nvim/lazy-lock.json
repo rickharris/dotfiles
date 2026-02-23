@@ -3,7 +3,7 @@
   "auto-dark-mode.nvim": { "branch": "master", "commit": "e300259ec777a40b4b9e3c8e6ade203e78d15881" },
   "blink.cmp": { "branch": "main", "commit": "b19413d214068f316c78978b08264ed1c41830ec" },
   "bufferline.nvim": { "branch": "main", "commit": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3" },
-  "codecompanion.nvim": { "branch": "main", "commit": "a8c696d1fc4268085e4306d54af39b07be884b17" },
+  "codecompanion.nvim": { "branch": "main", "commit": "558518f8d78a44198cd428f6bf8bf48bfa38d76d" },
   "codediff.nvim": { "branch": "main", "commit": "d72a1ece94826ca3e46744b5d76b44306038ff7c" },
   "conform.nvim": { "branch": "master", "commit": "cde4da5c1083d3527776fee69536107d98dae6c9" },
   "copilot.lua": { "branch": "master", "commit": "5bde2cfe01f049f522eeb8b52c5c723407db8bdf" },
