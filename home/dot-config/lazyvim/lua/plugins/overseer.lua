@@ -1,11 +1,6 @@
 return {
   "stevearc/overseer.nvim",
   optional = true,
-  ---@module 'overseer'
-  ---@type overseer.Config
-  opts = {
-    task_list = {
-      min_height = 1200,
-    },
-  },
+  -- Pinned to 1.x until Lazyvim supports 2.x
+  version = "1.x",
 }

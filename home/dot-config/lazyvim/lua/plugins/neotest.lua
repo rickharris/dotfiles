@@ -2,6 +2,7 @@ return {
   { "nvim-neotest/neotest-jest", lazy = true },
   {
     "nvim-neotest/neotest",
+    optional = true,
     opts = {
       -- Can be a list of adapters like what neotest expects,
       -- or a list of adapter names,
