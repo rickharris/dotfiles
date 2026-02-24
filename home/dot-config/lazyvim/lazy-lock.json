@@ -10,6 +10,8 @@
   "codecompanion.nvim": { "branch": "main", "commit": "558518f8d78a44198cd428f6bf8bf48bfa38d76d" },
   "codediff.nvim": { "branch": "main", "commit": "0a2f5d71cdf2e8e0ca37acb604cf7cb09998b045" },
   "conform.nvim": { "branch": "master", "commit": "e969e302bced7ffb9a0a0323629f31feb0ca35a6" },
+  "fff-snacks.nvim": { "branch": "main", "commit": "b14782370850d444b9846ae7dcce992ce734f4de" },
+  "fff.nvim": { "branch": "main", "commit": "7298978bcb0d05084638a53a30349e57b337d556" },
   "flash.nvim": { "branch": "main", "commit": "fcea7ff883235d9024dc41e638f164a450c14ca2" },
   "friendly-snippets": { "branch": "main", "commit": "6cd7280adead7f586db6fccbd15d2cac7e2188b9" },
   "gitsigns.nvim": { "branch": "main", "commit": "9f3c6dd7868bcc116e9c1c1929ce063b978fa519" },
