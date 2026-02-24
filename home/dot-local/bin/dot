@@ -2,6 +2,7 @@
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
+zshrc_local=$HOME/.zshrc.local
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -65,12 +66,20 @@ install() {
     asdf plugin add deno https://github.com/asdf-community/asdf-deno.git
   fi
 
-  if ! asdf plugin list | grep nodejs >/dev/null; then
-    asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
-  fi
-
   if ! asdf plugin list | grep neovim >/dev/null; then
     asdf plugin add neovim >/dev/null
+  fi
+
+  if [[ ! -f $zshrc_local ]]; then
+    touch $zshrc_local
+  fi
+
+  if test ! "$(which nvm)"; then
+    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | PROFILE=$zshrc_local bash
+    source $zshrc_local
+    echo "corepack" >>$NVM_DIR/default-packages
+    nvm install --lts
+    corepack enable
   fi
 }
 
