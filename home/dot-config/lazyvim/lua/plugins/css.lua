@@ -17,6 +17,7 @@ return {
       ensure_installed = {
         "css-lsp",
         "cssmodules-language-server",
+        "css-variables-language-server",
         "stylelint-lsp",
       },
     },
@@ -34,6 +35,7 @@ return {
             },
           },
         },
+        css_variables = {},
         stylelint_lsp = {
           settings = {
             stylelintplus = {

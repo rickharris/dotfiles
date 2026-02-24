@@ -26,11 +26,9 @@ return {
       opts = { integrations = { codediff = true } },
     },
     {
-      {
-        "folke/snacks.nvim",
-        optional = true,
-        keys = keys, -- Ensure default snacks keybindings get overridden by our keybindings
-      },
+      "folke/snacks.nvim",
+      optional = true,
+      keys = keys, -- Ensure default snacks keybindings get overridden by our keybindings
     },
   },
 }
