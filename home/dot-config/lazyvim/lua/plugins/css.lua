@@ -34,17 +34,14 @@ return {
             },
           },
         },
-        stylelint_lsp = {},
-      },
-    },
-  },
-  {
-    "stevearc/conform.nvim",
-    ---@module 'conform'
-    ---@type conform.setupOpts
-    opts = {
-      formatters_by_ft = {
-        css = { "stylelint" },
+        stylelint_lsp = {
+          settings = {
+            stylelintplus = {
+              autoFixOnFormat = true,
+              autoFixOnSave = true,
+            },
+          },
+        },
       },
     },
   },
