@@ -27,7 +27,11 @@ return {
     optional = true,
     opts = {
       servers = {
-        cssls = {},
+        cssls = {
+          init_options = {
+            provideFormatter = false,
+          },
+        },
         cssmodules_ls = {
           settings = {
             capabilities = {
