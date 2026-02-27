@@ -1,3 +1,5 @@
+--!strict
+
 local keys = {
   {
     "<leader>gd",
@@ -11,6 +13,7 @@ local keys = {
   },
 }
 
+---@module 'lazy'
 ---@type LazySpec
 return {
   "esmuellert/codediff.nvim",

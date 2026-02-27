@@ -1,3 +1,7 @@
+--!strict
+
+---@module 'lazy'
+---@type LazySpec
 return {
   {
     "dmtrKovalenko/fff.nvim",

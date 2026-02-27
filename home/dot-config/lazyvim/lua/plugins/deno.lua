@@ -1,5 +1,7 @@
 --!strict
---- @type LazySpec
+
+---@module 'lazy'
+---@type LazySpec
 return {
   {
     "mason-org/mason.nvim",
