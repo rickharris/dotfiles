@@ -18,6 +18,15 @@ return {
           files = {
             hidden = true,
           },
+          notifications = {
+            win = {
+              preview = {
+                wo = {
+                  wrap = true,
+                },
+              },
+            },
+          },
         },
       },
     },
