@@ -4,7 +4,7 @@
 ---@field dark string
 ---@field light string
 local colorschemes = {
-  dark = "tokyonight",
+  dark = "terafox",
   light = "dawnfox",
 }
 
