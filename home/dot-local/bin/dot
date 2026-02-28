@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
@@ -71,13 +71,14 @@ install() {
   fi
 
   if [[ ! -f $zshrc_local ]]; then
-    touch $zshrc_local
+    touch "$zshrc_local"
   fi
 
   if test ! "$(which nvm)"; then
     wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | PROFILE=$zshrc_local bash
-    source $zshrc_local
-    echo "corepack" >>$NVM_DIR/default-packages
+    # shellcheck source=/dev/null
+    source "$zshrc_local"
+    echo "corepack" >>"$NVM_DIR"/default-packages
     nvm install --lts
     corepack enable
   fi
