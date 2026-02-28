@@ -5,11 +5,13 @@
 return {
   {
     "snacks.nvim",
+    ---@module "snacks"
+    ---@type snacks.Config
     opts = {
-      scroll = { enabled = false },
       picker = {
         sources = {
           explorer = {
+            auto_close = true,
             hidden = true,
             ignored = true,
           },
