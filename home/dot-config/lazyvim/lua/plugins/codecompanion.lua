@@ -4,7 +4,6 @@
 ---@type LazySpec
 return {
   "olimorris/codecompanion.nvim",
-  version = "^18.0.0",
   init = function()
     vim.cmd([[cab cc CodeCompanion]])
   end,
