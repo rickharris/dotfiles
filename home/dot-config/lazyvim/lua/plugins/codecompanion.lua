@@ -38,6 +38,11 @@ return {
     },
   },
   opts = {
+    extensions = {
+      history = {
+        enabled = true,
+      },
+    },
     interactions = {
       chat = {
         adapter = {
@@ -61,6 +66,7 @@ return {
       ft = { "codecompanion" },
       opts = {},
     },
+    "ravitemer/codecompanion-history.nvim",
   },
   specs = {
     {
