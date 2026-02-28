@@ -18,12 +18,7 @@ return {
     ---@module 'neogit'
     ---@type NeogitConfig
     opts = {
-      signs = {
-        -- { CLOSED, OPENED }
-        hunk = { "", "" },
-        item = { "", "" },
-        section = { "", "" },
-      },
+      disable_signs = true, -- Fold signs are already handled by Snacks' statuscolumn.
     },
   },
 }
