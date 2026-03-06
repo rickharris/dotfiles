@@ -2,6 +2,7 @@
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
+ghostty_shaders=$HOME/.config/ghostty/shaders
 zshrc_local=$HOME/.zshrc.local
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
@@ -40,6 +41,10 @@ install() {
 
   if [ ! -d "$dotfiles" ]; then
     gh repo clone rickharris/dotfiles "$dotfiles"
+  fi
+
+  if [ ! -d "$ghostty_shaders" ]; then
+    gh repo clone sahaj-b/ghostty-cursor-shaders "$ghostty_shaders"
   fi
 
   if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
