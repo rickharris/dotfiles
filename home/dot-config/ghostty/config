@@ -12,6 +12,3 @@ font-feature = cv61
 font-feature = ss03
 
 theme = dark:terafox,light:dawnfox
-
-custom-shader = shaders/cursor_sweep.glsl
-custom-shader-animation = always
