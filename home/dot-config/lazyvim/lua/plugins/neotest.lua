@@ -7,6 +7,31 @@ return {
   {
     "nvim-neotest/neotest",
     optional = true,
+    keys = {
+      {
+        "<leader>to",
+        function()
+          require("neotest").output.open({
+            enter = true,
+            open_win = function()
+              local pad = 4
+              return vim.api.nvim_open_win(0, false, {
+                relative = "editor",
+                width = vim.o.columns - pad * 2,
+                height = vim.o.lines - pad,
+                row = 0,
+                col = pad,
+                style = "minimal",
+                border = "rounded",
+              })
+            end,
+          })
+        end,
+        desc = "Show Output (Neotest)",
+      },
+    },
+    ---@module 'neotest'
+    ---@class (partial) neotest.Config
     opts = {
       -- Can be a list of adapters like what neotest expects,
       -- or a list of adapter names,
@@ -22,6 +47,19 @@ return {
       --     dap_go_enabled = true,
       --   },
       -- },
+      output = {
+        enabled = true,
+        open_on_run = false,
+      },
+      quickfix = {
+        enabled = true,
+        open = false,
+      },
+      status = {
+        enabled = true,
+        signs = true,
+        virtual_text = false,
+      },
     },
   },
 }
