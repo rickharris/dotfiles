@@ -5,7 +5,8 @@
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "frontend-design@claude-code-plugins": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
