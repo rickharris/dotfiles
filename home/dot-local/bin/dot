@@ -133,6 +133,23 @@ EOF
   # No recents in Dock
   defaults write com.apple.dock show-recents -bool false
 
+  if ! defaults read com.rickharris.dotfiles dockConfigured >/dev/null 2>&1; then
+    defaults delete com.apple.dock persistent-apps 2>/dev/null || true
+    for app in \
+      "/System/Applications/Mail.app" \
+      "/System/Applications/Calendar.app" \
+      "/Applications/Safari.app" \
+      "/Applications/Zen.app" \
+      "/Applications/Ghostty.app"
+    do
+      defaults write com.apple.dock persistent-apps -array-add \
+        "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>${app:A}</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+    done
+
+    defaults write com.rickharris.dotfiles dockConfigured -bool true
+    killall Dock
+  fi
+
   # Finder defaults to column view
   defaults write com.apple.finder "FXPreferredViewStyle" -string "clmv" && killall Finder
 
