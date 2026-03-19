@@ -85,4 +85,35 @@
       }
     ];
   };
+
+  # Git — replaces dot-gitconfig
+  # Note: programs.git installs git itself, no home.packages entry needed
+  programs.git = {
+    enable = true;
+    userName = "Rick Harris";
+    userEmail = "rickharris@users.noreply.github.com";
+
+    delta = {
+      enable = true;
+      options = {
+        line-numbers = true;
+        navigate = true;
+        syntax-theme = "ansi";
+      };
+    };
+
+    aliases = {
+      st = "status";
+      ci = "commit";
+      co = "checkout";
+    };
+
+    extraConfig = {
+      init.defaultBranch = "main";
+      diff.colorMoved = "default";
+      merge.conflictstyle = "zdiff3";
+    };
+
+    includes = [{ path = "~/.gitconfig.local"; }];
+  };
 }
