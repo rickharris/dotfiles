@@ -29,9 +29,9 @@ fi
 # Build and activate
 # On first run, darwin-rebuild doesn't exist yet — use nix run to bootstrap
 if ! command -v darwin-rebuild >/dev/null 2>&1; then
-  nix run nix-darwin -- switch --flake "$dotfiles"
+  sudo nix run nix-darwin -- switch --flake "$dotfiles"
 else
-  darwin-rebuild switch --flake "$dotfiles"
+  sudo darwin-rebuild switch --flake "$dotfiles"
 fi
 
 # Open Karabiner-Elements on first install so it can request permissions
