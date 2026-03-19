@@ -9,5 +9,13 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+# Add Nix profile if present
+if [[ -d "$HOME/.nix-profile/bin" ]]; then
+  export PATH="$HOME/.nix-profile/bin:$PATH"
+fi
+if [[ -d "/run/current-system/sw/bin" ]]; then
+  export PATH="/run/current-system/sw/bin:$PATH"
+fi
+
 # Unset prompt customizations that can emit escape sequences
 unset PROMPT RPROMPT PS1 PS2
