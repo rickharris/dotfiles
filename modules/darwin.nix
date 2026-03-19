@@ -1,9 +1,11 @@
 { pkgs, lib, ... }: {
-  # Nix configuration
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Nix is managed by the Determinate Systems installer
+  nix.enable = false;
 
   # Required for nix-darwin
   system.stateVersion = 6;
+  system.primaryUser = "rick";
+  users.users.rick.home = "/Users/rick";
 
   # Homebrew — manages GUI apps (casks) that Nix can't install as .app bundles
   homebrew = {
@@ -44,7 +46,7 @@
 
     finder = {
       FXPreferredViewStyle = "clmv";
-      NewWindowTarget = "PfHm";
+      NewWindowTarget = "Home";
       AppleShowAllExtensions = true;
     };
 
@@ -53,7 +55,6 @@
       KeyRepeat = 2;
       InitialKeyRepeat = 15;
       "com.apple.mouse.tapBehavior" = 1;
-      "com.apple.mouse.scaling" = 2.0;
     };
 
     trackpad = {

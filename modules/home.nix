@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   home.stateVersion = "24.11";
 
   # dot — bootstrap and rebuild script, available on PATH from anywhere
@@ -47,37 +47,39 @@
       COREPACK_ENABLE_AUTO_PIN = "0";
     };
 
-    # zvm_before_init MUST be declared before zsh-vi-mode loads.
-    # initExtraFirst runs before plugins are sourced.
-    initExtraFirst = ''
-      # Powerlevel10k instant prompt — must be near the top
-      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-      fi
+    initContent = lib.mkMerge [
+      # Early init — must run before plugins load
+      (lib.mkBefore ''
+        # Powerlevel10k instant prompt — must be near the top
+        if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+          source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+        fi
 
-      # vi mode keybindings for history substring search
-      # Must be declared before zsh-vi-mode loads
-      function zvm_before_init() {
-        zvm_bindkey viins '^[[A' history-substring-search-up
-        zvm_bindkey viins '^[[B' history-substring-search-down
-        zvm_bindkey vicmd '^[[A' history-substring-search-up
-        zvm_bindkey vicmd '^[[B' history-substring-search-down
-      }
-    '';
+        # vi mode keybindings for history substring search
+        # Must be declared before zsh-vi-mode loads
+        function zvm_before_init() {
+          zvm_bindkey viins '^[[A' history-substring-search-up
+          zvm_bindkey viins '^[[B' history-substring-search-down
+          zvm_bindkey vicmd '^[[A' history-substring-search-up
+          zvm_bindkey vicmd '^[[B' history-substring-search-down
+        }
+      '')
 
-    initExtra = ''
-      # Powerlevel10k theme
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+      # Normal init
+      ''
+        # Powerlevel10k theme
+        source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+        [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-      # case-insensitive, partial-word and substring completion
-      zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+        # case-insensitive, partial-word and substring completion
+        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-      # Source local overrides
-      if [ -f ~/.zshrc.local ]; then
-        . ~/.zshrc.local
-      fi
-    '';
+        # Source local overrides
+        if [ -f ~/.zshrc.local ]; then
+          . ~/.zshrc.local
+        fi
+      ''
+    ];
 
     # zsh-vi-mode as a plugin — sources after initExtra
     plugins = [
@@ -93,33 +95,36 @@
   # Note: programs.git installs git itself, no home.packages entry needed
   programs.git = {
     enable = true;
-    userName = "Rick Harris";
-    userEmail = "rickharris@users.noreply.github.com";
 
-    delta = {
-      enable = true;
-      options = {
-        line-numbers = true;
-        navigate = true;
-        syntax-theme = "ansi";
+    settings = {
+      user = {
+        name = "Rick Harris";
+        email = "rickharris@users.noreply.github.com";
       };
-    };
-
-    aliases = {
-      st = "status";
-      ci = "commit";
-      co = "checkout";
-      br = ''!sh -c "git checkout $(git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads | fzf | cut -f2)"'';
-      gone = ''! "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"'';
-    };
-
-    extraConfig = {
+      alias = {
+        st = "status";
+        ci = "commit";
+        co = "checkout";
+        br = ''!sh -c "git checkout $(git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads | fzf | cut -f2)"'';
+        gone = ''! "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"'';
+      };
       init.defaultBranch = "main";
       diff.colorMoved = "default";
       merge.conflictstyle = "zdiff3";
     };
 
     includes = [{ path = "~/.gitconfig.local"; }];
+  };
+
+  # Delta — git pager
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      line-numbers = true;
+      navigate = true;
+      syntax-theme = "ansi";
+    };
   };
 
   # Tmux — replaces dot-tmux.conf and TPM
