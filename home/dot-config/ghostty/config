@@ -11,4 +11,4 @@ font-feature = cv61
 # Support arbitrary bracketed ligatures, e.g. [info]
 font-feature = ss03
 
-theme = dark:terafox,light:dawnfox
+theme = terafox
