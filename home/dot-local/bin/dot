@@ -181,6 +181,10 @@ EOF
   defaults write com.apple.Safari ShowOverlayStatusBar -bool true
   defaults write com.apple.Safari ShowStatusBarInFullScreen -bool true
 
+  # Enable Web Inspector / developer tools
+  defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+  defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+
   # Configure DuckDuckGo as main search engine
   defaults write com.apple.Safari SearchProviderIdentifier -string "com.duckduckgo"
   defaults write NSGlobalDomain NSProviderIdentifier -string "com.duckduckgo"
