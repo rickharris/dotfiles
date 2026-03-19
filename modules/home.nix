@@ -4,6 +4,7 @@
   # CLI packages — replaces brew formulae without dedicated home-manager modules
   home.packages = with pkgs; [
     ast-grep
+    # bat-extras  # TODO: verify package name — may need individual tools (batdiff, batgrep, etc.)
     eza
     fd
     gnused
@@ -39,7 +40,6 @@
     };
 
     sessionVariables = {
-      EDITOR = "nvim";
       NVIM_APPNAME = "astronvim";
       COREPACK_ENABLE_AUTO_PIN = "0";
     };
@@ -106,6 +106,8 @@
       st = "status";
       ci = "commit";
       co = "checkout";
+      br = ''!sh -c "git checkout $(git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:relative)%09%(refname:short)' refs/heads | fzf | cut -f2)"'';
+      gone = ''! "git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", $1); print $1}'); do git branch -D $branch; done"'';
     };
 
     extraConfig = {
