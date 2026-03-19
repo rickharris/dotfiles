@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -e
+
+dotfiles=$HOME/src/github.com/rickharris/dotfiles
+
+# Install Nix (Determinate Systems installer — includes clean uninstall support)
+if ! command -v nix >/dev/null 2>&1; then
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh
+  # Source nix in current shell
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
+# Generate SSH key if needed
+if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
+  ssh-keygen -t ed25519
+  ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
+fi
+
+# Authenticate with GitHub
+if ! nix run nixpkgs#gh -- auth status --hostname github.com >/dev/null 2>&1; then
+  nix run nixpkgs#gh -- auth login --git-protocol=ssh --hostname=github.com --web
+fi
+
+# Clone dotfiles
+if [ ! -d "$dotfiles" ]; then
+  nix run nixpkgs#gh -- repo clone rickharris/dotfiles "$dotfiles"
+fi
+
+# Build and activate
+# On first run, darwin-rebuild doesn't exist yet — use nix run to bootstrap
+if ! command -v darwin-rebuild >/dev/null 2>&1; then
+  nix run nix-darwin -- switch --flake "$dotfiles"
+else
+  darwin-rebuild switch --flake "$dotfiles"
+fi
+
+# Open Karabiner-Elements on first install so it can request permissions
+if ! pgrep -q karabiner; then
+  open /Applications/Karabiner-Elements.app
+fi
+
+# Sync neovim plugins
+nvim --headless "+Lazy! restore" +qa 2>/dev/null
