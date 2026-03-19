@@ -1,8 +1,11 @@
 { pkgs, ... }: {
   home.stateVersion = "24.11";
 
-  # CLI packages — replaces brew formulae without dedicated home-manager modules
-  home.packages = with pkgs; [
+  # dot — bootstrap and rebuild script, available on PATH from anywhere
+  home.packages = [
+    (pkgs.writeShellScriptBin "dot" (builtins.readFile ../bin/dot))
+  ] ++ (with pkgs; [
+    # CLI packages — replaces brew formulae without dedicated home-manager modules
     ast-grep
     # bat-extras  # TODO: verify package name — may need individual tools (batdiff, batgrep, etc.)
     eza
@@ -13,7 +16,7 @@
     shfmt
     tree-sitter
     wget
-  ];
+  ]);
 
   # Zsh — replaces dot-zshrc
   programs.zsh = {
