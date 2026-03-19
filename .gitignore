@@ -4,3 +4,5 @@
 **/karabiner/automatic_backups
 home/dot-config/lazyvim/lazyvim.json
 home/dot-claude/zsh/.zcompdump
+
+.claude
