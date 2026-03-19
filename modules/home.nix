@@ -161,4 +161,53 @@
       set-option -g window-status-current-format "#[reverse] #I:#W #{?window_zoomed_flag,󰊓 ,}#[default]"
     '';
   };
+
+  # Bat
+  programs.bat = {
+    enable = true;
+    config = {
+      theme = "ansi";
+    };
+  };
+
+  # Jujutsu
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user = {
+        name = "Rick Harris";
+        email = "rickharris@users.noreply.github.com";
+      };
+      ui = {
+        default-command = "log";
+      };
+    };
+  };
+
+  # fzf
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # Zoxide
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # GitHub CLI
+  programs.gh.enable = true;
+
+  # mise — replaces asdf and nvm
+  programs.mise = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # Neovim — installed via Nix, config stays as Lua files
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+  };
 }
