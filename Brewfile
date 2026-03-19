@@ -1,6 +1,5 @@
 # vim:ft=ruby
 
-brew 'asdf'
 brew 'ast-grep'
 brew 'bat'
 brew 'bat-extras'
@@ -15,6 +14,7 @@ brew 'jj'
 brew 'jq'
 brew 'killport'
 brew 'mas'
+brew 'mise'
 brew 'powerlevel10k'
 brew 'ripgrep'
 brew 'shfmt'

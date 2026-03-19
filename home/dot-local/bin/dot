@@ -2,7 +2,6 @@
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
-zshrc_local=$HOME/.zshrc.local
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -63,32 +62,9 @@ install() {
     open /Applications/Karabiner-Elements.app
   fi
 
-  if ! asdf plugin list | grep deno >/dev/null; then
-    asdf plugin add deno https://github.com/asdf-community/asdf-deno.git
-  fi
+  mise install
 
-  if ! asdf plugin list | grep neovim >/dev/null; then
-    asdf plugin add neovim >/dev/null
-  fi
-
-  if [[ ! -f $zshrc_local ]]; then
-    touch "$zshrc_local"
-  fi
-
-  if [ ! -d "${NVM_DIR:-$HOME/.nvm}" ]; then
-    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | PROFILE=$zshrc_local bash
-    # shellcheck source=/dev/null
-    source "$zshrc_local"
-    echo "corepack" >>"$NVM_DIR"/default-packages
-    nvm install --lts
-    corepack enable
-  fi
-
-  if ! command -v nvim >/dev/null 2>&1; then
-    asdf install neovim stable
-  fi
-
-  nvim --headless "+Lazy! restore" +qa >/dev/null
+  mise exec -- nvim --headless "+Lazy! restore" +qa >/dev/null
 
 }
 
