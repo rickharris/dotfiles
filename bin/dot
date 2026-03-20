@@ -40,4 +40,4 @@ if ! pgrep -q karabiner; then
 fi
 
 # Sync neovim plugins
-NVIM_APPNAME=astronvim nvim --headless "+Lazy! restore" +qa 2>/dev/null
+NVIM_APPNAME=astronvim nvim --headless "+Lazy! restore" +qa >/dev/null

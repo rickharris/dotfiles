@@ -19,7 +19,6 @@ in
     ast-grep
     bat-extras.core
     deadnix
-    eza
     fd
     gnused
     jq
@@ -52,8 +51,6 @@ in
     shellAliases = {
       vi = "$EDITOR";
       vim = "$EDITOR";
-      ls = "eza --icons --git";
-      cd = "z";
     };
 
     sessionVariables = {
@@ -183,6 +180,13 @@ in
     };
   };
 
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    git = true;
+    icons = "auto";
+  };
+
   # fzf
   programs.fzf = {
     enable = true;
@@ -193,6 +197,9 @@ in
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
+    options = [
+      "--cmd cd"
+    ];
   };
 
   # GitHub CLI

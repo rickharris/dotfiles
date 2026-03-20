@@ -42,10 +42,10 @@
         "/System/Applications/Mail.app"
         "/System/Applications/Calendar.app"
         "/System/Applications/Messages.app"
-        "/Applications/Claude.app"
-        "/Applications/Bear.app"
         "/System/Cryptexes/App/System/Applications/Safari.app"
         "/Applications/Zen.app"
+        "/Applications/Bear.app"
+        "/Applications/Claude.app"
         "/Applications/Ghostty.app"
       ];
     };
