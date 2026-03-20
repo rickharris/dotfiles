@@ -195,6 +195,16 @@ in {
   programs.mise = {
     enable = true;
     enableZshIntegration = true;
+    globalConfig = {
+      tools = {
+        node = "lts";
+        neovim = "latest";
+        deno = "latest";
+      };
+      settings = {
+        node.corepack = true;
+      };
+    };
   };
 
   # Neovim — installed via Nix, config stays as Lua files
