@@ -3,41 +3,68 @@ set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
 
-# Install Nix (Determinate Systems installer — includes clean uninstall support)
-if ! command -v nix >/dev/null 2>&1; then
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-  # Source nix in current shell
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+install() {
+  # Install Nix (Determinate Systems installer — includes clean uninstall support)
+  if ! command -v nix >/dev/null 2>&1; then
+    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+    # Source nix in current shell
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  fi
+
+  # Generate SSH key if needed
+  if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
+    ssh-keygen -t ed25519
+    ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
+  fi
+
+  # Authenticate with GitHub
+  if ! nix run nixpkgs#gh -- auth status --hostname github.com >/dev/null 2>&1; then
+    nix run nixpkgs#gh -- auth login --git-protocol=ssh --hostname=github.com --web
+  fi
+
+  # Clone dotfiles
+  if [ ! -d "$dotfiles" ]; then
+    nix run nixpkgs#gh -- repo clone rickharris/dotfiles "$dotfiles"
+  fi
+
+  # Build and activate
+  # On first run, darwin-rebuild doesn't exist yet — use nix run to bootstrap
+  if ! command -v darwin-rebuild >/dev/null 2>&1; then
+    sudo nix run nix-darwin -- switch --flake "$dotfiles"
+  else
+    sudo darwin-rebuild switch --flake "$dotfiles"
+  fi
+
+  # Open Karabiner-Elements on first install so it can request permissions
+  if ! pgrep -q karabiner; then
+    open /Applications/Karabiner-Elements.app
+  fi
+
+  # Sync neovim plugins (only if nvim is available)
+  if command -v nvim >/dev/null 2>&1; then
+    NVIM_APPNAME=astronvim nvim --headless "+Lazy! restore" +qa >/dev/null
+  fi
+}
+
+teardown() {
+  # Rebuild with the minimal nix-darwin config, which removes home-manager
+  # and triggers cleanup of all its managed symlinks and files.
+  # After this, switch to main and run `dot link` to restore stow-based dotfiles.
+  sudo darwin-rebuild switch --flake "$dotfiles#minimal"
+}
+
+if [ $# -eq 0 ]; then
+  install
+  exit
 fi
 
-# Generate SSH key if needed
-if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
-  ssh-keygen -t ed25519
-  ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
-fi
-
-# Authenticate with GitHub
-if ! nix run nixpkgs#gh -- auth status --hostname github.com >/dev/null 2>&1; then
-  nix run nixpkgs#gh -- auth login --git-protocol=ssh --hostname=github.com --web
-fi
-
-# Clone dotfiles
-if [ ! -d "$dotfiles" ]; then
-  nix run nixpkgs#gh -- repo clone rickharris/dotfiles "$dotfiles"
-fi
-
-# Build and activate
-# On first run, darwin-rebuild doesn't exist yet — use nix run to bootstrap
-if ! command -v darwin-rebuild >/dev/null 2>&1; then
-  sudo nix run nix-darwin -- switch --flake "$dotfiles"
-else
-  sudo darwin-rebuild switch --flake "$dotfiles"
-fi
-
-# Open Karabiner-Elements on first install so it can request permissions
-if ! pgrep -q karabiner; then
-  open /Applications/Karabiner-Elements.app
-fi
-
-# Sync neovim plugins
-NVIM_APPNAME=astronvim nvim --headless "+Lazy! restore" +qa >/dev/null
+case $1 in
+teardown)
+  teardown
+  ;;
+*)
+  printf "%s\n\n" "Run scripts related to your dotfiles repo."
+  printf "%s\t%s\n" "dot         " "Install and activate nix-darwin configuration"
+  printf "%s\t%s\n" "dot teardown" "Remove home-manager config so stow can be used on main"
+  ;;
+esac

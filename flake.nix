@@ -12,6 +12,19 @@
   outputs =
     { nix-darwin, home-manager, ... }:
     {
+      darwinConfigurations."minimal" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./modules/minimal-darwin.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rick = import ./modules/minimal-home.nix;
+          }
+        ];
+      };
+
       darwinConfigurations."ricks-mbp" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
