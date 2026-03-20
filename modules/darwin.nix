@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ ... }: {
   # Nix is managed by the Determinate Systems installer
   nix.enable = false;
 

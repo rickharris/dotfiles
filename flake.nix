@@ -9,7 +9,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, ... }: {
+  outputs = { nix-darwin, home-manager, ... }: {
     darwinConfigurations."ricks-mbp" = nix-darwin.lib.darwinSystem {
       system = "aarch64-darwin";
       modules = [
