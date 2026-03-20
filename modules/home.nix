@@ -220,6 +220,7 @@ in {
 
   home.file = {
     ".p10k.zsh".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/p10k.zsh";
-    ".claude".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude";
+    ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude/settings.json";
+    ".claude/zsh".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude/zsh";
   };
 }
