@@ -11,7 +11,7 @@ in {
   ] ++ (with pkgs; [
     # CLI packages
     ast-grep
-    # bat-extras  # TODO: verify package name — may need individual tools (batdiff, batgrep, etc.)
+    bat-extras.core
     deadnix
     eza
     fd
