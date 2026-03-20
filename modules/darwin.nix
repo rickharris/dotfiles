@@ -28,7 +28,7 @@
     masApps = {
       "AdGuard Mini: Safari Adblock" = 1440147259;
       "Bear" = 1091189122;
-      "Parcel" = 639968404;
+      "Parcel - Delivery Tracking" = 375589283;
     };
   };
 
@@ -86,6 +86,9 @@
       };
       NSGlobalDomain = {
         NSProviderIdentifier = "com.duckduckgo";
+      };
+      "com.mr-brightside.myParcel" = {
+        ShowParcelMenuBar = true;
       };
     };
   };
