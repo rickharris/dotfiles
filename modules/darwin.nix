@@ -40,7 +40,7 @@
       persistent-apps = [
         "/System/Applications/Mail.app"
         "/System/Applications/Calendar.app"
-        "/Applications/Safari.app"
+        "/System/Cryptexes/App/System/Applications/Safari.app"
         "/Applications/Zen.app"
         "/Applications/Ghostty.app"
       ];
