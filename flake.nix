@@ -9,19 +9,21 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nix-darwin, home-manager, ... }: {
-    darwinConfigurations."ricks-mbp" = nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
-      modules = [
-        ./modules/darwin.nix
-        home-manager.darwinModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          home-manager.users.rick = import ./modules/home.nix;
-        }
-      ];
+  outputs =
+    { nix-darwin, home-manager, ... }:
+    {
+      darwinConfigurations."ricks-mbp" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./modules/darwin.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.users.rick = import ./modules/home.nix;
+          }
+        ];
+      };
     };
-  };
 }

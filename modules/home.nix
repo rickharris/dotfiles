@@ -1,13 +1,20 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   dotfiles = "${config.home.homeDirectory}/src/github.com/rickharris/dotfiles";
-in {
+in
+{
   home.stateVersion = "24.11";
 
   # dot — bootstrap and rebuild script, available on PATH from anywhere
   home.packages = [
     (pkgs.writeShellScriptBin "dot" (builtins.readFile ../bin/dot))
-  ] ++ (with pkgs; [
+  ]
+  ++ (with pkgs; [
     # CLI packages
     ast-grep
     bat-extras.core
@@ -17,6 +24,7 @@ in {
     gnused
     jq
     nixd
+    nixfmt
     ripgrep
     shfmt
     statix
@@ -119,7 +127,7 @@ in {
       merge.conflictstyle = "zdiff3";
     };
 
-    includes = [{ path = "~/.gitconfig.local"; }];
+    includes = [ { path = "~/.gitconfig.local"; } ];
   };
 
   # Delta — git pager
@@ -224,12 +232,14 @@ in {
     # Karabiner: symlink only the JSON file, not the directory.
     # Karabiner-Elements writes to this directory at runtime,
     # so the directory itself must remain writable.
-    "karabiner/karabiner.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/karabiner/karabiner.json";
+    "karabiner/karabiner.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/karabiner/karabiner.json";
   };
 
   home.file = {
     ".p10k.zsh".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/p10k.zsh";
-    ".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude/settings.json";
+    ".claude/settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude/settings.json";
     ".claude/zsh".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude/zsh";
   };
 }
