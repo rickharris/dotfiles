@@ -46,11 +46,16 @@ install() {
   fi
 }
 
-teardown() {
-  # Rebuild with the minimal nix-darwin config, which removes home-manager
-  # and triggers cleanup of all its managed symlinks and files.
-  # After this, switch to main and run `dot link` to restore stow-based dotfiles.
+uninstall() {
+  # Step 1: rebuild with the minimal home-manager config so home-manager
+  # diffs to empty and cleans up all its managed symlinks in $HOME
   sudo darwin-rebuild switch --flake "$dotfiles#minimal"
+
+  # Step 2: remove nix-darwin system files
+  sudo nix --extra-experimental-features "nix-command flakes" run nix-darwin#darwin-uninstaller
+
+  # Step 3: remove Nix itself (Determinate Systems uninstaller)
+  /nix/nix-installer uninstall
 }
 
 if [ $# -eq 0 ]; then
@@ -59,12 +64,12 @@ if [ $# -eq 0 ]; then
 fi
 
 case $1 in
-teardown)
-  teardown
+uninstall)
+  uninstall
   ;;
 *)
   printf "%s\n\n" "Run scripts related to your dotfiles repo."
-  printf "%s\t%s\n" "dot         " "Install and activate nix-darwin configuration"
-  printf "%s\t%s\n" "dot teardown" "Remove home-manager config so stow can be used on main"
+  printf "%s\t%s\n" "dot          " "Install and activate nix-darwin configuration"
+  printf "%s\t%s\n" "dot uninstall" "Fully remove nix-darwin, home-manager, and Nix"
   ;;
 esac
