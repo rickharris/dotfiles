@@ -13,6 +13,8 @@
     onActivation.cleanup = "uninstall"; # switch to "zap" once cask list is verified complete
     casks = [
       "1password"
+      "claude"
+      "claude-code"
       "firefox"
       "font-maple-mono-nf"
       "ghostty"
