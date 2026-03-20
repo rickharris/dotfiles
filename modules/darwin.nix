@@ -11,6 +11,9 @@
   homebrew = {
     enable = true;
     onActivation.cleanup = "uninstall"; # switch to "zap" once cask list is verified complete
+    brews = [
+      "mas"
+    ];
     casks = [
       "1password"
       "claude"
@@ -23,12 +26,9 @@
       "zen"
     ];
     masApps = {
-      # Uncomment as desired
-      # "1Password for Safari" = 1569813296;
-      # "AdGuard for Safari" = 1440147259;
-      # "Bear" = 1091189122;
-      # "Hush" = 1544743900;
-      # "Parcel" = 639968404;
+      "AdGuard Mini: Safari Adblock" = 1440147259;
+      "Bear" = 1091189122;
+      "Parcel" = 639968404;
     };
   };
 
@@ -40,6 +40,9 @@
       persistent-apps = [
         "/System/Applications/Mail.app"
         "/System/Applications/Calendar.app"
+        "/System/Applications/Messages.app"
+        "/Applications/Claude.app"
+        "/Applications/Bear.app"
         "/System/Cryptexes/App/System/Applications/Safari.app"
         "/Applications/Zen.app"
         "/Applications/Ghostty.app"
