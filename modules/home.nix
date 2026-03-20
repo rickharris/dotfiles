@@ -1,4 +1,7 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, config, ... }:
+let
+  dotfiles = "${config.home.homeDirectory}/src/github.com/rickharris/dotfiles";
+in {
   home.stateVersion = "24.11";
 
   # dot — bootstrap and rebuild script, available on PATH from anywhere
@@ -221,22 +224,23 @@
     defaultEditor = true;
   };
 
-  # Dotfile symlinks — configs without dedicated home-manager modules
+  # Dotfile symlinks — link directly to repo, not the Nix store,
+  # so edits take effect immediately without rebuilding.
   xdg.configFile = {
-    "ghostty".source = ../home/config/ghostty;
-    "lazyvim".source = ../home/config/lazyvim;
-    "astronvim".source = ../home/config/astronvim;
-    "zed".source = ../home/config/zed;
-    "bat/themes".source = ../home/config/bat/themes;
+    "ghostty".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/ghostty";
+    "lazyvim".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/lazyvim";
+    "astronvim".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/astronvim";
+    "zed".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/zed";
+    "bat/themes".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/bat/themes";
 
     # Karabiner: symlink only the JSON file, not the directory.
     # Karabiner-Elements writes to this directory at runtime,
     # so the directory itself must remain writable.
-    "karabiner/karabiner.json".source = ../home/config/karabiner/karabiner.json;
+    "karabiner/karabiner.json".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/config/karabiner/karabiner.json";
   };
 
   home.file = {
-    ".p10k.zsh".source = ../home/p10k.zsh;
-    ".claude".source = ../home/claude;
+    ".p10k.zsh".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/p10k.zsh";
+    ".claude".source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/claude";
   };
 }
