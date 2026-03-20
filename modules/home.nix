@@ -8,15 +8,18 @@ in {
   home.packages = [
     (pkgs.writeShellScriptBin "dot" (builtins.readFile ../bin/dot))
   ] ++ (with pkgs; [
-    # CLI packages — replaces brew formulae without dedicated home-manager modules
+    # CLI packages
     ast-grep
     # bat-extras  # TODO: verify package name — may need individual tools (batdiff, batgrep, etc.)
+    deadnix
     eza
     fd
     gnused
     jq
+    nixd
     ripgrep
     shfmt
+    statix
     tree-sitter
     wget
   ]);
