@@ -1,7 +1,6 @@
 { pkgs, lib, config, ... }:
 let
-  # TODO: change back to main repo path before merging
-  dotfiles = "${config.home.homeDirectory}/src/github.com/rickharris/dotfiles/.claude/worktrees/nix-darwin-conversion";
+  dotfiles = "${config.home.homeDirectory}/src/github.com/rickharris/dotfiles";
 in {
   home.stateVersion = "24.11";
 
