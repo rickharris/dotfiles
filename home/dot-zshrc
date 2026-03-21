@@ -23,7 +23,6 @@ export PATH="$PATH:$HOME/.local/bin"
 alias vi='$EDITOR'
 alias vim='$EDITOR'
 alias ls="eza --icons --git"
-alias cd="z"
 
 export HISTSIZE=50000
 export SAVEHIST=10000
@@ -39,8 +38,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:
 
 export COREPACK_ENABLE_AUTO_PIN=0
 eval "$(mise activate zsh)"
-
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd=j zsh)"
 source <(fzf --zsh)
 
 if [ -f ~/.zshrc.local ]; then
