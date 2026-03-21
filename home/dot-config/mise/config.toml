@@ -1,0 +1,7 @@
+[tools]
+node = "lts"
+neovim = "latest"
+deno = "latest"
+
+[settings]
+node.corepack = true

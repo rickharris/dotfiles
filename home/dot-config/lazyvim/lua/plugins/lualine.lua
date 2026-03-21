@@ -1,3 +1,7 @@
+--!strict
+
+---@module 'lazy'
+---@type LazySpec
 return {
   {
     "nvim-lualine/lualine.nvim",
@@ -13,8 +17,6 @@ return {
             icon = "",
           },
         },
-        lualine_y = { "progress" },
-        lualine_z = { "location" },
       },
     },
   },

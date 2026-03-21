@@ -1,17 +1,8 @@
+--!strict
+
+---@module 'lazy'
+---@type LazySpec
 return {
-  {
-    "sindrets/diffview.nvim",
-    lazy = true,
-    cmd = {
-      "DiffviewClose",
-      "DiffviewFileHistory",
-      "DiffviewFocusFiles",
-      "DiffviewLog",
-      "DiffviewOpen",
-      "DiffviewRefresh",
-      "DiffviewToggleFiles",
-    },
-  },
   {
     "NeogitOrg/neogit",
     lazy = true,
@@ -27,12 +18,7 @@ return {
     ---@module 'neogit'
     ---@type NeogitConfig
     opts = {
-      signs = {
-        -- { CLOSED, OPENED }
-        hunk = { "", "" },
-        item = { "", "" },
-        section = { "", "" },
-      },
+      disable_signs = true, -- Fold signs are already handled by Snacks' statuscolumn.
     },
   },
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -e
 
 dotfiles=$HOME/src/github.com/rickharris/dotfiles
@@ -9,7 +9,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 install() {
   # Install hombrew first, which will download also download Command Line Tools
   # for Xcode.
-  if test ! "$(which brew)"; then
+  if ! command -v brew >/dev/null 2>&1; then
     echo -e "\nInstalling Homebrew…"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
@@ -61,7 +61,7 @@ install() {
     done
   fi
 
-  if test ! "$(which gh)"; then
+  if ! command -v gh >/dev/null 2>&1; then
     brew install gh
   fi
 
@@ -72,6 +72,9 @@ install() {
   if [ ! -d "$dotfiles" ]; then
     gh repo clone rickharris/dotfiles "$dotfiles"
   fi
+  link
+  # shellcheck source=/dev/null
+  source "$HOME"/.zshrc
 
   if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
     brew bundle --no-upgrade --file="$dotfiles"/Brewfile
@@ -93,24 +96,16 @@ install() {
     open /Applications/Karabiner-Elements.app
   fi
 
-  if ! asdf plugin list | grep deno >/dev/null; then
-    asdf plugin add deno https://github.com/asdf-community/asdf-deno.git
-  fi
-
-  if ! asdf plugin list | grep nodejs >/dev/null; then
-    asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git >/dev/null
-  fi
-
-  if ! asdf plugin list | grep neovim >/dev/null; then
-    asdf plugin add neovim >/dev/null
-  fi
+  mise install
+  mise exec -- nvim --headless "+Lazy! restore" +qa >/dev/null
 }
 
 link() {
-  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles home
-  defaults write com.googlecode.iterm2.plist LoadPrefsFromCustomFolder -bool true
-  defaults write com.googlecode.iterm2.plist PrefsCustomFolder -string "$dotfiles/iterm2"
+  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles --no-folding home
+}
 
+unlink() {
+  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles --no-folding home
 }
 
 preferences() {
@@ -150,6 +145,22 @@ EOF
   # No recents in Dock
   defaults write com.apple.dock show-recents -bool false
 
+  if ! defaults read com.rickharris.dotfiles dockConfigured >/dev/null 2>&1; then
+    defaults delete com.apple.dock persistent-apps 2>/dev/null || true
+    for app in \
+      "/System/Applications/Mail.app" \
+      "/System/Applications/Calendar.app" \
+      "/Applications/Safari.app" \
+      "/Applications/Zen.app" \
+      "/Applications/Ghostty.app"; do
+      defaults write com.apple.dock persistent-apps -array-add \
+        "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>${app:A}</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+    done
+
+    defaults write com.rickharris.dotfiles dockConfigured -bool true
+    killall Dock
+  fi
+
   # Finder defaults to column view
   defaults write com.apple.finder "FXPreferredViewStyle" -string "clmv" && killall Finder
 
@@ -181,6 +192,10 @@ EOF
   defaults write com.apple.Safari ShowOverlayStatusBar -bool true
   defaults write com.apple.Safari ShowStatusBarInFullScreen -bool true
 
+  # Enable Web Inspector / developer tools
+  defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+  defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+
   # Configure DuckDuckGo as main search engine
   defaults write com.apple.Safari SearchProviderIdentifier -string "com.duckduckgo"
   defaults write NSGlobalDomain NSProviderIdentifier -string "com.duckduckgo"
@@ -192,7 +207,6 @@ EOF
 
 if [ $# -eq 0 ]; then
   install
-  link
   preferences
   exit
 fi
@@ -202,6 +216,7 @@ print_help() {
   printf "%s\t%s\n" "dot        " "Run all scripts in the proper order"
   printf "%s\t%s\n" "dot install" "Install dependencies"
   printf "%s\t%s\n" "dot link   " "Link dotfiles the correct location"
+  printf "%s\t%s\n" "dot unlink " "Remove dotfile symlinks"
   printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
 }
 
@@ -211,6 +226,9 @@ install)
   ;;
 link)
   link
+  ;;
+unlink)
+  unlink
   ;;
 prefs)
   preferences

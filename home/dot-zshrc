@@ -17,13 +17,12 @@ autoload -Uz compinit
 compinit
 
 export EDITOR="nvim"
+export NVIM_APPNAME=astronvim
 export PATH="$PATH:$HOME/.local/bin"
 
 alias vi='$EDITOR'
 alias vim='$EDITOR'
 alias ls="eza --icons --git"
-alias cd="z"
-alias update-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
 
 export HISTSIZE=50000
 export SAVEHIST=10000
@@ -37,12 +36,9 @@ setopt share_history          # share command history data
 # case-insensitive,partial-word and then substring completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
-export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY=latest_installed
-export ASDF_NODEJS_AUTO_ENABLE_COREPACK=true
 export COREPACK_ENABLE_AUTO_PIN=0
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-eval "$(zoxide init zsh)"
+eval "$(mise activate zsh)"
+eval "$(zoxide init --cmd=j zsh)"
 source <(fzf --zsh)
 
 if [ -f ~/.zshrc.local ]; then

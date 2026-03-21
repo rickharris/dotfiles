@@ -4,7 +4,7 @@
 ---@field dark string
 ---@field light string
 local colorschemes = {
-  dark = "tokyonight",
+  dark = "terafox",
   light = "dawnfox",
 }
 
@@ -14,6 +14,7 @@ local set_colorscheme = function(bg)
   vim.cmd("colorscheme " .. colorschemes[bg])
 end
 
+---@module 'lazy'
 ---@type LazySpec
 return {
   {
