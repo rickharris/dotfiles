@@ -18,6 +18,7 @@ return {
   { import = "astrocommunity.debugging.nvim-dap-repl-highlights" },
   { import = "astrocommunity.debugging.nvim-dap-view" },
   { import = "astrocommunity.debugging.nvim-dap-virtual-text" },
+  { import = "astrocommunity.file-explorer.fyler-nvim" },
   { import = "astrocommunity.git.codediff-nvim" },
   { import = "astrocommunity.git.neogit" },
   { import = "astrocommunity.lsp.ts-error-translator-nvim" },
