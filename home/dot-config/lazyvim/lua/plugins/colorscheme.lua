@@ -126,7 +126,7 @@ return {
     lazy = true,
   },
   {
-    "LazyVim/LazyVim",
+    "rickharris/LazyVim",
     opts = {
       colorscheme = colorschemes.dark,
     },

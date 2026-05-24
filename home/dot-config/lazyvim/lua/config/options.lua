@@ -6,6 +6,7 @@ vim.g.ai_cmp = false
 
 -- Only use prettier in projects that use it.
 vim.g.lazyvim_prettier_needs_config = true
+vim.g.lazyvim_oxfmt_needs_config = true
 
 --- Default value:
 --- vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
