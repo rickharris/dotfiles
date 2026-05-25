@@ -12,8 +12,6 @@ local fileTypesToAdd = {
 return {
   {
     "stevearc/conform.nvim",
-    url = "https://github.com/rickharris/conform.nvim.git",
-    branch = "oxlint-exit-codes",
     opts = function(_, opts)
       opts.formatters_by_ft = opts.formatters_by_ft or {}
       for formatter, supported in pairs(fileTypesToAdd) do
