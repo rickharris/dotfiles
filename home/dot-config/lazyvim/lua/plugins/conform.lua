@@ -1,6 +1,16 @@
 local fileTypesToAdd = {
   oxfmt = {
     "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "jsonc",
+    "markdown",
+    "typescript",
+    "typescriptreact",
+    "yaml",
   },
   oxlint = {
     "javascript",
