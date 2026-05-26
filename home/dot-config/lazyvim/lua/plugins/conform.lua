@@ -1,9 +1,18 @@
 local fileTypesToAdd = {
+  oxfmt = {
+    "css",
+  },
   oxlint = {
     "javascript",
     "javascriptreact",
     "typescript",
     "typescriptreact",
+  },
+  shfmt = {
+    "zsh",
+  },
+  stylelint = {
+    "css",
   },
 }
 

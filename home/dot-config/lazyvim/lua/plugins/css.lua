@@ -20,7 +20,7 @@ return {
         "css-lsp",
         "cssmodules-language-server",
         "css-variables-language-server",
-        "stylelint-lsp",
+        "stylelint-language-server",
       },
     },
   },
@@ -42,14 +42,7 @@ return {
           },
         },
         css_variables = {},
-        stylelint_lsp = {
-          settings = {
-            stylelintplus = {
-              autoFixOnFormat = true,
-              autoFixOnSave = true,
-            },
-          },
-        },
+        stylelint_lsp = {},
       },
     },
   },
