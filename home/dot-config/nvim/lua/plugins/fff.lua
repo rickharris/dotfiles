@@ -9,11 +9,8 @@ return {
     prompt = " ",
   },
   {
-    "madmaxieee/fff-snacks.nvim",
-    dependencies = {
-      "dmtrKovalenko/fff.nvim",
-      "folke/snacks.nvim",
-    },
+    "femiagbabiaka/fff-snacks.nvim",
+    branch = "fix/use-relative-path-in-find-files",
     cmd = "FFFSnacks",
     keys = {
       {

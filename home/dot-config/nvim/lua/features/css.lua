@@ -17,7 +17,7 @@ return {
       ensure_installed = {
         "css-lsp",
         "cssmodules-language-server",
-        "stylelint-lsp",
+        "stylelint-language-server",
       },
     },
   },
@@ -44,7 +44,7 @@ return {
     ---@type conform.setupOpts
     opts = {
       formatters_by_ft = {
-        css = { "stylelint", "prettier" },
+        css = { "prettier", "oxfmt", "stylelint" },
       },
     },
   },

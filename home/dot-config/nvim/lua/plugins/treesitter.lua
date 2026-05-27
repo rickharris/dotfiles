@@ -1,7 +1,7 @@
 --- @type LazySpec
 return {
   "nvim-treesitter/nvim-treesitter",
-  version = "*",
+  version = false,
   build = ":TSUpdate",
   lazy = false,
   opts_extend = { "ensure_installed" },
@@ -12,8 +12,4 @@ return {
     highlight = { enable = true },
     indent = { enable = true },
   },
-  ---@param opts TSConfig
-  config = function(_, opts)
-    require("nvim-treesitter.configs").setup(opts)
-  end,
 }

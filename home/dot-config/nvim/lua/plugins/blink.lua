@@ -8,6 +8,9 @@ return {
   ---@type blink.cmp.Config
   opts = {
     completion = { documentation = { auto_show = true } },
+    fuzzy = {
+      implementation = "prefer_rust",
+    },
   },
   opts_extend = { "sources.default" },
 }
