@@ -129,7 +129,11 @@ vim.lsp.config("lua_ls", {
   ---@module 'lspconfig'
   ---@type lspconfig.settings.lua_ls
   settings = {
-    Lua = { format = { enable = false } },
+    Lua = {
+      semantic = { enable = false },
+      diagnostics = { libraryFiles = "Disable" },
+      format = { enable = false },
+    }
   },
 })
 
