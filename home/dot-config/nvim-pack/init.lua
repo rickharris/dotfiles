@@ -646,6 +646,23 @@ vim.keymap.set("n", "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>")
 vim.keymap.set("n", "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>")
 vim.keymap.set("n", "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>")
 
+-- ## Terminal
+local function toggle_terminal()
+  Snacks.terminal.toggle(nil, { win = { position = "right" } })
+end
+vim.keymap.set(
+  { "n", "t" },
+  "<c-/>",
+  toggle_terminal,
+  { desc = "Toggle terminal" }
+)
+vim.keymap.set(
+  { "n", "t" },
+  "<c-_>",
+  toggle_terminal,
+  { desc = "Toggle terminal" }
+)
+
 -- ## Sidekick
 vim.keymap.set("n", "<tab>", function()
   if not require("sidekick").nes_jump_or_apply() then
