@@ -1,0 +1,69 @@
+vim.loader.enable()
+
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
+vim.o.number = true
+
+vim.pack.add({
+  "https://github.com/folke/lazydev.nvim",
+  "https://github.com/folke/tokyonight.nvim",
+  "https://github.com/mason-org/mason.nvim",
+  "https://github.com/mason-org/mason-lspconfig.nvim",
+  "https://github.com/neovim/nvim-lspconfig",
+  "https://github.com/nvim-mini/mini.misc",
+})
+
+local misc = require("mini.misc")
+
+require("tokyonight").setup({ style = "moon" })
+require("mason").setup()
+require("mason-lspconfig").setup({
+  ensure_installed = { "lua_ls", "stylua" },
+})
+
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = "●",
+  },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "󰅚 ",
+      [vim.diagnostic.severity.WARN] = "󰀪 ",
+      [vim.diagnostic.severity.INFO] = "󰋽 ",
+      [vim.diagnostic.severity.HINT] = "󰌶 ",
+    },
+  },
+  jump = {
+    on_jump = function(_, bufnr)
+      vim.diagnostic.open_float({
+        bufnr = bufnr,
+        scope = "cursor",
+        focus = false,
+      })
+    end,
+  },
+})
+
+misc.safely("filetype:lua", function()
+  require("lazydev").setup({
+    library = {
+      -- See the configuration section for more details
+      -- Load luvit types when the `vim.uv` word is found
+      { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+    },
+  })
+end)
+
+vim.lsp.config("lua_ls", {
+  ---@module 'lspconfig'
+  ---@type lspconfig.settings.lua_ls
+  settings = {
+    Lua = {
+      format = { enable = false },
+    },
+  },
+})
+
+vim.cmd.colorscheme("tokyonight")
+vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
