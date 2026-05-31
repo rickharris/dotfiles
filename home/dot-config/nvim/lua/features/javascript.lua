@@ -23,6 +23,8 @@ return {
         "deno",
         "eslint-lsp",
         "graphql-language-service-cli",
+        "oxlint",
+        "oxfmt",
         "vtsls",
       },
     },
@@ -30,27 +32,45 @@ return {
   {
     "neovim/nvim-lspconfig",
     optional = true,
-    opts = {
-      servers = {
-        denols = {
-          workspace_required = true,
-          root_markers = { "deno.json", "deno.jsonc" },
-        },
-        eslint = {},
-        graphql = {},
-        vtsls = {
-          on_attach = function(client)
-            client.server_capabilities.documentFormattingProvider = false
-            client.server_capabilities.documentRangeFormattingProvider = false
-          end,
-          settings = {
-            vtsls = {
-              autoUseWorkspaceTsdk = true,
+    init = function() end,
+    opts = function(_, opts)
+      local oxlint_base_on_attach = vim.lsp.config.oxlint.on_attach
+      return vim.tbl_deep_extend("force", opts, {
+        servers = {
+          denols = {
+            workspace_required = true,
+            root_markers = { "deno.json", "deno.jsonc" },
+          },
+          eslint = {},
+          graphql = {},
+          oxfmt = {},
+          oxlint = {
+            on_attach = function(client, bufnr)
+              if not oxlint_base_on_attach then
+                return
+              end
+
+              oxlint_base_on_attach(client, bufnr)
+              vim.api.nvim_create_autocmd("BufWritePre", {
+                buffer = bufnr,
+                command = "LspOxlintFixAll",
+              })
+            end,
+          },
+          vtsls = {
+            on_attach = function(client)
+              client.server_capabilities.documentFormattingProvider = false
+              client.server_capabilities.documentRangeFormattingProvider = false
+            end,
+            settings = {
+              vtsls = {
+                autoUseWorkspaceTsdk = true,
+              },
             },
           },
         },
-      },
-    },
+      })
+    end,
   },
   {
 

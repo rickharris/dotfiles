@@ -24,28 +24,37 @@ return {
   {
     "neovim/nvim-lspconfig",
     optional = true,
-    opts = {
-      servers = {
-        cssls = {},
-        cssmodules_ls = {
-          settings = {
-            capabilities = {
-              definitionProvider = false,
+    opts = function(_, opts)
+      local stylelint_base_on_attach = vim.lsp.config.stylelint_lsp.on_attach
+
+      return vim.tbl_deep_extend("force", opts, {
+        servers = {
+          --- @type vim.lsp.Config
+          cssls = {},
+          --- @type vim.lsp.Config
+          cssmodules_ls = {
+            settings = {
+              capabilities = {
+                definitionProvider = false,
+              },
             },
           },
+          --- @type vim.lsp.Config
+          stylelint_lsp = {
+            on_attach = function(client, bufnr)
+              if not stylelint_base_on_attach then
+                return
+              end
+
+              stylelint_base_on_attach(client, bufnr)
+              vim.api.nvim_create_autocmd("BufWritePre", {
+                buffer = bufnr,
+                command = "LspStylelintFixAll",
+              })
+            end,
+          },
         },
-        stylelint_lsp = {},
-      },
-    },
-  },
-  {
-    "stevearc/conform.nvim",
-    ---@module 'conform'
-    ---@type conform.setupOpts
-    opts = {
-      formatters_by_ft = {
-        css = { "prettier", "oxfmt", "stylelint" },
-      },
-    },
+      })
+    end,
   },
 }
