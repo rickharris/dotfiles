@@ -87,6 +87,19 @@ install() {
     fi
   fi
 
+  # Migrate claude-code off the Homebrew cask if it was installed that way
+  # previously. The cask disables Claude Code's built-in auto-update, so we
+  # prefer the native installer going forward.
+  if brew list --cask claude-code >/dev/null 2>&1; then
+    echo -e "\nRemoving Homebrew-installed claude-code…"
+    brew uninstall --cask claude-code
+  fi
+
+  if ! command -v claude >/dev/null 2>&1; then
+    echo -e "\nInstalling Claude Code…"
+    curl -fsSL https://claude.ai/install.sh | bash
+  fi
+
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
   # should be running and this step can be skipped.

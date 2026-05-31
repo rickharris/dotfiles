@@ -29,7 +29,6 @@ brew 'zsh-vi-mode'
 brew 'zoxide'
 
 cask '1password'
-cask 'claude-code'
 cask 'copilot-cli'
 cask 'firefox'
 cask 'font-maple-mono-nf'
