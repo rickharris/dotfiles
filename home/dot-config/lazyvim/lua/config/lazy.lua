@@ -19,7 +19,8 @@ require("lazy").setup({
     -- add LazyVim and import its plugins
     {
       "rickharris/LazyVim",
-      branch = "oxfmt-option-require-config",
+      branch = "personal",
+      version = false,
       import = "lazyvim.plugins",
     },
     -- LazyVim extras

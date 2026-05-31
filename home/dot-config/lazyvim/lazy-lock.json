@@ -1,8 +1,7 @@
 {
-  "LazyVim": { "branch": "oxfmt-option-require-config", "commit": "870d5a54dfd610644e42b907882e222398896dc6" },
+  "LazyVim": { "branch": "personal", "commit": "2f31b64791a89c6b9333d8ec2a89ddaae2d8dc69" },
   "SchemaStore.nvim": { "branch": "main", "commit": "7e88652d0291bfd4c988737c176fa59e187904f2" },
   "async.nvim": { "branch": "main", "commit": "7a1d7d49933fbe902b84b55f352a3b10fd587331" },
-  "auto-dark-mode.nvim": { "branch": "master", "commit": "e300259ec777a40b4b9e3c8e6ade203e78d15881" },
   "blink.cmp": { "branch": "main", "commit": "4b18c32adef2898f95cdef6192cbd5796c1a332d" },
   "bufferline.nvim": { "branch": "main", "commit": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3" },
   "catppuccin": { "branch": "main", "commit": "0a5de4da015a175f416d6ef1eda84661623e0500" },
