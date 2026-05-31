@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "opus",
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
@@ -15,5 +16,6 @@
       ],
       "allowLocalBinding": true
     }
-  }
+  },
+  "skipAutoPermissionPrompt": true
 }
