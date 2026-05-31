@@ -17,5 +17,9 @@
       "allowLocalBinding": true
     }
   },
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "statusLine": {
+    "type": "command",
+    "command": "sh /Users/rick/.claude/statusline-command.sh"
+  }
 }
