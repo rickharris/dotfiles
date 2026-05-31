@@ -31,10 +31,7 @@ vim.pack.add({
   "https://github.com/NeogitOrg/neogit",
   "https://github.com/neovim/nvim-lspconfig",
   "https://github.com/nvim-mini/mini.icons",
-  "https://github.com/nvim-mini/mini.misc",
 })
-
-local misc = require("mini.misc")
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -67,15 +64,19 @@ vim.diagnostic.config({
   },
 })
 
-misc.safely("filetype:lua", function()
-  require("lazydev").setup({
-    library = {
-      -- See the configuration section for more details
-      -- Load luvit types when the `vim.uv` word is found
-      { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-    },
-  })
-end)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
+  once = true,
+  callback = function()
+    require("lazydev").setup({
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    })
+  end,
+})
 
 vim.lsp.config("lua_ls", {
   ---@module 'lspconfig'
@@ -88,7 +89,11 @@ vim.lsp.config("lua_ls", {
 })
 
 vim.cmd.colorscheme("tokyonight")
-vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
+vim.api.nvim_create_autocmd("BufWritePre", {
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+})
 
 require("which-key").add({
   {
