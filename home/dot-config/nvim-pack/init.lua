@@ -653,6 +653,10 @@ vim.keymap.set("n", "<tab>", function()
   end
 end, { expr = true, desc = "Apply next edit suggestion" })
 
+vim.keymap.set({ "n", "t", "i", "x" }, "<c-.>", function()
+  require("sidekick.cli").focus()
+end, { desc = "Focus sidekick CLI" })
+
 -- ## which-key leader bindings
 
 local function run_latest_task(action)
@@ -686,6 +690,68 @@ require("which-key").add({
     end,
     mode = { "n", "v" },
     desc = "Search and Replace",
+  },
+
+  -- ai (sidekick)
+  { "<leader>a", group = "ai" },
+  {
+    "<leader>aa",
+    function()
+      require("sidekick.cli").toggle()
+    end,
+    desc = "Toggle CLI",
+  },
+  {
+    "<leader>as",
+    function()
+      require("sidekick.cli").select()
+    end,
+    desc = "Select CLI",
+  },
+  {
+    "<leader>ad",
+    function()
+      require("sidekick.cli").close()
+    end,
+    desc = "Detach session",
+  },
+  {
+    "<leader>at",
+    function()
+      require("sidekick.cli").send({ msg = "{this}" })
+    end,
+    mode = { "n", "x" },
+    desc = "Send this",
+  },
+  {
+    "<leader>af",
+    function()
+      require("sidekick.cli").send({ msg = "{file}" })
+    end,
+    desc = "Send file",
+  },
+  {
+    "<leader>av",
+    function()
+      require("sidekick.cli").send({ msg = "{selection}" })
+    end,
+    mode = { "x" },
+    desc = "Send selection",
+  },
+  {
+    "<leader>ap",
+    function()
+      require("sidekick.cli").prompt()
+    end,
+    mode = { "n", "x" },
+    desc = "Select prompt",
+  },
+  {
+    "<leader>ac",
+    function()
+      require("sidekick.cli").toggle({ name = "claude", focus = true })
+    end,
+    desc = "Toggle Claude",
   },
 
   -- buffers
