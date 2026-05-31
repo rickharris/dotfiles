@@ -8,6 +8,7 @@ vim.o.number = true
 vim.pack.add({
   "https://github.com/folke/lazydev.nvim",
   "https://github.com/folke/tokyonight.nvim",
+  "https://github.com/folke/which-key.nvim",
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/neovim/nvim-lspconfig",
@@ -17,6 +18,7 @@ vim.pack.add({
 local misc = require("mini.misc")
 
 require("tokyonight").setup({ style = "moon" })
+require("which-key").setup()
 require("mason").setup()
 require("mason-lspconfig").setup({
   ensure_installed = { "lua_ls", "stylua" },
@@ -67,3 +69,8 @@ vim.lsp.config("lua_ls", {
 
 vim.cmd.colorscheme("tokyonight")
 vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
+
+require("which-key").add({
+  { "<leader>b", group = "buffer" },
+  { "<leader>bd", "<cmd>bdelete", mode = "n", desc = "delete buffer" },
+})
