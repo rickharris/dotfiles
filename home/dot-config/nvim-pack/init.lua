@@ -855,6 +855,21 @@ require("which-key").add({
   },
   { "<leader>f", group = "find" },
   {
+    "<leader>fc",
+    function()
+      Snacks.picker.colorschemes({
+        -- Drop Neovim's built-in colorschemes, which live under $VIMRUNTIME.
+        transform = function(item)
+          if item.file and item.file:find(vim.env.VIMRUNTIME, 1, true) then
+            return false
+          end
+          return item
+        end,
+      })
+    end,
+    desc = "Colorschemes",
+  },
+  {
     "<leader>fi",
     function()
       Snacks.picker.icons()
