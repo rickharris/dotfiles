@@ -258,7 +258,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 -- # Plugin setups
 
--- ## mason + LSP/tool installation
+-- ## Mason + LSP/tool installation
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -286,7 +286,7 @@ require("mason-tool-installer").setup({
   ensure_installed = { "prettier", "shfmt", "shellcheck" },
 })
 
--- ## conform formatting
+-- ## Conform formatting
 
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
@@ -299,12 +299,12 @@ require("conform").setup({
 })
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
--- ## icons (must run before any plugin that requires nvim-web-devicons)
+-- ## Icons (must run before any plugin that requires nvim-web-devicons)
 
 require("mini.icons").setup()
 require("mini.icons").mock_nvim_web_devicons()
 
--- ## colors
+-- ## Colors
 
 ---@diagnostic disable-next-line: missing-fields
 require("tokyonight").setup({ style = "moon" })
@@ -319,7 +319,7 @@ require("auto-dark-mode").setup({
 })
 vim.cmd.colorscheme("tokyonight")
 
--- ## core ui
+-- ## Core UI
 
 require("which-key").setup()
 
@@ -417,7 +417,7 @@ require("noice").setup({
   },
 })
 
--- ## editing
+-- ## Editing
 
 require("nvim-autopairs").setup({
   disable_filetype = { "snacks_picker_input", "grug-far" },
@@ -426,7 +426,7 @@ require("nvim-surround").setup({})
 require("yanky").setup({})
 require("nvim-highlight-colors").setup({})
 
--- ## completion
+-- ## Completion
 
 require("blink.cmp").setup({
   completion = { documentation = { auto_show = true } },
@@ -444,7 +444,7 @@ require("blink.cmp").setup({
   },
 })
 
--- ## treesitter
+-- ## Treesitter
 
 require("nvim-treesitter").install({
   "bash",
@@ -479,7 +479,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- ## files / search
+-- ## Files / search
 
 require("mini.files").setup({
   mappings = { synchronize = "<cr>" },
@@ -490,7 +490,7 @@ require("grug-far").setup({ transient = true })
 require("fff").setup({ prompt = " " })
 require("fff-snacks").setup()
 
--- ## git
+-- ## Git
 
 require("gitsigns").setup({
   on_attach = function(bufnr)
@@ -550,7 +550,7 @@ require("octo").setup({ picker = "snacks", enable_builtin = true })
 require("litee.lib").setup()
 require("litee.gh").setup({})
 
--- ## test / tasks
+-- ## Test / tasks
 
 ---@diagnostic disable-next-line: missing-fields
 require("neotest").setup({
@@ -564,11 +564,11 @@ require("neotest").setup({
 
 require("overseer").setup({})
 
--- ## ai
+-- ## AI
 
 require("sidekick").setup({})
 
--- ## misc
+-- ## Misc
 
 require("render-markdown").setup({ code = { border = "thin" } })
 
@@ -590,7 +590,7 @@ vim.api.nvim_create_autocmd("PackChanged", {
 
 -- # Keymaps
 
--- ## yanky put / cycle
+-- ## Yanky put / cycle
 vim.keymap.set({ "n", "x" }, "y", "<Plug>(YankyYank)", { desc = "Yank" })
 vim.keymap.set(
   { "n", "x" },
@@ -639,14 +639,14 @@ vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)")
 vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)")
 vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)")
 
--- ## tmux navigation
+-- ## Tmux navigation
 vim.keymap.set("n", "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>")
 vim.keymap.set("n", "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>")
 vim.keymap.set("n", "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>")
 vim.keymap.set("n", "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>")
 vim.keymap.set("n", "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>")
 
--- ## sidekick
+-- ## Sidekick
 vim.keymap.set("n", "<tab>", function()
   if not require("sidekick").nes_jump_or_apply() then
     return "<Tab>"
@@ -657,7 +657,7 @@ vim.keymap.set({ "n", "t", "i", "x" }, "<c-.>", function()
   require("sidekick.cli").focus()
 end, { desc = "Focus sidekick CLI" })
 
--- ## which-key leader bindings
+-- ## Which-key leader bindings
 
 local function run_latest_task(action)
   local overseer = require("overseer")
@@ -670,14 +670,34 @@ local function run_latest_task(action)
 end
 
 require("which-key").add({
-  -- find / search
-  { "<leader><leader>", "<cmd>FFFSnacks<cr>", desc = "Find files" },
+  {
+    "<leader><leader>",
+    "<cmd>FFFSnacks<cr>",
+    desc = "Find files",
+  },
   {
     "<leader>/",
     function()
       Snacks.picker.grep()
     end,
     desc = "Grep",
+  },
+  {
+    "<leader>e",
+    function()
+      local mf = require("mini.files")
+      if not mf.close() then
+        mf.open(vim.api.nvim_buf_get_name(0), false)
+      end
+    end,
+    desc = "Toggle file explorer",
+  },
+  {
+    "<leader>p",
+    function()
+      Snacks.picker.projects()
+    end,
+    desc = "Projects",
   },
   {
     "<leader>s",
@@ -692,7 +712,6 @@ require("which-key").add({
     desc = "Search and Replace",
   },
 
-  -- ai (sidekick)
   { "<leader>a", group = "ai" },
   {
     "<leader>aa",
@@ -753,8 +772,6 @@ require("which-key").add({
     end,
     desc = "Toggle Claude",
   },
-
-  -- buffers
   { "<leader>b", group = "buffer" },
   {
     "<leader>bd",
@@ -777,22 +794,6 @@ require("which-key").add({
     "<cmd>BufferLineGroupClose ungrouped<cr>",
     desc = "Close unpinned",
   },
-  { "<leader>1", "<cmd>BufferLineGoToBuffer 1<cr>", desc = "Buffer 1" },
-  { "<leader>2", "<cmd>BufferLineGoToBuffer 2<cr>", desc = "Buffer 2" },
-  { "<leader>3", "<cmd>BufferLineGoToBuffer 3<cr>", desc = "Buffer 3" },
-  { "<leader>4", "<cmd>BufferLineGoToBuffer 4<cr>", desc = "Buffer 4" },
-
-  -- files / picker
-  {
-    "<leader>e",
-    function()
-      local mf = require("mini.files")
-      if not mf.close() then
-        mf.open(vim.api.nvim_buf_get_name(0), false)
-      end
-    end,
-    desc = "Toggle file explorer",
-  },
   { "<leader>f", group = "find" },
   {
     "<leader>fi",
@@ -807,8 +808,6 @@ require("which-key").add({
     mode = { "n", "x" },
     desc = "Yank history",
   },
-
-  -- git
   { "<leader>g", group = "git" },
   { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
   { "<leader>gd", "<cmd>CodeDiff<cr>", desc = "Diff view" },
@@ -834,8 +833,6 @@ require("which-key").add({
     mode = { "n", "x" },
     desc = "Browse (copy permalink)",
   },
-
-  -- github (gh.nvim)
   { "<leader>gh", group = "github" },
   { "<leader>ghc", group = "commits" },
   { "<leader>ghcc", "<cmd>GHCloseCommit<cr>", desc = "Close" },
@@ -868,8 +865,6 @@ require("which-key").add({
   { "<leader>ghtc", "<cmd>GHCreateThread<cr>", desc = "Create" },
   { "<leader>ghtn", "<cmd>GHNextThread<cr>", desc = "Next" },
   { "<leader>ghtt", "<cmd>GHToggleThread<cr>", desc = "Toggle" },
-
-  -- octo
   { "<leader>o", group = "octo" },
   { "<leader>oi", "<cmd>Octo issue list<cr>", desc = "Issues" },
   { "<leader>op", "<cmd>Octo pr list<cr>", desc = "PRs" },
@@ -884,17 +879,6 @@ require("which-key").add({
     end,
     desc = "Search GitHub",
   },
-
-  -- projects (snacks)
-  {
-    "<leader>p",
-    function()
-      Snacks.picker.projects()
-    end,
-    desc = "Projects",
-  },
-
-  -- run / tasks (overseer)
   { "<leader>r", group = "run" },
   { "<leader>rr", "<cmd>OverseerRun<cr>", desc = "Run task" },
   {
@@ -912,8 +896,6 @@ require("which-key").add({
     end,
     desc = "Output of latest",
   },
-
-  -- test (neotest)
   { "<leader>t", group = "test" },
   {
     "<leader>tt",
