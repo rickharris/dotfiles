@@ -1,11 +1,11 @@
 local colorschemes = {
   dark = "tokyonight",
-  light = "dawnfox",
+  light = "tokyonight",
 }
 
 ---@param bg "dark" | "light"
 local set_colorscheme = function(bg)
-  vim.api.nvim_set_option_value("background", bg, {})
+  -- vim.api.nvim_set_option_value("background", bg, {})
   vim.cmd("colorscheme " .. colorschemes[bg])
 end
 
