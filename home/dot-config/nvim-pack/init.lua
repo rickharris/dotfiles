@@ -15,17 +15,19 @@ vim.pack.add({
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/NeogitOrg/neogit",
   "https://github.com/neovim/nvim-lspconfig",
+  "https://github.com/nvim-mini/mini.icons",
   "https://github.com/nvim-mini/mini.misc",
 })
 
 local misc = require("mini.misc")
 
-require("tokyonight").setup({ style = "moon" })
-require("which-key").setup()
 require("mason").setup()
 require("mason-lspconfig").setup({
   ensure_installed = { "lua_ls", "stylua" },
 })
+require("mini.icons").setup()
+require("tokyonight").setup({ style = "moon" })
+require("which-key").setup()
 
 vim.diagnostic.config({
   virtual_text = {
@@ -74,6 +76,13 @@ vim.cmd.colorscheme("tokyonight")
 vim.cmd([[autocmd BufWritePre * lua vim.lsp.buf.format()]])
 
 require("which-key").add({
+  {
+    "<leader><space>",
+    function()
+      require("snacks").picker.smart()
+    end,
+    desc = "find files",
+  },
   { "<leader>b", group = "buffer" },
   { "<leader>bd", "<cmd>bdelete", mode = "n", desc = "delete buffer" },
   { "<leader>g", group = "git" },
