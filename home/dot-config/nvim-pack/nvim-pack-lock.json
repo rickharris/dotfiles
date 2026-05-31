@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "codediff.nvim": {
+      "rev": "29b06f37251f2e010f53a0892573b2ec03d165e2",
+      "src": "https://github.com/esmuellert/codediff.nvim"
+    },
     "lazydev.nvim": {
       "rev": "ff2cbcba459b637ec3fd165a2be59b7bbaeedf0d",
       "src": "https://github.com/folke/lazydev.nvim"
@@ -20,9 +24,17 @@
       "rev": "eb2246ede307fc863a12e9d9b0fa4b7ca9b88188",
       "src": "https://github.com/nvim-mini/mini.misc"
     },
+    "neogit": {
+      "rev": "99326a1310fb2d616b455d2fd16d01bf00682f06",
+      "src": "https://github.com/NeogitOrg/neogit"
+    },
     "nvim-lspconfig": {
       "rev": "9573948c38bfabeec353ae7dd7d3ffec4c506a6b",
       "src": "https://github.com/neovim/nvim-lspconfig"
+    },
+    "snacks.nvim": {
+      "rev": "882c996cf28183f4d63640de0b4c02ec886d01f2",
+      "src": "https://github.com/folke/snacks.nvim"
     },
     "tokyonight.nvim": {
       "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
