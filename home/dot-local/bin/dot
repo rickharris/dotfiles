@@ -35,13 +35,13 @@ install() {
     brew install --cask 1password
   fi
 
-  if test ! "$(which op)"; then
+  if ! command -v op >/dev/null 2>&1; then
     echo -e "\nInstalling 1Password CLI…"
     brew install --cask 1password-cli
   fi
 
   # Open 1Password and wait for user to sign in
-  setup1p=$(op account list 2>/dev/null)
+  setup1p=$(op account list 2>/dev/null || true)
   if [ -z "$setup1p" ]; then
     while [ -z "$setup1p" ]; do
       echo -e "\n1Password needs to be set up before continuing."
