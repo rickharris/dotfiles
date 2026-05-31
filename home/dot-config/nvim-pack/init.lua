@@ -35,7 +35,7 @@ vim.pack.add({
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "lua_ls", "stylua" },
+  ensure_installed = { "lua_ls", "oxfmt", "oxlint", "stylua" },
 })
 require("mini.icons").setup()
 require("tokyonight").setup({ style = "moon" })
@@ -86,6 +86,21 @@ vim.lsp.config("lua_ls", {
       format = { enable = false },
     },
   },
+})
+
+local oxlint_base_on_attach = vim.lsp.config.oxlint.on_attach
+vim.lsp.config("oxlint", {
+  on_attach = function(client, bufnr)
+    if not oxlint_base_on_attach then
+      return
+    end
+
+    oxlint_base_on_attach(client, bufnr)
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = bufnr,
+      command = "LspOxlintFixAll",
+    })
+  end,
 })
 
 vim.cmd.colorscheme("tokyonight")
