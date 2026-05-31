@@ -49,6 +49,7 @@ vim.pack.add({
   "https://github.com/brenoprata10/nvim-highlight-colors",
   "https://github.com/christoomey/vim-tmux-navigator",
   "https://github.com/dmtrKovalenko/fff.nvim",
+  "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
   "https://github.com/femiagbabiaka/fff-snacks.nvim",
   "https://github.com/f-person/auto-dark-mode.nvim",
@@ -309,6 +310,43 @@ require("mini.icons").setup()
 require("mini.icons").mock_nvim_web_devicons()
 
 -- ## Colors
+
+require("nightfox").setup({
+  options = {
+    modules = {
+      neogit = false,
+    },
+    styles = {
+      comments = "italic",
+    },
+  },
+  palettes = {
+    dawnfox = {
+      -- The default dawnfox yellow does not have enough contrast for my eyes.
+      -- These values are the colors from the theme, shaded down by 0.25.
+      yellow = {
+        base = "#b07627",
+        bright = "#b37e35",
+        dim = "#a66c1b",
+      },
+    },
+  },
+  groups = {
+    all = {
+      -- Nightfox themes set `NormalFloat` to have a darker background color to
+      -- contrast it to the standard background color, but float border and
+      -- title have the normal background. This results in a weird two-tone
+      -- theme for floating windows. I prefer to have NormalFloat, FloatBorder,
+      -- and FloatTitle to all have matching styles.
+      FloatBorder = {
+        link = "NormalFloat",
+      },
+      FloatTitle = {
+        link = "NormalFloat",
+      },
+    },
+  },
+})
 
 ---@diagnostic disable-next-line: missing-fields
 require("tokyonight").setup({ style = "moon" })
