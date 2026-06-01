@@ -47,7 +47,7 @@ vim.pack.add({
   "https://github.com/akinsho/bufferline.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
   "https://github.com/brenoprata10/nvim-highlight-colors",
-  "https://github.com/christoomey/vim-tmux-navigator",
+  "https://github.com/coder/claudecode.nvim",
   "https://github.com/dmtrKovalenko/fff.nvim",
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
@@ -134,7 +134,7 @@ vim.lsp.config("lua_ls", {
       semantic = { enable = false },
       diagnostics = { libraryFiles = "Disable" },
       format = { enable = false },
-    }
+    },
   },
 })
 
@@ -608,7 +608,11 @@ require("overseer").setup({})
 
 -- ## AI
 
+-- sidekick provides Copilot next-edit-suggestions (the <tab> keymap below).
 require("sidekick").setup({})
+
+-- claudecode connects Neovim to the Claude Code CLI over its MCP websocket.
+require("claudecode").setup({})
 
 -- ## Misc
 
@@ -681,12 +685,11 @@ vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)")
 vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)")
 vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)")
 
--- ## Tmux navigation
-vim.keymap.set("n", "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>")
-vim.keymap.set("n", "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>")
-vim.keymap.set("n", "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>")
-vim.keymap.set("n", "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>")
-vim.keymap.set("n", "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>")
+-- ## Window navigation
+vim.keymap.set({ "n", "t" }, "<c-h>", "<cmd>wincmd h<cr>")
+vim.keymap.set({ "n", "t" }, "<c-j>", "<cmd>wincmd j<cr>")
+vim.keymap.set({ "n", "t" }, "<c-k>", "<cmd>wincmd k<cr>")
+vim.keymap.set({ "n", "t" }, "<c-l>", "<cmd>wincmd l<cr>")
 
 -- ## Terminal
 local function toggle_terminal()
@@ -705,16 +708,20 @@ vim.keymap.set(
   { desc = "Toggle terminal" }
 )
 
--- ## Sidekick
+-- ## Sidekick (next edit suggestions)
 vim.keymap.set("n", "<tab>", function()
   if not require("sidekick").nes_jump_or_apply() then
     return "<Tab>"
   end
 end, { expr = true, desc = "Apply next edit suggestion" })
 
-vim.keymap.set({ "n", "t", "i", "x" }, "<c-.>", function()
-  require("sidekick.cli").focus()
-end, { desc = "Focus sidekick CLI" })
+-- ## Claude Code
+vim.keymap.set(
+  { "n", "t", "i", "x" },
+  "<c-.>",
+  "<cmd>ClaudeCodeFocus<cr>",
+  { desc = "Focus Claude" }
+)
 
 -- ## Which-key leader bindings
 
@@ -772,65 +779,23 @@ require("which-key").add({
   },
 
   { "<leader>a", group = "ai" },
-  {
-    "<leader>aa",
-    function()
-      require("sidekick.cli").toggle()
-    end,
-    desc = "Toggle CLI",
-  },
+  { "<leader>aa", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+  { "<leader>af", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add file" },
   {
     "<leader>as",
-    function()
-      require("sidekick.cli").select()
-    end,
-    desc = "Select CLI",
-  },
-  {
-    "<leader>ad",
-    function()
-      require("sidekick.cli").close()
-    end,
-    desc = "Detach session",
-  },
-  {
-    "<leader>at",
-    function()
-      require("sidekick.cli").send({ msg = "{this}" })
-    end,
-    mode = { "n", "x" },
-    desc = "Send this",
-  },
-  {
-    "<leader>af",
-    function()
-      require("sidekick.cli").send({ msg = "{file}" })
-    end,
-    desc = "Send file",
-  },
-  {
-    "<leader>av",
-    function()
-      require("sidekick.cli").send({ msg = "{selection}" })
-    end,
+    "<cmd>ClaudeCodeSend<cr>",
     mode = { "x" },
     desc = "Send selection",
   },
+  { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume session" },
   {
-    "<leader>ap",
-    function()
-      require("sidekick.cli").prompt()
-    end,
-    mode = { "n", "x" },
-    desc = "Select prompt",
+    "<leader>aC",
+    "<cmd>ClaudeCode --continue<cr>",
+    desc = "Continue session",
   },
-  {
-    "<leader>ac",
-    function()
-      require("sidekick.cli").toggle({ name = "claude", focus = true })
-    end,
-    desc = "Toggle Claude",
-  },
+  { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select model" },
+  { "<leader>ay", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+  { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
   { "<leader>b", group = "buffer" },
   {
     "<leader>bd",
