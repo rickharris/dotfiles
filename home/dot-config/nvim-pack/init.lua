@@ -68,6 +68,7 @@ vim.pack.add({
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
+  "https://github.com/mrjones2014/smart-splits.nvim",
   "https://github.com/MunifTanjim/nui.nvim",
   "https://github.com/NeogitOrg/neogit",
   "https://github.com/neovim/nvim-lspconfig",
@@ -459,6 +460,10 @@ require("noice").setup({
   },
 })
 
+-- ## Windows
+
+require("smart-splits").setup({ default_amount = 2 })
+
 -- ## Editing
 
 require("nvim-autopairs").setup({
@@ -685,11 +690,16 @@ vim.keymap.set("n", "<P", "<Plug>(YankyPutIndentBeforeShiftLeft)")
 vim.keymap.set("n", "=p", "<Plug>(YankyPutAfterFilter)")
 vim.keymap.set("n", "=P", "<Plug>(YankyPutBeforeFilter)")
 
--- ## Window navigation
-vim.keymap.set({ "n", "t" }, "<c-h>", "<cmd>wincmd h<cr>")
-vim.keymap.set({ "n", "t" }, "<c-j>", "<cmd>wincmd j<cr>")
-vim.keymap.set({ "n", "t" }, "<c-k>", "<cmd>wincmd k<cr>")
-vim.keymap.set({ "n", "t" }, "<c-l>", "<cmd>wincmd l<cr>")
+-- ## Window navigation and resize
+vim.keymap.set({ "n", "t" }, "<C-h>", require("smart-splits").move_cursor_left)
+vim.keymap.set({ "n", "t" }, "<C-j>", require("smart-splits").move_cursor_down)
+vim.keymap.set({ "n", "t" }, "<C-k>", require("smart-splits").move_cursor_up)
+vim.keymap.set({ "n", "t" }, "<C-l>", require("smart-splits").move_cursor_right)
+
+vim.keymap.set({ "n", "t" }, "<A-h>", require("smart-splits").resize_left)
+vim.keymap.set({ "n", "t" }, "<A-j>", require("smart-splits").resize_down)
+vim.keymap.set({ "n", "t" }, "<A-k>", require("smart-splits").resize_up)
+vim.keymap.set({ "n", "t" }, "<A-l>", require("smart-splits").resize_right)
 
 -- ## Terminal
 local function toggle_terminal()
@@ -817,6 +827,19 @@ require("which-key").add({
     "<leader>bu",
     "<cmd>BufferLineGroupClose ungrouped<cr>",
     desc = "Close unpinned",
+  },
+  { "<leader>c", group = "config" },
+  {
+    "<leader>cc",
+    "<cmd>edit $MYVIMRC<cr>",
+    desc = "Edit config",
+  },
+  {
+    "<leader>cp",
+    function()
+      vim.pack.update()
+    end,
+    desc = "Plugin status",
   },
   { "<leader>f", group = "find" },
   {
