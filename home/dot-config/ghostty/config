@@ -12,3 +12,6 @@ font-feature = cv61
 font-feature = ss03
 
 theme = TokyoNight Moon
+
+# Send Option as Alt so Neovim can map <M-...> bindings.
+macos-option-as-alt = true
