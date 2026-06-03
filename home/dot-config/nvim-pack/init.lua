@@ -92,6 +92,9 @@ vim.pack.add({
   "https://github.com/windwp/nvim-autopairs",
 })
 
+-- Shared, config-agnostic local modules (see ~/.config/nvim-shared).
+vim.opt.runtimepath:append(vim.fn.expand("~/.config/nvim-shared"))
+
 -- # LSP & diagnostics
 
 vim.diagnostic.config({
@@ -425,7 +428,15 @@ require("lualine").setup({
   sections = {
     lualine_b = { { "branch", icon = "" } },
     lualine_c = { "filename", "diagnostics" },
-    lualine_x = { "diff", "filetype" },
+    lualine_x = {
+      {
+        function()
+          return require("pr_reviews").statusline()
+        end,
+      },
+      "diff",
+      "filetype",
+    },
   },
 })
 
@@ -596,6 +607,8 @@ require("octo").setup({ picker = "snacks", enable_builtin = true })
 
 require("litee.lib").setup()
 require("litee.gh").setup({})
+
+require("pr_reviews").setup({})
 
 -- ## Test / tasks
 
@@ -940,6 +953,13 @@ require("which-key").add({
       })
     end,
     desc = "Search GitHub",
+  },
+  {
+    "<leader>or",
+    function()
+      require("pr_reviews").pick()
+    end,
+    desc = "Review requests",
   },
   { "<leader>r", group = "run" },
   { "<leader>rr", "<cmd>OverseerRun<cr>", desc = "Run task" },
