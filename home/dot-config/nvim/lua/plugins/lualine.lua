@@ -17,7 +17,17 @@ return {
         },
       },
       lualine_c = { "filename", "diagnostics" },
-      lualine_x = { "diff", "filetype" },
+      lualine_x = {
+        -- Deferred require (render-time) so this is safe regardless of lazy
+        -- load order.
+        {
+          function()
+            return require("pr_reviews").statusline()
+          end,
+        },
+        "diff",
+        "filetype",
+      },
     },
   },
 }
