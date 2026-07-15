@@ -19,7 +19,7 @@ autoload -Uz compinit
 compinit
 
 export EDITOR="nvim"
-export NVIM_APPNAME="lazyvim"
+export NVIM_APPNAME="nvim-pack"
 export PATH="$PATH:$HOME/.local/bin"
 
 alias vi='$EDITOR'
