@@ -130,6 +130,12 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.lsp.config("cssls", {
+  init_options = {
+    provideFormatter = false,
+  },
+})
+
 vim.lsp.config("lua_ls", {
   ---@module 'lspconfig'
   ---@type lspconfig.settings.lua_ls
