@@ -71,11 +71,9 @@ function M.build_search_args(opts, search)
   if search and search ~= "" then
     args[#args + 1] = search
   end
-  args[#args + 1] = "draft:false"
-  args[#args + 1] = "--review-requested"
-  args[#args + 1] = reviewer
-  args[#args + 1] = "--state"
-  args[#args + 1] = state
+  args[#args + 1] = "--state=" .. state
+  args[#args + 1] = "--draft=false"
+  args[#args + 1] = "user-review-requested:" .. reviewer
   args[#args + 1] = "--limit"
   args[#args + 1] = tostring(limit)
   return args
