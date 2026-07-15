@@ -490,6 +490,20 @@ require("blink.cmp").setup({
   completion = { documentation = { auto_show = true } },
   fuzzy = { implementation = "prefer_rust" },
   cmdline = { enabled = false },
+  -- Insert-mode <tab>: snippet jump, else sidekick next-edit, else accept
+  -- the Copilot inline suggestion (same chain as LazyVim's ai extras).
+  keymap = {
+    ["<Tab>"] = {
+      "snippet_forward",
+      function()
+        if require("sidekick").nes_jump_or_apply() then
+          return true
+        end
+        return vim.lsp.inline_completion.get()
+      end,
+      "fallback",
+    },
+  },
   sources = {
     default = { "lazydev", "lsp", "path", "snippets", "buffer" },
     providers = {
@@ -626,7 +640,12 @@ require("overseer").setup({})
 
 -- ## AI
 
--- sidekick provides Copilot next-edit-suggestions (the <tab> keymap below).
+-- Copilot autocomplete comes straight from the copilot LSP server
+-- (mason-installed above); <tab> accepts via the blink keymap.
+vim.lsp.inline_completion.enable()
+
+-- sidekick provides Copilot next-edit-suggestions (the <tab> keymaps below
+-- and in the blink setup above).
 require("sidekick").setup({})
 
 -- claudecode connects Neovim to the Claude Code CLI over its MCP websocket.
@@ -737,6 +756,14 @@ vim.keymap.set("n", "<tab>", function()
     return "<Tab>"
   end
 end, { expr = true, desc = "Apply next edit suggestion" })
+
+-- ## Copilot (inline completion)
+vim.keymap.set("i", "<M-]>", function()
+  vim.lsp.inline_completion.select({ count = 1 })
+end, { desc = "Next Copilot suggestion" })
+vim.keymap.set("i", "<M-[>", function()
+  vim.lsp.inline_completion.select({ count = -1 })
+end, { desc = "Previous Copilot suggestion" })
 
 -- ## Claude Code
 vim.keymap.set(
