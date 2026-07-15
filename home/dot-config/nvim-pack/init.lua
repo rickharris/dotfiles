@@ -911,6 +911,22 @@ require("which-key").add({
     desc = "Find icon",
   },
   {
+    "<leader>fp",
+    function()
+      local dirs = {}
+      for _, dir in ipairs({
+        vim.fn.expand("~/.claude/plans"),
+        vim.fn.getcwd() .. "/.claude/plans",
+      }) do
+        if vim.fn.isdirectory(dir) == 1 then
+          table.insert(dirs, dir)
+        end
+      end
+      Snacks.picker.files({ dirs = dirs })
+    end,
+    desc = "Find plan files",
+  },
+  {
     "<leader>fy",
     "<cmd>YankyRingHistory<cr>",
     mode = { "n", "x" },
