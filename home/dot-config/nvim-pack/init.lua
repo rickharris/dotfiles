@@ -60,6 +60,7 @@ vim.pack.add({
   "https://github.com/folke/tokyonight.nvim",
   "https://github.com/folke/which-key.nvim",
   "https://github.com/gbprod/yanky.nvim",
+  "https://github.com/georgeguimaraes/review.nvim",
   "https://github.com/kylechui/nvim-surround",
   "https://github.com/ldelossa/gh.nvim",
   "https://github.com/ldelossa/litee.nvim",
@@ -628,6 +629,8 @@ require("octo").setup({ picker = "snacks", enable_builtin = true })
 require("litee.lib").setup()
 require("litee.gh").setup({})
 
+require("review").setup({})
+
 require("pr_reviews").setup({})
 
 -- ## Test / tasks
@@ -935,6 +938,7 @@ require("which-key").add({
   { "<leader>g", group = "git" },
   { "<leader>gg", "<cmd>Neogit<cr>", desc = "Neogit" },
   { "<leader>gd", "<cmd>CodeDiff<cr>", desc = "Diff view" },
+  { "<leader>gv", "<cmd>Review<cr>", desc = "Review" },
   {
     "<leader>go",
     function()
