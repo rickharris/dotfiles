@@ -3,7 +3,6 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "sh /Users/rick/.claude/statusline-command.sh"
