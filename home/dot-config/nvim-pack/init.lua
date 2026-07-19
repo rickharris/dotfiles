@@ -43,6 +43,24 @@ vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 vim.keymap.set({ "n", "v" }, "<leader>p", '"+p')
 vim.keymap.set({ "n", "v" }, "<leader>P", '"+P')
 
+-- # Build hooks
+
+-- Registered before vim.pack.add so the install events fired during a fresh
+-- setup are caught, not just later updates.
+vim.api.nvim_create_autocmd("PackChanged", {
+  callback = function(args)
+    if args.data.kind == "delete" then
+      return
+    end
+    local name = args.data.spec.name
+    if name == "fff.nvim" then
+      require("fff.download").download_or_build_binary()
+    elseif name == "nvim-treesitter" then
+      vim.cmd("TSUpdate")
+    end
+  end,
+})
+
 vim.pack.add({
   "https://github.com/akinsho/bufferline.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
@@ -663,22 +681,6 @@ require("claudecode").setup({})
 -- ## Misc
 
 require("render-markdown").setup({ code = { border = "thin" } })
-
--- # Build hooks
-
-vim.api.nvim_create_autocmd("PackChanged", {
-  callback = function(args)
-    if args.data.kind == "delete" then
-      return
-    end
-    local name = args.data.spec.name
-    if name == "fff.nvim" then
-      require("fff.download").download_or_build_binary()
-    elseif name == "nvim-treesitter" then
-      vim.cmd("TSUpdate")
-    end
-  end,
-})
 
 -- # Keymaps
 
