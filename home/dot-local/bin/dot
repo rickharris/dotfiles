@@ -46,7 +46,7 @@ install() {
     while [ -z "$setup1p" ]; do
       echo -e "\n1Password needs to be set up before continuing."
       echo "Opening 1Password app..."
-      open -a "1Password"
+      open /Applications/1Password.app || true
 
       cat <<-EOF
 
@@ -72,9 +72,6 @@ install() {
   if [ ! -d "$dotfiles" ]; then
     gh repo clone rickharris/dotfiles "$dotfiles"
   fi
-  link
-  # shellcheck source=/dev/null
-  source "$HOME"/.zshrc
 
   if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
     brew bundle --no-upgrade --file="$dotfiles"/Brewfile
@@ -86,6 +83,8 @@ install() {
       chmod go-w "$HOMEBREW_PREFIX"/share
     fi
   fi
+
+  link
 
   # Migrate claude-code off the Homebrew cask if it was installed that way
   # previously. The cask disables Claude Code's built-in auto-update, so we
@@ -108,10 +107,13 @@ install() {
   fi
 
   mise install
-  mise exec -- nvim --headless "+Lazy! restore" +qa >/dev/null
+  NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
 }
 
 link() {
+  if ! command -v stow >/dev/null 2>&1; then
+    brew install stow
+  fi
   stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles --no-folding home
 }
 
