@@ -48,14 +48,20 @@ vim.keymap.set({ "n", "v" }, "<leader>P", '"+P')
 -- Registered before vim.pack.add so the install events fired during a fresh
 -- setup are caught, not just later updates.
 vim.api.nvim_create_autocmd("PackChanged", {
-  callback = function(args)
-    if args.data.kind == "delete" then
+  callback = function(ev)
+    local name, kind = ev.data.spec.name, ev.data.kind
+    if kind ~= "install" and kind ~= "update" then
       return
     end
-    local name = args.data.spec.name
     if name == "fff.nvim" then
+      if not ev.data.active then
+        vim.cmd.packadd("fff.nvim")
+      end
       require("fff.download").download_or_build_binary()
     elseif name == "nvim-treesitter" then
+      if not ev.data.active then
+        vim.cmd.packadd("nvim-treesitter")
+      end
       vim.cmd("TSUpdate")
     end
   end,
@@ -543,7 +549,7 @@ require("blink.cmp").setup({
 
 -- ## Treesitter
 
-require("nvim-treesitter").install({
+local ts_install = require("nvim-treesitter").install({
   "bash",
   "css",
   "git_config",
@@ -567,6 +573,12 @@ require("nvim-treesitter").install({
   "yaml",
 })
 
+-- When bootstrapping headlessly (`dot`), block until parsers finish
+-- installing so quitting doesn't kill the downloads mid-flight.
+if #vim.api.nvim_list_uis() == 0 then
+  ts_install:wait(300000)
+end
+
 vim.api.nvim_create_autocmd("FileType", {
   callback = function(args)
     if pcall(vim.treesitter.start, args.buf) then
@@ -583,6 +595,13 @@ require("mini.files").setup({
 })
 
 require("grug-far").setup({ transient = true })
+
+-- The PackChanged hook only fires on install/update, so recover here if a
+-- previous session was interrupted before the binary landed on disk.
+local fff_download = require("fff.download")
+if not vim.uv.fs_stat(fff_download.get_binary_path()) then
+  fff_download.download_or_build_binary()
+end
 
 require("fff").setup({ prompt = " " })
 require("fff-snacks").setup()
