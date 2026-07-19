@@ -23,12 +23,6 @@ install() {
     brew completions link
   fi
 
-  if [[ ! -f $HOME/.ssh/id_ed25519 ]]; then
-    echo -e "\nCreating an ssh key…"
-    ssh-keygen -t ed25519
-    ssh-add --apple-use-keychain "$HOME"/.ssh/id_ed25519
-  fi
-
   # Install 1Password early so we can access passwords during gh auth login
   if [ ! -d "/Applications/1Password.app" ]; then
     echo -e "\nInstalling 1Password app…"
@@ -66,7 +60,7 @@ install() {
   fi
 
   if ! gh auth status --hostname github.com >/dev/null; then
-    gh auth login --git-protocol=ssh --hostname=github.com --web
+    gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
   if [ ! -d "$dotfiles" ]; then
