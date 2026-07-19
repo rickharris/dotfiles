@@ -1,5 +1,4 @@
 {
-    "global": { "show_in_menu_bar": true },
     "profiles": [
         {
             "complex_modifications": {
@@ -879,7 +878,6 @@
                 }
             ],
             "name": "Gaming",
-            "selected": false,
             "simple_modifications": [
                 {
                     "from": { "key_code": "caps_lock" },
