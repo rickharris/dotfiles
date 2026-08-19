@@ -71,7 +71,6 @@ vim.pack.add({
   "https://github.com/akinsho/bufferline.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
   "https://github.com/brenoprata10/nvim-highlight-colors",
-  "https://github.com/coder/claudecode.nvim",
   "https://github.com/dmtrKovalenko/fff.nvim",
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
@@ -691,11 +690,21 @@ require("overseer").setup({})
 vim.lsp.inline_completion.enable()
 
 -- sidekick provides Copilot next-edit-suggestions (the <tab> keymaps below
--- and in the blink setup above).
-require("sidekick").setup({})
-
--- claudecode connects Neovim to the Claude Code CLI over its MCP websocket.
-require("claudecode").setup({})
+-- and in the blink setup above) plus a generic terminal for AI CLI tools
+-- (Copilot CLI, Claude, Gemini, etc. -- see the <leader>a keymaps below).
+require("sidekick").setup({
+  cli = {
+    tools = {
+      -- Sidekick's terminal always sets TERM=xterm-256color, but still
+      -- inherits COLORTERM=truecolor from the outer shell. Copilot CLI
+      -- treats that combo as "render my own truecolor theme" instead of
+      -- adapting to the terminal's ANSI palette, hence the neon colors.
+      -- Clearing COLORTERM here forces it back to ANSI16 rendering, which
+      -- honors nvim's terminal_color_* (set by the tokyonight colorscheme).
+      copilot = { env = { COLORTERM = false } },
+    },
+  },
+})
 
 -- ## Misc
 
@@ -795,12 +804,14 @@ vim.keymap.set("i", "<M-[>", function()
   vim.lsp.inline_completion.select({ count = -1 })
 end, { desc = "Previous Copilot suggestion" })
 
--- ## Claude Code
+-- ## AI CLI (sidekick)
 vim.keymap.set(
   { "n", "t", "i", "x" },
   "<c-.>",
-  "<cmd>ClaudeCodeFocus<cr>",
-  { desc = "Focus Claude" }
+  function()
+    require("sidekick.cli").focus()
+  end,
+  { desc = "Focus AI CLI" }
 )
 
 -- ## Which-key leader bindings
@@ -859,23 +870,58 @@ require("which-key").add({
   },
 
   { "<leader>a", group = "ai" },
-  { "<leader>aa", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-  { "<leader>af", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add file" },
+  {
+    "<leader>aa",
+    function()
+      require("sidekick.cli").toggle()
+    end,
+    desc = "Toggle AI CLI",
+  },
   {
     "<leader>as",
-    "<cmd>ClaudeCodeSend<cr>",
-    mode = { "x" },
-    desc = "Send selection",
+    function()
+      require("sidekick.cli").select()
+    end,
+    desc = "Select AI CLI tool",
   },
-  { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume session" },
   {
-    "<leader>aC",
-    "<cmd>ClaudeCode --continue<cr>",
-    desc = "Continue session",
+    "<leader>ad",
+    function()
+      require("sidekick.cli").close()
+    end,
+    desc = "Detach AI CLI session",
   },
-  { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select model" },
-  { "<leader>ay", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-  { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+  {
+    "<leader>at",
+    function()
+      require("sidekick.cli").send({ msg = "{this}" })
+    end,
+    mode = { "n", "x" },
+    desc = "Send this",
+  },
+  {
+    "<leader>af",
+    function()
+      require("sidekick.cli").send({ msg = "{file}" })
+    end,
+    desc = "Send file",
+  },
+  {
+    "<leader>av",
+    function()
+      require("sidekick.cli").send({ msg = "{selection}" })
+    end,
+    mode = { "x" },
+    desc = "Send visual selection",
+  },
+  {
+    "<leader>ap",
+    function()
+      require("sidekick.cli").prompt()
+    end,
+    mode = { "n", "x" },
+    desc = "Select prompt",
+  },
   { "<leader>b", group = "buffer" },
   {
     "<leader>bd",
