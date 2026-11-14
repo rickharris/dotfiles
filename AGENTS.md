@@ -50,14 +50,15 @@ that it was not exercised.
 
 ## Layout
 
-| Path                            | What it is                                                                                                                  |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `home/`                         | Linked into `~` file by file. `dot-foo` becomes `.foo`.                                                                     |
-| `layers/personal/`              | A layer for personal machines only: its own `Brewfile`, plus a `folded/` package linked directory by directory (Karabiner). |
-| `Brewfile`                      | Installed on every machine. Personal-only apps go in `layers/personal/Brewfile`.                                            |
-| `home/dot-config/nvim/`         | The Neovim config (`vim.pack`). `nvim-shared/` holds Lua shared with it.                                                    |
-| `home/dot-claude/settings.json` | The user's **global** Claude Code settings, live.                                                                           |
-| `.claude/settings.json`         | Settings for agents working **in this repo**. Not linked anywhere.                                                          |
+| Path                               | What it is                                                                                                                                                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home/`                            | Linked into `~` file by file. `dot-foo` becomes `.foo`.                                                                                                                                                 |
+| `layers/personal/`                 | A layer for personal machines only: its own `Brewfile`, plus a `folded/` package linked directory by directory (Karabiner).                                                                             |
+| `Brewfile`                         | Installed on every machine. Personal-only apps go in `layers/personal/Brewfile`.                                                                                                                        |
+| `home/dot-config/nvim/`            | The Neovim config (`vim.pack`). `nvim-shared/` holds Lua shared with it.                                                                                                                                |
+| `home/dot-config/mise/config.toml` | The **global** mise config: default versions of node, Neovim and every language server, formatter and linter Neovim uses. Neovim runs them through mise shims, so a project `mise.toml` overrides them. |
+| `home/dot-claude/settings.json`    | The user's **global** Claude Code settings, live.                                                                                                                                                       |
+| `.claude/settings.json`            | Settings for agents working **in this repo**. Not linked anywhere.                                                                                                                                      |
 
 Use a `folded/` package for an app that saves config by replacing the file,
 which would otherwise turn a file-level link into a regular file.
