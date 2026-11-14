@@ -35,21 +35,36 @@ install() {
     git clone https://github.com/rickharris/dotfiles.git "$dotfiles"
   fi
 
+  # Everything that needs someone at the keyboard comes first, so the long
+  # unattended part of the install can run to the end on its own.
+
   # Ask once per machine whether it gets the personal layer. The answer is
   # recorded by writing the layers file, so this never asks again.
   if [[ ! -e $layers_file && -t 0 ]]; then
     offer_personal_layer
   fi
 
-  bundle "$dotfiles"/Brewfile
+  # Install 1Password early so we can access passwords during gh auth login
+  if [ ! -d "/Applications/1Password.app" ]; then
+    echo -e "\nInstalling 1Password app…"
+    brew install --cask 1password
+  fi
+
+  if ! command -v op >/dev/null 2>&1; then
+    echo -e "\nInstalling 1Password CLI…"
+    brew install --cask 1password-cli
+  fi
+
+  if ! command -v gh >/dev/null 2>&1; then
+    brew install gh
+  fi
 
   # Link before anything below gets a chance to write its own dotfiles. In
   # particular `gh auth login` writes ~/.gitconfig, and a regular file there
-  # would block linking ours.
+  # would block linking ours. link installs stow itself if it is missing.
   link
 
-  # Open 1Password and wait for user to sign in, so that passwords are
-  # available during gh auth login.
+  # Open 1Password and wait for user to sign in
   setup1p=$(op account list 2>/dev/null || true)
   if [ -z "$setup1p" ]; then
     while [ -z "$setup1p" ]; do
@@ -74,11 +89,11 @@ install() {
     gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
-  # Brewfiles from the other layers. The base one is done above, before
-  # linking, because linking needs stow.
+  # From here on nothing asks for input. Install every layer's Brewfile, the
+  # base repo's first.
   layers
   local layer
-  for layer in ${layer_dirs[2,-1]}; do
+  for layer in $layer_dirs; do
     if [[ -f $layer/Brewfile ]]; then
       bundle "$layer"/Brewfile
     fi
