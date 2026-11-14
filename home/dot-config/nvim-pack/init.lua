@@ -117,6 +117,24 @@ vim.pack.add({
   "https://github.com/windwp/nvim-autopairs",
 })
 
+-- vim.pack keeps the lockfile in sync with what is on disk, so a plugin
+-- dropped from the list above stays locked until it is deleted. Prune anything
+-- not added above; this must stay after the only vim.pack.add() call.
+do
+  local stale = vim
+    .iter(vim.pack.get(nil, { info = false }))
+    :filter(function(p)
+      return not p.active
+    end)
+    :map(function(p)
+      return p.spec.name
+    end)
+    :totable()
+  if #stale > 0 then
+    vim.pack.del(stale)
+  end
+end
+
 -- Shared, config-agnostic local modules (see ~/.config/nvim-shared).
 vim.opt.runtimepath:append(vim.fn.expand("~/.config/nvim-shared"))
 
