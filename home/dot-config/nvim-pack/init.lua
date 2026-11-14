@@ -71,6 +71,7 @@ vim.pack.add({
   "https://github.com/akinsho/bufferline.nvim",
   "https://github.com/b0o/SchemaStore.nvim",
   "https://github.com/brenoprata10/nvim-highlight-colors",
+  "https://github.com/cajames/copy-reference.nvim",
   "https://github.com/dmtrKovalenko/fff.nvim",
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
@@ -514,6 +515,7 @@ require("nvim-autopairs").setup({
 })
 require("nvim-surround").setup({})
 require("yanky").setup({})
+require("copy-reference").setup({})
 require("nvim-highlight-colors").setup({})
 
 -- ## Completion
@@ -713,6 +715,19 @@ require("sidekick").setup({
 require("render-markdown").setup({ code = { border = "thin" } })
 
 -- # Keymaps
+
+vim.keymap.set(
+  { "n", "x" },
+  "yr",
+  "<cmd>CopyReference line<CR>",
+  { desc = "Copy file:line reference" }
+)
+vim.keymap.set(
+  { "n", "x" },
+  "yR",
+  "<cmd>CopyReference file<CR>",
+  { desc = "Copy file path" }
+)
 
 -- ## Yanky put / cycle
 vim.keymap.set({ "n", "x" }, "y", "<Plug>(YankyYank)", { desc = "Yank" })

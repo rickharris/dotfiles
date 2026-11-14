@@ -25,6 +25,10 @@
       "rev": "016802de402556da54c36bd7359b441266b01cdd",
       "src": "https://github.com/stevearc/conform.nvim"
     },
+    "copy-reference.nvim": {
+      "rev": "6b888fa9b280724f79f33c031a2105a962c2014c",
+      "src": "https://github.com/cajames/copy-reference.nvim"
+    },
     "fff-snacks.nvim": {
       "rev": "492e91217db523810d4c17c4c5184caeded99680",
       "src": "https://github.com/femiagbabiaka/fff-snacks.nvim"
