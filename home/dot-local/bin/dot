@@ -108,21 +108,69 @@ install() {
   NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
 }
 
+# Sets layer_dirs to the base repo followed by every directory listed in the
+# layers file. A layer has the same layout as this repo: an optional home/
+# package (stowed without folding), an optional folded/ package (stowed with
+# folding) and an optional Brewfile.
+#
+# The layers file holds one directory per line. Blank lines and lines starting
+# with # are ignored, and a leading ~ expands to $HOME.
+layers() {
+  setopt local_options extended_glob
+  layer_dirs=("$dotfiles")
+  if [[ ! -f $layers_file ]]; then
+    return 0
+  fi
+
+  local line
+  while IFS= read -r line || [[ -n $line ]]; do
+    line=${${line##[[:space:]]##}%%[[:space:]]##}
+    if [[ -z $line || $line == \#* ]]; then
+      continue
+    fi
+    if [[ $line == \~* ]]; then
+      line=$HOME${line#\~}
+    fi
+    if [[ ! -d $line ]]; then
+      print -ru2 -- "dot: layer not found: $line"
+      return 1
+    fi
+    layer_dirs+=("$line")
+  done <"$layers_file"
+}
+
 link() {
   if ! command -v stow >/dev/null 2>&1; then
     brew install stow
   fi
-  stow --dir "$dotfiles" --target="$target" --restow --dotfiles --no-folding home
-  # The folded package is stowed with folding enabled so its app directories
-  # are symlinked whole. This is for apps that save config by writing a new
-  # file and renaming it over the old one (e.g. Karabiner-Elements), which
-  # would replace a file-level symlink with a regular file.
-  stow --dir "$dotfiles" --target="$target" --restow --dotfiles folded
+
+  layers
+  local layer
+  for layer in $layer_dirs; do
+    if [[ -d $layer/home ]]; then
+      stow --dir "$layer" --target="$target" --restow --dotfiles --no-folding home
+    fi
+    # The folded package is stowed with folding enabled so its app directories
+    # are symlinked whole. This is for apps that save config by writing a new
+    # file and renaming it over the old one (e.g. Karabiner-Elements), which
+    # would replace a file-level symlink with a regular file.
+    if [[ -d $layer/folded ]]; then
+      stow --dir "$layer" --target="$target" --restow --dotfiles folded
+    fi
+  done
 }
 
 unlink() {
-  stow --dir "$dotfiles" --target="$target" -D --dotfiles --no-folding home
-  stow --dir "$dotfiles" --target="$target" -D --dotfiles folded
+  layers
+  local layer
+  for layer in ${(Oa)layer_dirs}; do
+    if [[ -d $layer/folded ]]; then
+      stow --dir "$layer" --target="$target" -D --dotfiles folded
+    fi
+    if [[ -d $layer/home ]]; then
+      stow --dir "$layer" --target="$target" -D --dotfiles --no-folding home
+    fi
+  done
 }
 
 preferences() {

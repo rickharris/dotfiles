@@ -92,6 +92,46 @@ test_help_exits_0() {
   assert_out_contains "dot link"
 }
 
+test_layer_is_linked_after_base() {
+  mkdir -p "$tmp/work layer/home" # space in the path on purpose
+  touch "$tmp/base/home/dot-rc" "$tmp/work layer/home/dot-rc.local"
+  print -rl -- "# comment" "" "$tmp/work layer" >"$tmp/layers"
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.rc" "$tmp/base/home/dot-rc"
+  assert_link "$tmp/target/.rc.local" "$tmp/work layer/home/dot-rc.local"
+}
+
+test_missing_layer_fails_before_linking() {
+  touch "$tmp/base/home/dot-rc"
+  print -rl -- "$tmp/nope" >"$tmp/layers"
+  run_dot link
+  assert_rc 1
+  assert_out_contains "dot: layer not found: $tmp/nope"
+  assert_absent "$tmp/target/.rc"
+}
+
+test_layer_without_home_is_fine() {
+  mkdir -p "$tmp/work/folded/dot-config/tool"
+  touch "$tmp/work/folded/dot-config/tool/c"
+  mkdir -p "$tmp/base/home/dot-config"
+  touch "$tmp/base/home/dot-config/keep"
+  print -rl -- "$tmp/work" >"$tmp/layers"
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.config/tool" "$tmp/work/folded/dot-config/tool"
+}
+
+test_unlink_removes_layer_links() {
+  mkdir -p "$tmp/work/home"
+  touch "$tmp/work/home/dot-w"
+  print -rl -- "$tmp/work" >"$tmp/layers"
+  run_dot link
+  assert_link "$tmp/target/.w" "$tmp/work/home/dot-w"
+  run_dot unlink
+  assert_absent "$tmp/target/.w"
+}
+
 failures=0
 for t in ${(ok)functions[(I)test_*]}; do
   test_failed=0
