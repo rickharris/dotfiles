@@ -34,14 +34,15 @@ mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
 ```
 
-The formatters are pinned in `mise.toml`: `prettier` for Markdown, JSON and
-YAML, `stylua` for Lua, `taplo` for TOML, and `shfmt` and `shellcheck` for shell. Run them
-through mise (`mise exec -- prettier ...`), not from wherever else they are
+The tools are pinned in `mise.toml`: `oxfmt` for Markdown, JSON, YAML and
+TOML, `stylua` for Lua, and `shfmt` and `shellcheck` for shell. Run them
+through mise (`mise exec -- oxfmt ...`), not from wherever else they are
 installed, because their output changes between versions. On a new checkout
 run `mise trust && mise install` once.
 
-Files that apps rewrite themselves are listed in `.prettierignore`. Add a file
-there instead of fighting the app over its formatting.
+Files that apps rewrite themselves are listed under `ignorePatterns` in
+`.oxfmtrc.json`. Add a file there instead of fighting the app over its
+formatting.
 
 The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 

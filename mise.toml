@@ -5,29 +5,26 @@
 # and CI, the agent hook and `mise run` all use the same ones.
 
 [tools]
-"npm:prettier" = "3.10.1"
+"npm:oxfmt" = "0.78.0"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
 stylua = "2.6.0"
-taplo = "0.10.0"
 
 [tasks.fmt]
 description = "Format every file a formatter covers"
 run = [
-  "prettier --write --log-level warn .",
+  "oxfmt .",
   "stylua $(git ls-files '*.lua')",
-  "taplo fmt $(git ls-files '*.toml')",
-  "shfmt -ln zsh -i 2 -w home/dot-zshrc",
+  "shfmt -ln zsh -i 2 -w home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot",
   "shfmt -i 2 -w home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
 
 [tasks.lint]
 description = "Check formatting and run ShellCheck, without changing anything"
 run = [
-  "prettier --check --log-level warn .",
+  "oxfmt --check .",
   "stylua --check $(git ls-files '*.lua')",
-  "taplo fmt --check $(git ls-files '*.toml')",
-  "shfmt -ln zsh -i 2 -d home/dot-zshrc",
+  "shfmt -ln zsh -i 2 -d home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot",
   "shfmt -i 2 -d home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
   "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
