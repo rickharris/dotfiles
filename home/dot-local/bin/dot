@@ -157,6 +157,10 @@ layers() {
   if [[ $1 == --keep-going ]]; then
     keep_going=1
   fi
+  if [[ ! -d $dotfiles ]]; then
+    print -ru2 -- "dot: dotfiles repo not found: $dotfiles"
+    return 1
+  fi
   layer_dirs=("$dotfiles")
   missing_layers=()
   if [[ ! -f $layers_file ]]; then
@@ -221,11 +225,14 @@ dangling_links() {
     done
   done
 
+  # This group is one side of a pipeline, so it runs in a subshell that still
+  # has set -e. find exits non-zero when it meets a directory it cannot read,
+  # and without the `|| true` that would silently skip every later root.
   {
-    find "$target" -maxdepth 1 -type l
+    find "$target" -maxdepth 1 -type l || true
     for root in $roots; do
       if [[ -d $root && ! -L $root ]]; then
-        find "$root" -type l
+        find "$root" -type l || true
       fi
     done
   } 2>/dev/null | sort -u | while IFS= read -r link; do
@@ -268,6 +275,14 @@ link() {
   fi
 
   layers
+  # The install prompt is the only thing that writes the layers file. A machine
+  # that was set up before layers existed has never been asked, and would
+  # otherwise lose what moved into the personal layer without a word.
+  if [[ ! -e $layers_file && -d $dotfiles/layers/personal ]]; then
+    print -ru2 -- "dot: the personal layer is not enabled on this machine, because $layers_file does not exist."
+    print -ru2 -- "dot: run \`dot install\` to be asked about it, or see the Layers section of the README."
+  fi
+
   # Prune before stowing: a directory that moved from one layer to another
   # leaves a dangling link that would block stow at the new location.
   prune

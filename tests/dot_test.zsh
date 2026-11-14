@@ -9,8 +9,11 @@ repo=${0:A:h:h}
 dot=$repo/home/dot-local/bin/dot
 
 setup() {
-  tmp=$(mktemp -d)
-  tmp=${tmp:A}
+  # mktemp hands back a path through a symlinked parent on macOS (/var is a
+  # link to /private/var). Most tests use the resolved path; tmp_raw keeps the
+  # original for the tests that need the two to differ.
+  tmp_raw=$(mktemp -d)
+  tmp=${tmp_raw:A}
   mkdir -p "$tmp/base/home" "$tmp/base/folded" "$tmp/target" "$tmp/fakehome"
   export DOTFILES="$tmp/base"
   export DOT_TARGET="$tmp/target"
@@ -279,6 +282,58 @@ test_offer_personal_creates_parent_dir() {
   run_dot __offer-personal-layer <<<"n"
   assert_rc 0
   [[ -f "$tmp/cfg/dot/layers" ]] || fail "layers file not written"
+}
+
+test_prune_survives_unreadable_directory() {
+  mkdir -p "$tmp/base/home/dot-aaa/locked" "$tmp/base/home/dot-zzz/app" "$tmp/base/home/dot-zzz/keep"
+  touch "$tmp/base/home/dot-aaa/locked/f" "$tmp/base/home/dot-zzz/app/init" "$tmp/base/home/dot-zzz/keep/k"
+  run_dot link
+  rm -r "$tmp/base/home/dot-zzz/app"
+  chmod 000 "$tmp/target/.aaa/locked"
+  run_dot doctor
+  chmod 700 "$tmp/target/.aaa/locked"
+  assert_rc 1
+  assert_out_contains "dangling: $tmp/target/.zzz/app/init"
+}
+
+test_prune_with_symlinked_parent_paths() {
+  [[ $tmp_raw != $tmp ]] || return 0 # nothing to tell apart on this system
+  export DOTFILES="$tmp_raw/base" DOT_TARGET="$tmp_raw/target"
+  mkdir -p "$tmp/base/home/dot-config/app" "$tmp/base/home/dot-config/keep"
+  touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/keep/k"
+  run_dot link
+  rm -r "$tmp/base/home/dot-config/app"
+  run_dot link
+  assert_rc 0
+  assert_absent "$tmp/target/.config/app"
+}
+
+test_missing_base_repo_is_an_error() {
+  export DOTFILES="$tmp/nope"
+  run_dot link
+  assert_rc 1
+  assert_out_contains "dot: dotfiles repo not found: $tmp/nope"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "dot: dotfiles repo not found: $tmp/nope"
+}
+
+test_link_hints_when_personal_layer_was_never_offered() {
+  mkdir -p "$tmp/base/layers/personal/home"
+  touch "$tmp/base/home/dot-rc"
+  run_dot link
+  assert_rc 0
+  assert_out_contains "dot: the personal layer is not enabled"
+  assert_out_contains "$tmp/layers"
+}
+
+test_link_does_not_hint_once_layers_file_exists() {
+  mkdir -p "$tmp/base/layers/personal/home"
+  touch "$tmp/base/home/dot-rc"
+  run_dot __offer-personal-layer <<<"n"
+  run_dot link
+  assert_rc 0
+  [[ $out != *"personal layer is not enabled"* ]] || fail "hint shown although the question was answered"
 }
 
 failures=0

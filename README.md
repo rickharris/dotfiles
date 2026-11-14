@@ -39,6 +39,16 @@ personal machines. The first time `dot install` runs on a machine it asks
 whether to enable it, and records the answer by writing the layers file. To
 change the answer later, edit that file.
 
+### Machines set up before layers existed
+
+Such a machine has no layers file, so it has never been asked about the
+personal layer, and `dot link` says so. Run `dot install` to be asked, or
+create the layers file by hand.
+
+The Karabiner config used to live in `folded/` at the top of this repo. After
+pulling, delete what is left of that directory (only untracked backups) before
+linking, or the old `~/.config/karabiner` link stays in the way.
+
 ### Overriding shared config
 
 Two layers cannot provide the same file. A layer changes shared config through
