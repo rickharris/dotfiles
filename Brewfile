@@ -29,6 +29,7 @@ brew 'zsh-vi-mode'
 brew 'zoxide'
 
 cask '1password'
+cask '1password-cli'
 cask 'discord'
 cask 'font-maple-mono-nf'
 cask 'ghostty'

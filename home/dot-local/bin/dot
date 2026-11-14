@@ -8,7 +8,9 @@ target=${DOT_TARGET:-$HOME}
 layers_file=${DOT_LAYERS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/dot/layers}
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 install() {
   # Install hombrew first, which will download also download Command Line Tools
@@ -27,18 +29,21 @@ install() {
     brew completions link
   fi
 
-  # Install 1Password early so we can access passwords during gh auth login
-  if [ ! -d "/Applications/1Password.app" ]; then
-    echo -e "\nInstalling 1Password app…"
-    brew install --cask 1password
+  # The repo is public and git comes with the Command Line Tools that Homebrew
+  # just installed, so cloning needs no auth.
+  if [ ! -d "$dotfiles" ]; then
+    git clone https://github.com/rickharris/dotfiles.git "$dotfiles"
   fi
 
-  if ! command -v op >/dev/null 2>&1; then
-    echo -e "\nInstalling 1Password CLI…"
-    brew install --cask 1password-cli
-  fi
+  bundle "$dotfiles"/Brewfile
 
-  # Open 1Password and wait for user to sign in
+  # Link before anything below gets a chance to write its own dotfiles. In
+  # particular `gh auth login` writes ~/.gitconfig, and a regular file there
+  # would block linking ours.
+  link
+
+  # Open 1Password and wait for user to sign in, so that passwords are
+  # available during gh auth login.
   setup1p=$(op account list 2>/dev/null || true)
   if [ -z "$setup1p" ]; then
     while [ -z "$setup1p" ]; do
@@ -51,38 +56,27 @@ install() {
 	Please complete the following steps:
 	1. Sign in to your 1Password account
 	2. Enable the setting "Developer -> Integrate with 1Password CLI"
-	
+
 	Press Enter once you've done those things to continue...
 	EOF
       read -r
-      setup1p=$(op account list 2>/dev/null)
+      setup1p=$(op account list 2>/dev/null || true)
     done
-  fi
-
-  if ! command -v gh >/dev/null 2>&1; then
-    brew install gh
   fi
 
   if ! gh auth status --hostname github.com >/dev/null; then
     gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
-  if [ ! -d "$dotfiles" ]; then
-    gh repo clone rickharris/dotfiles "$dotfiles"
-  fi
-
-  if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
-    brew bundle --no-upgrade --file="$dotfiles"/Brewfile
-
-    # Fix permissions issue with homebrew and zsh-completions
-    # https://formulae.brew.sh/formula/zsh-completions
-    permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
-    if [[ $permissions =~ 'w' ]]; then
-      chmod go-w "$HOMEBREW_PREFIX"/share
+  # Brewfiles from the other layers. The base one is done above, before
+  # linking, because linking needs stow.
+  layers
+  local layer
+  for layer in ${layer_dirs[2,-1]}; do
+    if [[ -f $layer/Brewfile ]]; then
+      bundle "$layer"/Brewfile
     fi
-  fi
-
-  link
+  done
 
   # Migrate claude-code off the Homebrew cask if it was installed that way
   # previously. The cask disables Claude Code's built-in auto-update, so we
@@ -106,6 +100,21 @@ install() {
 
   mise install
   NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
+}
+
+# Installs what a Brewfile lists, unless it is already satisfied.
+bundle() {
+  local brewfile=$1
+  if ! brew bundle check --no-upgrade --file="$brewfile" >/dev/null; then
+    brew bundle --no-upgrade --file="$brewfile"
+
+    # Fix permissions issue with homebrew and zsh-completions
+    # https://formulae.brew.sh/formula/zsh-completions
+    permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
+    if [[ $permissions =~ 'w' ]]; then
+      chmod go-w "$HOMEBREW_PREFIX"/share
+    fi
+  fi
 }
 
 # Sets layer_dirs to the base repo followed by every directory listed in the
@@ -325,9 +334,10 @@ doctor() {
   print -r -- "dot: ok"
 }
 
-preferences() {
+# Setting Safari preferences needs Full Disk Access for the terminal, so this
+# write doubles as the check for it.
+check_full_disk_access() {
   # Enable Safari Developer Menu
-  # Used as a check for full disk access
   if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true; then
     cat <<-EOF
 Before running this script, enable Full Disk Access for your terminal.
@@ -336,6 +346,10 @@ https://support.apple.com/guide/mac-help/change-privacy-security-settings-on-mac
 EOF
     exit 1
   fi
+}
+
+preferences() {
+  check_full_disk_access
 
   # Many things taken from https://mths.be/macos
 
@@ -423,6 +437,8 @@ EOF
 }
 
 if [ $# -eq 0 ]; then
+  # Fail on missing permissions now rather than after a long install.
+  check_full_disk_access
   install
   preferences
   exit
