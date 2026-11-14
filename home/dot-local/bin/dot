@@ -99,6 +99,13 @@ install() {
     fi
   done
 
+  # GitHub's CLI for stacked pull requests. gh extensions live outside
+  # Homebrew, so the Brewfile cannot cover it.
+  if ! gh extension list | grep -q 'github/gh-stack'; then
+    echo -e "\nInstalling gh stack…"
+    gh extension install github/gh-stack
+  fi
+
   # Migrate claude-code off the Homebrew cask if it was installed that way
   # previously. The cask disables Claude Code's built-in auto-update, so we
   # prefer the native installer going forward.
