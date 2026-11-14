@@ -96,7 +96,7 @@ install() {
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
   # should be running and this step can be skipped.
-  if ! pgrep karabiner | grep -v grep >/dev/null; then
+  if ! pgrep -qi karabiner; then
     open /Applications/Karabiner-Elements.app
   fi
 
