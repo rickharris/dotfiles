@@ -805,14 +805,9 @@ vim.keymap.set("i", "<M-[>", function()
 end, { desc = "Previous Copilot suggestion" })
 
 -- ## AI CLI (sidekick)
-vim.keymap.set(
-  { "n", "t", "i", "x" },
-  "<c-.>",
-  function()
-    require("sidekick.cli").focus()
-  end,
-  { desc = "Focus AI CLI" }
-)
+vim.keymap.set({ "n", "t", "i", "x" }, "<c-.>", function()
+  require("sidekick.cli").focus()
+end, { desc = "Focus AI CLI" })
 
 -- ## Which-key leader bindings
 
@@ -873,7 +868,7 @@ require("which-key").add({
   {
     "<leader>aa",
     function()
-      require("sidekick.cli").toggle()
+      require("sidekick.cli").toggle({ name = "copilot" })
     end,
     desc = "Toggle AI CLI",
   },
@@ -894,7 +889,7 @@ require("which-key").add({
   {
     "<leader>at",
     function()
-      require("sidekick.cli").send({ msg = "{this}" })
+      require("sidekick.cli").send({ msg = "{this}", name = "copilot" })
     end,
     mode = { "n", "x" },
     desc = "Send this",
@@ -902,14 +897,14 @@ require("which-key").add({
   {
     "<leader>af",
     function()
-      require("sidekick.cli").send({ msg = "{file}" })
+      require("sidekick.cli").send({ msg = "{file}", name = "copilot" })
     end,
     desc = "Send file",
   },
   {
     "<leader>av",
     function()
-      require("sidekick.cli").send({ msg = "{selection}" })
+      require("sidekick.cli").send({ msg = "{selection}", name = "copilot" })
     end,
     mode = { "x" },
     desc = "Send visual selection",
