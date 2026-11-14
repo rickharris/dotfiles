@@ -30,14 +30,6 @@ brew 'zoxide'
 
 cask '1password'
 cask '1password-cli'
-cask 'discord'
 cask 'font-maple-mono-nf'
 cask 'ghostty'
-cask 'karabiner-elements'
 cask 'zen'
-
-# mas "1Password for Safari", id: 1569813296
-# mas "AdGuard for Safari", id: 1440147259
-# mas "Bear", id: 1091189122
-# mas "Hush", id: 1544743900
-# mas "Parcel", id: 639968404

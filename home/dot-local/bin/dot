@@ -35,6 +35,12 @@ install() {
     git clone https://github.com/rickharris/dotfiles.git "$dotfiles"
   fi
 
+  # Ask once per machine whether it gets the personal layer. The answer is
+  # recorded by writing the layers file, so this never asks again.
+  if [[ ! -e $layers_file && -t 0 ]]; then
+    offer_personal_layer
+  fi
+
   bundle "$dotfiles"/Brewfile
 
   # Link before anything below gets a chance to write its own dotfiles. In
@@ -93,13 +99,31 @@ install() {
 
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
-  # should be running and this step can be skipped.
-  if ! pgrep -qi karabiner; then
+  # should be running and this step can be skipped. It comes from the personal
+  # layer, so it may not be installed at all.
+  if [[ -d /Applications/Karabiner-Elements.app ]] && ! pgrep -qi karabiner; then
     open /Applications/Karabiner-Elements.app
   fi
 
   mise install
   NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
+}
+
+# Asks whether this machine should use the personal layer (layers/personal in
+# this repo) and writes the layers file either way.
+offer_personal_layer() {
+  local answer
+  print -n -- "Install the personal layer (apps and config for personal machines only)? [y/N] "
+  read -r answer || true
+
+  mkdir -p "${layers_file:h}"
+  {
+    print -r -- '# Layers for this machine, one directory per line. Read by `dot`.'
+    print -r -- '# Edit by hand to add or remove layers.'
+    if [[ $answer == [yY]* ]]; then
+      print -r -- "$dotfiles/layers/personal"
+    fi
+  } >"$layers_file"
 }
 
 # Installs what a Brewfile lists, unless it is already satisfied.
@@ -384,6 +408,11 @@ preferences() {
       "/Applications/Safari.app" \
       "/Applications/Zen.app" \
       "/Applications/Ghostty.app"; do
+      # Not every machine has every app, and a missing one leaves a broken
+      # tile in the Dock.
+      if [[ ! -d $app ]]; then
+        continue
+      fi
       defaults write com.apple.dock persistent-apps -array-add \
         "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>${app:A}</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
     done
@@ -469,6 +498,10 @@ doctor)
   ;;
 prefs)
   preferences
+  ;;
+__offer-personal-layer)
+  # Not a public command; it lets the tests drive the install prompt.
+  offer_personal_layer
   ;;
 help | -h | --help)
   print_help

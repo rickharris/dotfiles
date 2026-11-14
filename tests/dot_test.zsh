@@ -250,6 +250,37 @@ test_doctor_reports_dangling_and_missing_layer() {
   [[ -L "$tmp/target/.config/app/init" ]] || fail "doctor pruned a link"
 }
 
+test_offer_personal_yes_writes_layer() {
+  mkdir -p "$tmp/base/layers/personal/home"
+  touch "$tmp/base/layers/personal/home/dot-personal"
+  run_dot __offer-personal-layer <<<"y"
+  assert_rc 0
+  assert_out_contains "Install the personal layer"
+  [[ "$(grep -v '^#' "$tmp/layers")" == "$tmp/base/layers/personal" ]] || fail "layer line missing"
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.personal" "$tmp/base/layers/personal/home/dot-personal"
+}
+
+test_offer_personal_no_writes_header_only() {
+  mkdir -p "$tmp/base/layers/personal/home"
+  touch "$tmp/base/layers/personal/home/dot-personal"
+  run_dot __offer-personal-layer <<<""
+  assert_rc 0
+  [[ -f "$tmp/layers" ]] || fail "layers file not written"
+  [[ -z "$(grep -v '^#' "$tmp/layers")" ]] || fail "unexpected layer line"
+  run_dot link
+  assert_rc 0
+  assert_absent "$tmp/target/.personal"
+}
+
+test_offer_personal_creates_parent_dir() {
+  export DOT_LAYERS_FILE="$tmp/cfg/dot/layers"
+  run_dot __offer-personal-layer <<<"n"
+  assert_rc 0
+  [[ -f "$tmp/cfg/dot/layers" ]] || fail "layers file not written"
+}
+
 failures=0
 for t in ${(ok)functions[(I)test_*]}; do
   test_failed=0
