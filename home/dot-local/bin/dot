@@ -1,7 +1,11 @@
 #!/usr/bin/env zsh
 set -e
 
-dotfiles=$HOME/src/github.com/rickharris/dotfiles
+# These three can be overridden from the environment, which is how the tests
+# run dot against fixture directories instead of the real home directory.
+dotfiles=${DOTFILES:-$HOME/src/github.com/rickharris/dotfiles}
+target=${DOT_TARGET:-$HOME}
+layers_file=${DOT_LAYERS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/dot/layers}
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -108,17 +112,17 @@ link() {
   if ! command -v stow >/dev/null 2>&1; then
     brew install stow
   fi
-  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles --no-folding home
+  stow --dir "$dotfiles" --target="$target" --restow --dotfiles --no-folding home
   # The folded package is stowed with folding enabled so its app directories
   # are symlinked whole. This is for apps that save config by writing a new
   # file and renaming it over the old one (e.g. Karabiner-Elements), which
   # would replace a file-level symlink with a regular file.
-  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles folded
+  stow --dir "$dotfiles" --target="$target" --restow --dotfiles folded
 }
 
 unlink() {
-  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles --no-folding home
-  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles folded
+  stow --dir "$dotfiles" --target="$target" -D --dotfiles --no-folding home
+  stow --dir "$dotfiles" --target="$target" -D --dotfiles folded
 }
 
 preferences() {
@@ -246,7 +250,11 @@ unlink)
 prefs)
   preferences
   ;;
-*)
+help | -h | --help)
   print_help
+  ;;
+*)
+  print_help >&2
+  exit 1
   ;;
 esac
