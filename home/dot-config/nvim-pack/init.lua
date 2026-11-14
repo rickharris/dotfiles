@@ -93,7 +93,6 @@ vim.pack.add({
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
-  "https://github.com/mrjones2014/smart-splits.nvim",
   "https://github.com/MunifTanjim/nui.nvim",
   "https://github.com/NeogitOrg/neogit",
   "https://github.com/neovim/nvim-lspconfig",
@@ -110,6 +109,11 @@ vim.pack.add({
   {
     src = "https://github.com/saghen/blink.cmp",
     version = vim.version.range("1"),
+  },
+  "https://github.com/smart-splits-nvim/backend-ghostty",
+  {
+    src = "https://github.com/smart-splits-nvim/smart-splits.nvim",
+    version = vim.version.range("3"),
   },
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/stevearc/overseer.nvim",
@@ -543,7 +547,13 @@ require("noice").setup({
 
 -- ## Windows
 
-require("smart-splits").setup({ resize = { amount = 2, ignored_events = {} } })
+-- At an editor edge, hand movement and resizing to Ghostty panes. The keys
+-- here must match the `nvim/` key table in ~/.config/ghostty/config.
+require("smart-splits").setup({
+  mux = { backend = "smart-splits-backend-ghostty" },
+  move = { at_edge = "stop" },
+  resize = { amount = 2, ignored_events = {} },
+})
 
 -- ## Editing
 

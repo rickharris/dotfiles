@@ -15,3 +15,30 @@ theme = light:dawnfox,dark:TokyoNight Moon
 
 # Send Option as Alt so Neovim can map <M-...> bindings.
 macos-option-as-alt = true
+
+# Split navigation and resize shared with Neovim (smart-splits.nvim +
+# backend-ghostty). `performable` only consumes the key when a split exists in
+# that direction, so ctrl+l still clears the screen in a lone pane.
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:down
+keybind = performable:ctrl+k=goto_split:up
+keybind = performable:ctrl+l=goto_split:right
+
+keybind = performable:alt+h=resize_split:left,30
+keybind = performable:alt+j=resize_split:down,30
+keybind = performable:alt+k=resize_split:up,30
+keybind = performable:alt+l=resize_split:right,30
+
+# Key table the backend activates while Neovim is focused: pass the keys
+# through so smart-splits decides between a Neovim window and a Ghostty pane.
+# These must match the smart-splits mappings in nvim-pack/init.lua.
+keybind = nvim/
+keybind = nvim/ctrl+h=text:\x08
+keybind = nvim/ctrl+j=text:\x0a
+keybind = nvim/ctrl+k=text:\x0b
+keybind = nvim/ctrl+l=text:\x0c
+
+keybind = nvim/alt+h=esc:h
+keybind = nvim/alt+j=esc:j
+keybind = nvim/alt+k=esc:k
+keybind = nvim/alt+l=esc:l
