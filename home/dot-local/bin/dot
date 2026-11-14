@@ -139,6 +139,20 @@ layers() {
   done <"$layers_file"
 }
 
+# Runs stow for one package of one layer: stow_pkg <layer> <package> <args...>
+# Stow refuses the whole package if any target is in the way, so on failure
+# say which layer it was and what to do about it.
+stow_pkg() {
+  local layer=$1 package=$2 output
+  shift 2
+  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles "$@" "$package" 2>&1); then
+    print -ru2 -- "$output"
+    print -ru2 -- "dot: could not link $layer/$package."
+    print -ru2 -- 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.'
+    return 1
+  fi
+}
+
 link() {
   if ! command -v stow >/dev/null 2>&1; then
     brew install stow
@@ -148,14 +162,14 @@ link() {
   local layer
   for layer in $layer_dirs; do
     if [[ -d $layer/home ]]; then
-      stow --dir "$layer" --target="$target" --restow --dotfiles --no-folding home
+      stow_pkg "$layer" home --restow --no-folding
     fi
     # The folded package is stowed with folding enabled so its app directories
     # are symlinked whole. This is for apps that save config by writing a new
     # file and renaming it over the old one (e.g. Karabiner-Elements), which
     # would replace a file-level symlink with a regular file.
     if [[ -d $layer/folded ]]; then
-      stow --dir "$layer" --target="$target" --restow --dotfiles folded
+      stow_pkg "$layer" folded --restow
     fi
   done
 }
@@ -165,10 +179,10 @@ unlink() {
   local layer
   for layer in ${(Oa)layer_dirs}; do
     if [[ -d $layer/folded ]]; then
-      stow --dir "$layer" --target="$target" -D --dotfiles folded
+      stow_pkg "$layer" folded -D
     fi
     if [[ -d $layer/home ]]; then
-      stow --dir "$layer" --target="$target" -D --dotfiles --no-folding home
+      stow_pkg "$layer" home -D --no-folding
     fi
   done
 }

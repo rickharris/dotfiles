@@ -132,6 +132,26 @@ test_unlink_removes_layer_links() {
   assert_absent "$tmp/target/.w"
 }
 
+test_existing_file_conflict_is_explained() {
+  touch "$tmp/base/home/dot-gitconfig"
+  print real >"$tmp/target/.gitconfig"
+  run_dot link
+  assert_rc 1
+  assert_out_contains ".gitconfig"
+  assert_out_contains "dot: could not link $tmp/base/home."
+  assert_out_contains "re-run \`dot link\`"
+  [[ "$(<$tmp/target/.gitconfig)" == real ]] || fail "existing file was modified"
+}
+
+test_two_layers_same_file_conflict() {
+  mkdir -p "$tmp/work/home"
+  touch "$tmp/base/home/dot-rc" "$tmp/work/home/dot-rc"
+  print -rl -- "$tmp/work" >"$tmp/layers"
+  run_dot link
+  assert_rc 1
+  assert_out_contains "dot: could not link $tmp/work/home."
+}
+
 failures=0
 for t in ${(ok)functions[(I)test_*]}; do
   test_failed=0
