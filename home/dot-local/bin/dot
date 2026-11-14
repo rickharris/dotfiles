@@ -121,7 +121,7 @@ install() {
   fi
 
   mise install
-  NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
+  mise exec -- nvim --headless +q
 }
 
 # Asks whether this machine should use the personal layer (layers/personal in

@@ -31,7 +31,7 @@ keybind = performable:alt+l=resize_split:right,30
 
 # Key table the backend activates while Neovim is focused: pass the keys
 # through so smart-splits decides between a Neovim window and a Ghostty pane.
-# These must match the smart-splits mappings in nvim-pack/init.lua.
+# These must match the smart-splits mappings in nvim/init.lua.
 keybind = nvim/
 keybind = nvim/ctrl+h=text:\x08
 keybind = nvim/ctrl+j=text:\x0a
