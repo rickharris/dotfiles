@@ -209,6 +209,47 @@ test_folded_dir_moves_between_layers() {
   assert_link "$tmp/target/.config/kb" "$tmp/work/folded/dot-config/kb"
 }
 
+test_doctor_clean() {
+  touch "$tmp/base/home/dot-rc"
+  run_dot link
+  run_dot doctor
+  assert_rc 0
+  assert_out_contains "dot: ok"
+}
+
+test_doctor_reports_unlinked() {
+  touch "$tmp/base/home/dot-rc"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "not linked: $tmp/target/.rc"
+  assert_absent "$tmp/target/.rc" # doctor changes nothing
+}
+
+test_doctor_reports_replaced_symlink() {
+  touch "$tmp/base/home/dot-rc"
+  run_dot link
+  print real >"$tmp/target/.rc.tmp"
+  mv "$tmp/target/.rc.tmp" "$tmp/target/.rc"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "conflict in $tmp/base/home"
+  assert_out_contains ".rc"
+}
+
+test_doctor_reports_dangling_and_missing_layer() {
+  mkdir -p "$tmp/base/home/dot-config/app" "$tmp/base/home/dot-config/keep"
+  touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/keep/k"
+  run_dot link
+  rm -r "$tmp/base/home/dot-config/app"
+  print -rl -- "$tmp/nope" >"$tmp/layers"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "dangling: $tmp/target/.config/app/init"
+  assert_out_contains "missing layer: $tmp/nope"
+  assert_out_contains "dot: 2 problem(s) found"
+  [[ -L "$tmp/target/.config/app/init" ]] || fail "doctor pruned a link"
+}
+
 failures=0
 for t in ${(ok)functions[(I)test_*]}; do
   test_failed=0

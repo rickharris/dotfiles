@@ -115,9 +115,17 @@ install() {
 #
 # The layers file holds one directory per line. Blank lines and lines starting
 # with # are ignored, and a leading ~ expands to $HOME.
+#
+# A listed directory that does not exist is an error, unless --keep-going is
+# given, in which case it is recorded in missing_layers and skipped.
 layers() {
   setopt local_options extended_glob
+  local keep_going=0
+  if [[ $1 == --keep-going ]]; then
+    keep_going=1
+  fi
   layer_dirs=("$dotfiles")
+  missing_layers=()
   if [[ ! -f $layers_file ]]; then
     return 0
   fi
@@ -132,6 +140,10 @@ layers() {
       line=$HOME${line#\~}
     fi
     if [[ ! -d $line ]]; then
+      if ((keep_going)); then
+        missing_layers+=("$line")
+        continue
+      fi
       print -ru2 -- "dot: layer not found: $line"
       return 1
     fi
@@ -255,6 +267,64 @@ unlink() {
   done
 }
 
+# Reports drift without changing anything: layers that are missing, files
+# that are not linked, links that were replaced by regular files, dangling
+# links and unsatisfied Brewfiles.
+doctor() {
+  local problems=0 layer package output line
+  local -a flags
+
+  layers --keep-going
+  for layer in $missing_layers; do
+    print -r -- "missing layer: $layer"
+    problems=$((problems + 1))
+  done
+
+  for layer in $layer_dirs; do
+    for package in home folded; do
+      if [[ ! -d $layer/$package ]]; then
+        continue
+      fi
+      flags=()
+      if [[ $package == home ]]; then
+        flags=(--no-folding)
+      fi
+
+      # A dry run without --restow only reports what is not yet in place, and
+      # fails if something is in the way, which is how a link that an app
+      # replaced with a regular file shows up.
+      if ! output=$(stow -n -v --dir "$layer" --target="$target" --dotfiles $flags "$package" 2>&1); then
+        print -r -- "conflict in $layer/$package:"
+        print -rl -- ${(M)${(f)output}:#  \* *}
+        problems=$((problems + 1))
+      fi
+      for line in ${(M)${(f)output}:#LINK: *}; do
+        line=${line#LINK: }
+        print -r -- "not linked: $target/${line%% => *}"
+        problems=$((problems + 1))
+      done
+    done
+  done
+
+  for line in ${(f)"$(dangling_links)"}; do
+    print -r -- "dangling: $line"
+    problems=$((problems + 1))
+  done
+
+  for layer in $layer_dirs; do
+    if [[ -f $layer/Brewfile ]] && ! brew bundle check --no-upgrade --file="$layer/Brewfile" >/dev/null 2>&1; then
+      print -r -- "brewfile not satisfied: $layer/Brewfile"
+      problems=$((problems + 1))
+    fi
+  done
+
+  if ((problems)); then
+    print -ru2 -- "dot: $problems problem(s) found"
+    return 1
+  fi
+  print -r -- "dot: ok"
+}
+
 preferences() {
   # Enable Safari Developer Menu
   # Used as a check for full disk access
@@ -364,6 +434,7 @@ print_help() {
   printf "%s\t%s\n" "dot install" "Install dependencies"
   printf "%s\t%s\n" "dot link   " "Link dotfiles the correct location"
   printf "%s\t%s\n" "dot unlink " "Remove dotfile symlinks"
+  printf "%s\t%s\n" "dot doctor " "Check for drift without changing anything"
   printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
 }
 
@@ -376,6 +447,9 @@ link)
   ;;
 unlink)
   unlink
+  ;;
+doctor)
+  doctor
   ;;
 prefs)
   preferences
