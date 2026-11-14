@@ -109,10 +109,16 @@ link() {
     brew install stow
   fi
   stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles --no-folding home
+  # The folded package is stowed with folding enabled so its app directories
+  # are symlinked whole. This is for apps that save config by writing a new
+  # file and renaming it over the old one (e.g. Karabiner-Elements), which
+  # would replace a file-level symlink with a regular file.
+  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles folded
 }
 
 unlink() {
   stow --dir "$dotfiles" --target="$HOME" -D --dotfiles --no-folding home
+  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles folded
 }
 
 preferences() {
