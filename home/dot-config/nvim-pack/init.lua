@@ -503,7 +503,7 @@ require("noice").setup({
 
 -- ## Windows
 
-require("smart-splits").setup({ default_amount = 2 })
+require("smart-splits").setup({ resize = { amount = 2, ignored_events = {} } })
 
 -- ## Editing
 
