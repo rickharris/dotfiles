@@ -1,0 +1,24 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install stow and neovim
+        run: brew install stow neovim
+
+      - name: Syntax check
+        run: zsh -n home/dot-local/bin/dot && zsh -n home/dot-zshrc
+
+      - name: dot tests
+        run: zsh tests/dot_test.zsh
+
+      - name: pr_reviews query tests
+        run: nvim -l home/dot-config/nvim-shared/tests/query_spec.lua

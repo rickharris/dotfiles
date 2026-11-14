@@ -1,10 +1,16 @@
 #!/usr/bin/env zsh
 set -e
 
-dotfiles=$HOME/src/github.com/rickharris/dotfiles
+# These three can be overridden from the environment, which is how the tests
+# run dot against fixture directories instead of the real home directory.
+dotfiles=${DOTFILES:-$HOME/src/github.com/rickharris/dotfiles}
+target=${DOT_TARGET:-$HOME}
+layers_file=${DOT_LAYERS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/dot/layers}
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 install() {
   # Install hombrew first, which will download also download Command Line Tools
@@ -23,6 +29,21 @@ install() {
     brew completions link
   fi
 
+  # The repo is public and git comes with the Command Line Tools that Homebrew
+  # just installed, so cloning needs no auth.
+  if [ ! -d "$dotfiles" ]; then
+    git clone https://github.com/rickharris/dotfiles.git "$dotfiles"
+  fi
+
+  # Everything that needs someone at the keyboard comes first, so the long
+  # unattended part of the install can run to the end on its own.
+
+  # Ask once per machine whether it gets the personal layer. The answer is
+  # recorded by writing the layers file, so this never asks again.
+  if [[ ! -e $layers_file && -t 0 ]]; then
+    offer_personal_layer
+  fi
+
   # Install 1Password early so we can access passwords during gh auth login
   if [ ! -d "/Applications/1Password.app" ]; then
     echo -e "\nInstalling 1Password app…"
@@ -33,6 +54,15 @@ install() {
     echo -e "\nInstalling 1Password CLI…"
     brew install --cask 1password-cli
   fi
+
+  if ! command -v gh >/dev/null 2>&1; then
+    brew install gh
+  fi
+
+  # Link before anything below gets a chance to write its own dotfiles. In
+  # particular `gh auth login` writes ~/.gitconfig, and a regular file there
+  # would block linking ours. link installs stow itself if it is missing.
+  link
 
   # Open 1Password and wait for user to sign in
   setup1p=$(op account list 2>/dev/null || true)
@@ -47,38 +77,27 @@ install() {
 	Please complete the following steps:
 	1. Sign in to your 1Password account
 	2. Enable the setting "Developer -> Integrate with 1Password CLI"
-	
+
 	Press Enter once you've done those things to continue...
 	EOF
       read -r
-      setup1p=$(op account list 2>/dev/null)
+      setup1p=$(op account list 2>/dev/null || true)
     done
-  fi
-
-  if ! command -v gh >/dev/null 2>&1; then
-    brew install gh
   fi
 
   if ! gh auth status --hostname github.com >/dev/null; then
     gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
-  if [ ! -d "$dotfiles" ]; then
-    gh repo clone rickharris/dotfiles "$dotfiles"
-  fi
-
-  if ! brew bundle check --no-upgrade --file="$dotfiles"/Brewfile >/dev/null; then
-    brew bundle --no-upgrade --file="$dotfiles"/Brewfile
-
-    # Fix permissions issue with homebrew and zsh-completions
-    # https://formulae.brew.sh/formula/zsh-completions
-    permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
-    if [[ $permissions =~ 'w' ]]; then
-      chmod go-w "$HOMEBREW_PREFIX"/share
+  # From here on nothing asks for input. Install every layer's Brewfile, the
+  # base repo's first.
+  layers
+  local layer
+  for layer in $layer_dirs; do
+    if [[ -f $layer/Brewfile ]]; then
+      bundle "$layer"/Brewfile
     fi
-  fi
-
-  link
+  done
 
   # Migrate claude-code off the Homebrew cask if it was installed that way
   # previously. The cask disables Claude Code's built-in auto-update, so we
@@ -95,8 +114,9 @@ install() {
 
   # On first install, open up Karabiner-Elements so that it can set itself up
   # and ask for the permissions that it need. After that some form of karabiner
-  # should be running and this step can be skipped.
-  if ! pgrep -qi karabiner; then
+  # should be running and this step can be skipped. It comes from the personal
+  # layer, so it may not be installed at all.
+  if [[ -d /Applications/Karabiner-Elements.app ]] && ! pgrep -qi karabiner; then
     open /Applications/Karabiner-Elements.app
   fi
 
@@ -104,26 +124,307 @@ install() {
   NVIM_APPNAME=nvim-pack mise exec -- nvim --headless +q
 }
 
+# Asks whether this machine should use the personal layer (layers/personal in
+# this repo) and writes the layers file either way.
+offer_personal_layer() {
+  local answer
+  print -n -- "Install the personal layer (apps and config for personal machines only)? [y/N] "
+  read -r answer || true
+
+  mkdir -p "${layers_file:h}"
+  {
+    print -r -- '# Layers for this machine, one directory per line. Read by `dot`.'
+    print -r -- '# Edit by hand to add or remove layers.'
+    if [[ $answer == [yY]* ]]; then
+      print -r -- "$dotfiles/layers/personal"
+    fi
+  } >"$layers_file"
+}
+
+# Installs what a Brewfile lists, unless it is already satisfied.
+bundle() {
+  local brewfile=$1
+  if ! brew bundle check --no-upgrade --file="$brewfile" >/dev/null; then
+    brew bundle --no-upgrade --file="$brewfile"
+
+    # Fix permissions issue with homebrew and zsh-completions
+    # https://formulae.brew.sh/formula/zsh-completions
+    permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
+    if [[ $permissions =~ 'w' ]]; then
+      chmod go-w "$HOMEBREW_PREFIX"/share
+    fi
+  fi
+}
+
+# Sets layer_dirs to the base repo followed by every directory listed in the
+# layers file. A layer has the same layout as this repo: an optional home/
+# package (stowed without folding), an optional folded/ package (stowed with
+# folding) and an optional Brewfile.
+#
+# The layers file holds one directory per line. Blank lines and lines starting
+# with # are ignored, and a leading ~ expands to $HOME. Paths must be absolute,
+# because a relative one would mean something different depending on where dot
+# is run from.
+#
+# A path that is not absolute, or a directory that does not exist, is an
+# error, unless --keep-going is given, in which case it is recorded in
+# invalid_layers or missing_layers and skipped.
+layers() {
+  setopt local_options extended_glob
+  local keep_going=0
+  if [[ $1 == --keep-going ]]; then
+    keep_going=1
+  fi
+  if [[ ! -d $dotfiles ]]; then
+    print -ru2 -- "dot: dotfiles repo not found: $dotfiles"
+    return 1
+  fi
+  layer_dirs=("$dotfiles")
+  missing_layers=()
+  invalid_layers=()
+  if [[ ! -f $layers_file ]]; then
+    return 0
+  fi
+
+  local line
+  while IFS= read -r line || [[ -n $line ]]; do
+    line=${${line##[[:space:]]##}%%[[:space:]]##}
+    if [[ -z $line || $line == \#* ]]; then
+      continue
+    fi
+    # Only ~ and ~/ are expanded. ~name is left alone and then rejected below
+    # for not being absolute.
+    if [[ $line == \~ || $line == \~/* ]]; then
+      line=$HOME${line#\~}
+    fi
+    if [[ $line != /* ]]; then
+      if ((keep_going)); then
+        invalid_layers+=("$line")
+        continue
+      fi
+      print -ru2 -- "dot: layer path must be absolute: $line"
+      return 1
+    fi
+    if [[ ! -d $line ]]; then
+      if ((keep_going)); then
+        missing_layers+=("$line")
+        continue
+      fi
+      print -ru2 -- "dot: layer not found: $line"
+      return 1
+    fi
+    layer_dirs+=("$line")
+  done <"$layers_file"
+}
+
+# Runs stow for one package of one layer: stow_pkg <layer> <package> <args...>
+# Stow refuses the whole package if any target is in the way, so on failure
+# say which layer it was and what to do about it.
+stow_pkg() {
+  local layer=$1 package=$2 output
+  shift 2
+  local -a args=("$@")
+  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles $args "$package" 2>&1); then
+    print -ru2 -- "$output"
+    if ((${args[(Ie)-D]})); then
+      print -ru2 -- "dot: could not unlink $layer/$package."
+      print -ru2 -- 'dot: move the files listed above out of the way, then re-run `dot unlink`.'
+    else
+      print -ru2 -- "dot: could not link $layer/$package."
+      print -ru2 -- 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.'
+    fi
+    return 1
+  fi
+}
+
+# Prints every broken symlink in the target that points into a layer, one per
+# line. Needs layer_dirs to be set. These are left behind when a directory is
+# removed from a layer or moved to another one: stow only cleans up inside
+# directories the package still has.
+#
+# Only the target's top level and the top-level directories that some layer
+# still provides (.config, .local, ...) are searched, not all of the target.
+# So if a whole top-level directory is removed from every layer, run
+# `dot unlink` before removing it.
+dangling_links() {
+  local layer package entry root link dest
+  local -a resolved_layers
+  local -aU roots
+
+  for layer in $layer_dirs; do
+    resolved_layers+=("${layer:A}")
+    for package in home folded; do
+      for entry in "$layer/$package"/*(ND/); do
+        roots+=("$target/${${entry:t}/#dot-/.}")
+      done
+    done
+  done
+
+  # This group is one side of a pipeline, so it runs in a subshell that still
+  # has set -e. find exits non-zero when it meets a directory it cannot read,
+  # and without the `|| true` that would silently skip every later root.
+  {
+    find "$target" -maxdepth 1 -type l || true
+    for root in $roots; do
+      if [[ -d $root && ! -L $root ]]; then
+        find "$root" -type l || true
+      fi
+    done
+  } 2>/dev/null | sort -u | while IFS= read -r link; do
+    if [[ -e $link ]]; then
+      continue
+    fi
+    # Resolve the link text against the link's own directory, with symlinked
+    # parents resolved on both sides so /tmp and /private/tmp compare equal.
+    dest=$(readlink "$link")
+    if [[ $dest != /* ]]; then
+      dest=${link:h:A}/$dest
+    fi
+    dest=${dest:a}
+    for layer in $resolved_layers; do
+      if [[ $dest == $layer/* ]]; then
+        print -r -- "$link"
+        break
+      fi
+    done
+  done
+}
+
+# Removes the links dangling_links finds, and any directories that leaves
+# empty.
+prune() {
+  local link dir
+  dangling_links | while IFS= read -r link; do
+    rm -- "$link"
+    print -r -- "pruned: $link"
+    dir=${link:h}
+    while [[ $dir == $target/* ]] && rmdir -- "$dir" 2>/dev/null; do
+      dir=${dir:h}
+    done
+  done
+}
+
 link() {
   if ! command -v stow >/dev/null 2>&1; then
     brew install stow
   fi
-  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles --no-folding home
-  # The folded package is stowed with folding enabled so its app directories
-  # are symlinked whole. This is for apps that save config by writing a new
-  # file and renaming it over the old one (e.g. Karabiner-Elements), which
-  # would replace a file-level symlink with a regular file.
-  stow --dir "$dotfiles" --target="$HOME" --restow --dotfiles folded
+
+  layers
+  # The install prompt is the only thing that writes the layers file. A machine
+  # that was set up before layers existed has never been asked, and would
+  # otherwise lose what moved into the personal layer without a word.
+  if [[ ! -e $layers_file && -d $dotfiles/layers/personal ]]; then
+    print -ru2 -- "dot: the personal layer is not enabled on this machine, because $layers_file does not exist."
+    print -ru2 -- "dot: run \`dot install\` to be asked about it, or see the Layers section of the README."
+  fi
+
+  # Prune before stowing: a directory that moved from one layer to another
+  # leaves a dangling link that would block stow at the new location.
+  prune
+
+  local layer
+  for layer in $layer_dirs; do
+    if [[ -d $layer/home ]]; then
+      stow_pkg "$layer" home --restow --no-folding
+    fi
+    # The folded package is stowed with folding enabled so its app directories
+    # are symlinked whole. This is for apps that save config by writing a new
+    # file and renaming it over the old one (e.g. Karabiner-Elements), which
+    # would replace a file-level symlink with a regular file.
+    if [[ -d $layer/folded ]]; then
+      stow_pkg "$layer" folded --restow
+    fi
+  done
 }
 
 unlink() {
-  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles --no-folding home
-  stow --dir "$dotfiles" --target="$HOME" -D --dotfiles folded
+  layers
+  local layer
+  for layer in ${(Oa)layer_dirs}; do
+    if [[ -d $layer/folded ]]; then
+      stow_pkg "$layer" folded -D
+    fi
+    if [[ -d $layer/home ]]; then
+      stow_pkg "$layer" home -D --no-folding
+    fi
+  done
 }
 
-preferences() {
+# Reports drift without changing anything: layers that are missing, files
+# that are not linked, links that were replaced by regular files, dangling
+# links and unsatisfied Brewfiles.
+doctor() {
+  local problems=0 layer package output line
+  local -a flags
+
+  layers --keep-going
+  for layer in $invalid_layers; do
+    print -r -- "layer path must be absolute: $layer"
+    problems=$((problems + 1))
+  done
+  for layer in $missing_layers; do
+    print -r -- "missing layer: $layer"
+    problems=$((problems + 1))
+  done
+
+  # Without stow there is no way to tell what is linked, so say that once
+  # rather than reporting every package as a conflict.
+  local have_stow=1
+  if ! command -v stow >/dev/null 2>&1; then
+    have_stow=0
+    print -r -- "stow is not installed: run \`dot install\`"
+    problems=$((problems + 1))
+  fi
+
+  for layer in $layer_dirs; do
+    for package in home folded; do
+      if ((!have_stow)) || [[ ! -d $layer/$package ]]; then
+        continue
+      fi
+      flags=()
+      if [[ $package == home ]]; then
+        flags=(--no-folding)
+      fi
+
+      # A dry run without --restow only reports what is not yet in place, and
+      # fails if something is in the way, which is how a link that an app
+      # replaced with a regular file shows up.
+      if ! output=$(stow -n -v --dir "$layer" --target="$target" --dotfiles $flags "$package" 2>&1); then
+        print -r -- "conflict in $layer/$package:"
+        print -rl -- ${(M)${(f)output}:#  \* *}
+        problems=$((problems + 1))
+      fi
+      for line in ${(M)${(f)output}:#LINK: *}; do
+        line=${line#LINK: }
+        print -r -- "not linked: $target/${line%% => *}"
+        problems=$((problems + 1))
+      done
+    done
+  done
+
+  for line in ${(f)"$(dangling_links)"}; do
+    print -r -- "dangling: $line"
+    problems=$((problems + 1))
+  done
+
+  for layer in $layer_dirs; do
+    if [[ -f $layer/Brewfile ]] && ! brew bundle check --no-upgrade --file="$layer/Brewfile" >/dev/null 2>&1; then
+      print -r -- "brewfile not satisfied: $layer/Brewfile"
+      problems=$((problems + 1))
+    fi
+  done
+
+  if ((problems)); then
+    print -ru2 -- "dot: $problems problem(s) found"
+    return 1
+  fi
+  print -r -- "dot: ok"
+}
+
+# Setting Safari preferences needs Full Disk Access for the terminal, so this
+# write doubles as the check for it.
+check_full_disk_access() {
   # Enable Safari Developer Menu
-  # Used as a check for full disk access
   if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true; then
     cat <<-EOF
 Before running this script, enable Full Disk Access for your terminal.
@@ -132,6 +433,10 @@ https://support.apple.com/guide/mac-help/change-privacy-security-settings-on-mac
 EOF
     exit 1
   fi
+}
+
+preferences() {
+  check_full_disk_access
 
   # Many things taken from https://mths.be/macos
 
@@ -166,6 +471,11 @@ EOF
       "/Applications/Safari.app" \
       "/Applications/Zen.app" \
       "/Applications/Ghostty.app"; do
+      # Not every machine has every app, and a missing one leaves a broken
+      # tile in the Dock.
+      if [[ ! -d $app ]]; then
+        continue
+      fi
       defaults write com.apple.dock persistent-apps -array-add \
         "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>${app:A}</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
     done
@@ -219,6 +529,8 @@ EOF
 }
 
 if [ $# -eq 0 ]; then
+  # Fail on missing permissions now rather than after a long install.
+  check_full_disk_access
   install
   preferences
   exit
@@ -230,6 +542,7 @@ print_help() {
   printf "%s\t%s\n" "dot install" "Install dependencies"
   printf "%s\t%s\n" "dot link   " "Link dotfiles the correct location"
   printf "%s\t%s\n" "dot unlink " "Remove dotfile symlinks"
+  printf "%s\t%s\n" "dot doctor " "Check for drift without changing anything"
   printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
 }
 
@@ -243,10 +556,21 @@ link)
 unlink)
   unlink
   ;;
+doctor)
+  doctor
+  ;;
 prefs)
   preferences
   ;;
-*)
+__offer-personal-layer)
+  # Not a public command; it lets the tests drive the install prompt.
+  offer_personal_layer
+  ;;
+help | -h | --help)
   print_help
+  ;;
+*)
+  print_help >&2
+  exit 1
   ;;
 esac
