@@ -22,7 +22,8 @@ one. Any others are listed in `~/.config/dot/layers`, a file that is not
 tracked anywhere, so each machine decides for itself which layers it uses.
 
 The layers file holds one directory per line. Blank lines and lines starting
-with `#` are ignored, and a leading `~` expands to the home directory.
+with `#` are ignored, and a leading `~` expands to the home directory. Paths
+must be absolute.
 
 Every layer has the same layout, and every part is optional:
 

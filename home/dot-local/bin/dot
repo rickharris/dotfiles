@@ -147,10 +147,13 @@ bundle() {
 # folding) and an optional Brewfile.
 #
 # The layers file holds one directory per line. Blank lines and lines starting
-# with # are ignored, and a leading ~ expands to $HOME.
+# with # are ignored, and a leading ~ expands to $HOME. Paths must be absolute,
+# because a relative one would mean something different depending on where dot
+# is run from.
 #
-# A listed directory that does not exist is an error, unless --keep-going is
-# given, in which case it is recorded in missing_layers and skipped.
+# A path that is not absolute, or a directory that does not exist, is an
+# error, unless --keep-going is given, in which case it is recorded in
+# invalid_layers or missing_layers and skipped.
 layers() {
   setopt local_options extended_glob
   local keep_going=0
@@ -163,6 +166,7 @@ layers() {
   fi
   layer_dirs=("$dotfiles")
   missing_layers=()
+  invalid_layers=()
   if [[ ! -f $layers_file ]]; then
     return 0
   fi
@@ -173,8 +177,18 @@ layers() {
     if [[ -z $line || $line == \#* ]]; then
       continue
     fi
-    if [[ $line == \~* ]]; then
+    # Only ~ and ~/ are expanded. ~name is left alone and then rejected below
+    # for not being absolute.
+    if [[ $line == \~ || $line == \~/* ]]; then
       line=$HOME${line#\~}
+    fi
+    if [[ $line != /* ]]; then
+      if ((keep_going)); then
+        invalid_layers+=("$line")
+        continue
+      fi
+      print -ru2 -- "dot: layer path must be absolute: $line"
+      return 1
     fi
     if [[ ! -d $line ]]; then
       if ((keep_going)); then
@@ -194,10 +208,16 @@ layers() {
 stow_pkg() {
   local layer=$1 package=$2 output
   shift 2
-  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles "$@" "$package" 2>&1); then
+  local -a args=("$@")
+  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles $args "$package" 2>&1); then
     print -ru2 -- "$output"
-    print -ru2 -- "dot: could not link $layer/$package."
-    print -ru2 -- 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.'
+    if ((${args[(Ie)-D]})); then
+      print -ru2 -- "dot: could not unlink $layer/$package."
+      print -ru2 -- 'dot: move the files listed above out of the way, then re-run `dot unlink`.'
+    else
+      print -ru2 -- "dot: could not link $layer/$package."
+      print -ru2 -- 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.'
+    fi
     return 1
   fi
 }
@@ -323,14 +343,27 @@ doctor() {
   local -a flags
 
   layers --keep-going
+  for layer in $invalid_layers; do
+    print -r -- "layer path must be absolute: $layer"
+    problems=$((problems + 1))
+  done
   for layer in $missing_layers; do
     print -r -- "missing layer: $layer"
     problems=$((problems + 1))
   done
 
+  # Without stow there is no way to tell what is linked, so say that once
+  # rather than reporting every package as a conflict.
+  local have_stow=1
+  if ! command -v stow >/dev/null 2>&1; then
+    have_stow=0
+    print -r -- "stow is not installed: run \`dot install\`"
+    problems=$((problems + 1))
+  fi
+
   for layer in $layer_dirs; do
     for package in home folded; do
-      if [[ ! -d $layer/$package ]]; then
+      if ((!have_stow)) || [[ ! -d $layer/$package ]]; then
         continue
       fi
       flags=()

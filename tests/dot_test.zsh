@@ -5,6 +5,13 @@
 # real home directory is never touched: run_dot points the three DOT overrides
 # at the fixture and also swaps HOME for an empty directory.
 
+# dot installs stow with Homebrew when it is missing. The tests must never
+# install anything on the machine they run on, so refuse to start without it.
+if ! command -v stow >/dev/null 2>&1; then
+  print -ru2 -- "stow is not installed; install it before running these tests."
+  exit 1
+fi
+
 repo=${0:A:h:h}
 dot=$repo/home/dot-local/bin/dot
 
@@ -334,6 +341,58 @@ test_link_does_not_hint_once_layers_file_exists() {
   run_dot link
   assert_rc 0
   [[ $out != *"personal layer is not enabled"* ]] || fail "hint shown although the question was answered"
+}
+
+test_unlink_failure_says_unlink() {
+  touch "$tmp/base/home/dot-rc"
+  run_dot link
+  # A directory where the package has a file makes stow refuse to unstow.
+  rm "$tmp/target/.rc"
+  mkdir "$tmp/target/.rc"
+  run_dot unlink
+  assert_rc 1
+  assert_out_contains "dot: could not unlink $tmp/base/home."
+  assert_out_contains "re-run \`dot unlink\`"
+  [[ $out != *"could not link"* ]] || fail "unlink failure used the link wording"
+}
+
+test_tilde_slash_expands_to_home() {
+  mkdir -p "$tmp/fakehome/work/home"
+  touch "$tmp/fakehome/work/home/dot-w"
+  print -rl -- "~/work" >"$tmp/layers"
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.w" "$tmp/fakehome/work/home/dot-w"
+}
+
+test_tilde_user_is_not_expanded() {
+  touch "$tmp/base/home/dot-rc"
+  print -rl -- "~bob/work" >"$tmp/layers"
+  run_dot link
+  assert_rc 1
+  assert_out_contains "dot: layer path must be absolute: ~bob/work"
+  assert_absent "$tmp/target/.rc"
+}
+
+test_relative_layer_path_is_rejected() {
+  # The directory exists relative to the repo root, where the tests run, so
+  # only the absolute-path rule can reject it.
+  touch "$tmp/base/home/dot-rc"
+  print -rl -- "tests" >"$tmp/layers"
+  run_dot link
+  assert_rc 1
+  assert_out_contains "dot: layer path must be absolute: tests"
+  assert_absent "$tmp/target/.rc"
+}
+
+test_doctor_reports_relative_layer_path() {
+  touch "$tmp/base/home/dot-rc"
+  run_dot link
+  print -rl -- "tests" >"$tmp/layers"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "layer path must be absolute: tests"
+  assert_out_contains "dot: 1 problem(s) found"
 }
 
 failures=0
