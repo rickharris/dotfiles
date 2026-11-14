@@ -1,4 +1,8 @@
-#!/usr/bin/env zsh
+#!/bin/bash
+#
+# This runs on the bash that ships with macOS, which is 3.2, because it
+# bootstraps a machine before anything newer is installed. So no associative
+# arrays, no mapfile, no ${var,,}. The tests always run it with /bin/bash.
 set -e
 
 # These three can be overridden from the environment, which is how the tests
@@ -9,7 +13,7 @@ layers_file=${DOT_LAYERS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/dot/layers}
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 if [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  eval "$(/opt/homebrew/bin/brew shellenv bash)"
 fi
 
 install() {
@@ -25,7 +29,7 @@ install() {
     # We don't want shellenv to be run
     # shellcheck disable=SC2016
     echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>"$HOME"/.zprofile
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+    eval "$(/opt/homebrew/bin/brew shellenv bash)"
     brew completions link
   fi
 
@@ -93,7 +97,7 @@ install() {
   # base repo's first.
   layers
   local layer
-  for layer in $layer_dirs; do
+  for layer in "${layer_dirs[@]}"; do
     if [[ -f $layer/Brewfile ]]; then
       bundle "$layer"/Brewfile
     fi
@@ -139,31 +143,64 @@ install() {
 # this repo) and writes the layers file either way.
 offer_personal_layer() {
   local answer
-  print -n -- "Install the personal layer (apps and config for personal machines only)? [y/N] "
+  printf '%s' "Install the personal layer (apps and config for personal machines only)? [y/N] "
   read -r answer || true
 
-  mkdir -p "${layers_file:h}"
+  mkdir -p "$(dirname "$layers_file")"
   {
-    print -r -- '# Layers for this machine, one directory per line. Read by `dot`.'
-    print -r -- '# Edit by hand to add or remove layers.'
+    # The backticks are literal text for whoever reads the file.
+    # shellcheck disable=SC2016
+    echo '# Layers for this machine, one directory per line. Read by `dot`.'
+    echo '# Edit by hand to add or remove layers.'
     if [[ $answer == [yY]* ]]; then
-      print -r -- "$dotfiles/layers/personal"
+      echo "$dotfiles/layers/personal"
     fi
   } >"$layers_file"
 }
 
 # Installs what a Brewfile lists, unless it is already satisfied.
 bundle() {
-  local brewfile=$1
+  local brewfile=$1 permissions
   if ! brew bundle check --no-upgrade --file="$brewfile" >/dev/null; then
     brew bundle --no-upgrade --file="$brewfile"
 
     # Fix permissions issue with homebrew and zsh-completions
     # https://formulae.brew.sh/formula/zsh-completions
     permissions=$(stat -f "%SMp %SLp" "$HOMEBREW_PREFIX"/share)
-    if [[ $permissions =~ 'w' ]]; then
+    if [[ $permissions == *w* ]]; then
       chmod go-w "$HOMEBREW_PREFIX"/share
     fi
+  fi
+}
+
+# Prints a directory's path with every symlink in it resolved.
+resolve_dir() {
+  (cd "$1" && pwd -P)
+}
+
+# Prints an absolute path with its . and .. parts resolved, without touching
+# the filesystem, so it also works for a path that does not exist.
+normalize_path() {
+  local part
+  local -a parts kept
+  kept=()
+  IFS=/ read -r -a parts <<<"$1"
+  for part in "${parts[@]}"; do
+    case $part in
+    '' | .) ;;
+    ..)
+      if ((${#kept[@]} > 0)); then
+        unset "kept[$((${#kept[@]} - 1))]"
+      fi
+      ;;
+    *) kept+=("$part") ;;
+    esac
+  done
+  if ((${#kept[@]} == 0)); then
+    echo /
+  else
+    printf '/%s' "${kept[@]}"
+    echo
   fi
 }
 
@@ -181,13 +218,12 @@ bundle() {
 # error, unless --keep-going is given, in which case it is recorded in
 # invalid_layers or missing_layers and skipped.
 layers() {
-  setopt local_options extended_glob
   local keep_going=0
-  if [[ $1 == --keep-going ]]; then
+  if [[ ${1:-} == --keep-going ]]; then
     keep_going=1
   fi
   if [[ ! -d $dotfiles ]]; then
-    print -ru2 -- "dot: dotfiles repo not found: $dotfiles"
+    echo "dot: dotfiles repo not found: $dotfiles" >&2
     return 1
   fi
   layer_dirs=("$dotfiles")
@@ -199,7 +235,9 @@ layers() {
 
   local line
   while IFS= read -r line || [[ -n $line ]]; do
-    line=${${line##[[:space:]]##}%%[[:space:]]##}
+    # Trim leading, then trailing, whitespace.
+    line=${line#"${line%%[![:space:]]*}"}
+    line=${line%"${line##*[![:space:]]}"}
     if [[ -z $line || $line == \#* ]]; then
       continue
     fi
@@ -213,7 +251,7 @@ layers() {
         invalid_layers+=("$line")
         continue
       fi
-      print -ru2 -- "dot: layer path must be absolute: $line"
+      echo "dot: layer path must be absolute: $line" >&2
       return 1
     fi
     if [[ ! -d $line ]]; then
@@ -221,7 +259,7 @@ layers() {
         missing_layers+=("$line")
         continue
       fi
-      print -ru2 -- "dot: layer not found: $line"
+      echo "dot: layer not found: $line" >&2
       return 1
     fi
     layer_dirs+=("$line")
@@ -232,17 +270,23 @@ layers() {
 # Stow refuses the whole package if any target is in the way, so on failure
 # say which layer it was and what to do about it.
 stow_pkg() {
-  local layer=$1 package=$2 output
+  local layer=$1 package=$2 output arg unlinking=0
   shift 2
-  local -a args=("$@")
-  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles $args "$package" 2>&1); then
-    print -ru2 -- "$output"
-    if ((${args[(Ie)-D]})); then
-      print -ru2 -- "dot: could not unlink $layer/$package."
-      print -ru2 -- 'dot: move the files listed above out of the way, then re-run `dot unlink`.'
+  for arg in "$@"; do
+    if [[ $arg == -D ]]; then
+      unlinking=1
+    fi
+  done
+  if ! output=$(stow --dir "$layer" --target="$target" --dotfiles "$@" "$package" 2>&1); then
+    echo "$output" >&2
+    # The backticks in these messages are literal text for the reader.
+    # shellcheck disable=SC2016
+    if ((unlinking)); then
+      echo "dot: could not unlink $layer/$package." >&2
+      echo 'dot: move the files listed above out of the way, then re-run `dot unlink`.' >&2
     else
-      print -ru2 -- "dot: could not link $layer/$package."
-      print -ru2 -- 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.'
+      echo "dot: could not link $layer/$package." >&2
+      echo 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.' >&2
     fi
     return 1
   fi
@@ -258,16 +302,24 @@ stow_pkg() {
 # So if a whole top-level directory is removed from every layer, run
 # `dot unlink` before removing it.
 dangling_links() {
-  local layer package entry root link dest
-  local -a resolved_layers
-  local -aU roots
+  local layer package entry name root link dest
+  local -a resolved_layers roots
+  resolved_layers=()
+  roots=()
 
-  for layer in $layer_dirs; do
-    resolved_layers+=("${layer:A}")
+  for layer in "${layer_dirs[@]}"; do
+    resolved_layers+=("$(resolve_dir "$layer")")
     for package in home folded; do
-      for entry in "$layer/$package"/*(ND/); do
-        roots+=("$target/${${entry:t}/#dot-/.}")
-      done
+      if [[ ! -d $layer/$package ]]; then
+        continue
+      fi
+      while IFS= read -r entry; do
+        name=${entry##*/}
+        if [[ $name == dot-* ]]; then
+          name=.${name#dot-}
+        fi
+        roots+=("$target/$name")
+      done < <(find "$layer/$package" -mindepth 1 -maxdepth 1 -type d)
     done
   done
 
@@ -276,7 +328,7 @@ dangling_links() {
   # and without the `|| true` that would silently skip every later root.
   {
     find "$target" -maxdepth 1 -type l || true
-    for root in $roots; do
+    for root in "${roots[@]}"; do
       if [[ -d $root && ! -L $root ]]; then
         find "$root" -type l || true
       fi
@@ -289,12 +341,12 @@ dangling_links() {
     # parents resolved on both sides so /tmp and /private/tmp compare equal.
     dest=$(readlink "$link")
     if [[ $dest != /* ]]; then
-      dest=${link:h:A}/$dest
+      dest=$(resolve_dir "$(dirname "$link")")/$dest
     fi
-    dest=${dest:a}
-    for layer in $resolved_layers; do
-      if [[ $dest == $layer/* ]]; then
-        print -r -- "$link"
+    dest=$(normalize_path "$dest")
+    for layer in "${resolved_layers[@]}"; do
+      if [[ $dest == "$layer"/* ]]; then
+        echo "$link"
         break
       fi
     done
@@ -307,10 +359,10 @@ prune() {
   local link dir
   dangling_links | while IFS= read -r link; do
     rm -- "$link"
-    print -r -- "pruned: $link"
-    dir=${link:h}
-    while [[ $dir == $target/* ]] && rmdir -- "$dir" 2>/dev/null; do
-      dir=${dir:h}
+    echo "pruned: $link"
+    dir=$(dirname "$link")
+    while [[ $dir == "$target"/* ]] && rmdir -- "$dir" 2>/dev/null; do
+      dir=$(dirname "$dir")
     done
   done
 }
@@ -325,8 +377,8 @@ link() {
   # that was set up before layers existed has never been asked, and would
   # otherwise lose what moved into the personal layer without a word.
   if [[ ! -e $layers_file && -d $dotfiles/layers/personal ]]; then
-    print -ru2 -- "dot: the personal layer is not enabled on this machine, because $layers_file does not exist."
-    print -ru2 -- "dot: run \`dot install\` to be asked about it, or see the Layers section of the README."
+    echo "dot: the personal layer is not enabled on this machine, because $layers_file does not exist." >&2
+    echo "dot: run \`dot install\` to be asked about it, or see the Layers section of the README." >&2
   fi
 
   # Prune before stowing: a directory that moved from one layer to another
@@ -334,7 +386,7 @@ link() {
   prune
 
   local layer
-  for layer in $layer_dirs; do
+  for layer in "${layer_dirs[@]}"; do
     if [[ -d $layer/home ]]; then
       stow_pkg "$layer" home --restow --no-folding
     fi
@@ -350,8 +402,10 @@ link() {
 
 unlink() {
   layers
-  local layer
-  for layer in ${(Oa)layer_dirs}; do
+  local layer i
+  # Last layer first, the reverse of the order they were linked in.
+  for ((i = ${#layer_dirs[@]} - 1; i >= 0; i--)); do
+    layer=${layer_dirs[i]}
     if [[ -d $layer/folded ]]; then
       stow_pkg "$layer" folded -D
     fi
@@ -369,12 +423,12 @@ doctor() {
   local -a flags
 
   layers --keep-going
-  for layer in $invalid_layers; do
-    print -r -- "layer path must be absolute: $layer"
+  for layer in "${invalid_layers[@]}"; do
+    echo "layer path must be absolute: $layer"
     problems=$((problems + 1))
   done
-  for layer in $missing_layers; do
-    print -r -- "missing layer: $layer"
+  for layer in "${missing_layers[@]}"; do
+    echo "missing layer: $layer"
     problems=$((problems + 1))
   done
 
@@ -383,11 +437,11 @@ doctor() {
   local have_stow=1
   if ! command -v stow >/dev/null 2>&1; then
     have_stow=0
-    print -r -- "stow is not installed: run \`dot install\`"
+    echo "stow is not installed: run \`dot install\`"
     problems=$((problems + 1))
   fi
 
-  for layer in $layer_dirs; do
+  for layer in "${layer_dirs[@]}"; do
     for package in home folded; do
       if ((have_stow == 0)) || [[ ! -d $layer/$package ]]; then
         continue
@@ -400,36 +454,40 @@ doctor() {
       # A dry run without --restow only reports what is not yet in place, and
       # fails if something is in the way, which is how a link that an app
       # replaced with a regular file shows up.
-      if ! output=$(stow -n -v --dir "$layer" --target="$target" --dotfiles $flags "$package" 2>&1); then
-        print -r -- "conflict in $layer/$package:"
-        print -rl -- ${(M)${(f)output}:#  \* *}
+      if ! output=$(stow -n -v --dir "$layer" --target="$target" --dotfiles "${flags[@]}" "$package" 2>&1); then
+        echo "conflict in $layer/$package:"
         problems=$((problems + 1))
       fi
-      for line in ${(M)${(f)output}:#LINK: *}; do
-        line=${line#LINK: }
-        print -r -- "not linked: $target/${line%% => *}"
-        problems=$((problems + 1))
-      done
+      while IFS= read -r line; do
+        case $line in
+        "  * "*) echo "$line" ;;
+        "LINK: "*)
+          line=${line#LINK: }
+          echo "not linked: $target/${line%% => *}"
+          problems=$((problems + 1))
+          ;;
+        esac
+      done <<<"$output"
     done
   done
 
-  for line in ${(f)"$(dangling_links)"}; do
-    print -r -- "dangling: $line"
+  while IFS= read -r line; do
+    echo "dangling: $line"
     problems=$((problems + 1))
-  done
+  done < <(dangling_links)
 
-  for layer in $layer_dirs; do
+  for layer in "${layer_dirs[@]}"; do
     if [[ -f $layer/Brewfile ]] && ! brew bundle check --no-upgrade --file="$layer/Brewfile" >/dev/null 2>&1; then
-      print -r -- "brewfile not satisfied: $layer/Brewfile"
+      echo "brewfile not satisfied: $layer/Brewfile"
       problems=$((problems + 1))
     fi
   done
 
   if ((problems)); then
-    print -ru2 -- "dot: $problems problem(s) found"
+    echo "dot: $problems problem(s) found" >&2
     return 1
   fi
-  print -r -- "dot: ok"
+  echo "dot: ok"
 }
 
 # Setting Safari preferences needs Full Disk Access for the terminal, so this
@@ -488,7 +546,7 @@ preferences() {
         continue
       fi
       defaults write com.apple.dock persistent-apps -array-add \
-        "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>${app:A}</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
+        "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>$(resolve_dir "$app")</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
     done
 
     defaults write com.rickharris.dotfiles dockConfigured -bool true
@@ -557,7 +615,7 @@ print_help() {
   printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
 }
 
-case $1 in
+case ${1:-} in
 install)
   install
   ;;

@@ -1,5 +1,9 @@
-#!/usr/bin/env zsh
-# Tests for home/dot-local/bin/dot. Run with: zsh tests/dot_test.zsh
+#!/bin/bash
+# Tests for home/dot-local/bin/dot. Run with: /bin/bash tests/dot_test.bash
+#
+# dot has to run on the bash that ships with macOS, which is 3.2, because it
+# bootstraps a machine before anything newer is installed. So these tests
+# and dot itself are always run with /bin/bash, never a newer bash on PATH.
 #
 # Every test runs dot against fixture directories under a fresh temp dir. The
 # real home directory is never touched: run_dot points the three DOT overrides
@@ -12,7 +16,7 @@ if ! command -v stow >/dev/null 2>&1; then
   exit 1
 fi
 
-repo=${0:A:h:h}
+repo=$(cd "$(dirname "$0")/.." && pwd -P)
 dot=$repo/home/dot-local/bin/dot
 
 setup() {
@@ -20,7 +24,7 @@ setup() {
   # link to /private/var). Most tests use the resolved path; tmp_raw keeps the
   # original for the tests that need the two to differ.
   tmp_raw=$(mktemp -d)
-  tmp=${tmp_raw:A}
+  tmp=$(cd "$tmp_raw" && pwd -P)
   mkdir -p "$tmp/base/home" "$tmp/base/folded" "$tmp/target" "$tmp/fakehome"
   export DOTFILES="$tmp/base"
   export DOT_TARGET="$tmp/target"
@@ -34,12 +38,12 @@ teardown() {
 # Runs dot, leaving combined output in $out and the exit status in $rc. Stdin
 # is passed through so tests can answer prompts.
 run_dot() {
-  out=$(HOME="$tmp/fakehome" zsh "$dot" "$@" 2>&1)
+  out=$(HOME="$tmp/fakehome" /bin/bash "$dot" "$@" 2>&1)
   rc=$?
 }
 
 fail() {
-  print -r -- "       $*"
+  echo "       $*"
   test_failed=1
 }
 
@@ -56,7 +60,8 @@ assert_link() {
     fail "expected a symlink at $1"
     return
   fi
-  [[ ${1:A} == ${2:A} ]] || fail "expected $1 to resolve to $2, got ${1:A}"
+  # -ef is true when both paths resolve to the same file.
+  [[ $1 -ef $2 ]] || fail "expected $1 to resolve to $2"
 }
 
 assert_dir_not_link() {
@@ -108,7 +113,7 @@ test_help_exits_0() {
 test_layer_is_linked_after_base() {
   mkdir -p "$tmp/work layer/home" # space in the path on purpose
   touch "$tmp/base/home/dot-rc" "$tmp/work layer/home/dot-rc.local"
-  print -rl -- "# comment" "" "$tmp/work layer" >"$tmp/layers"
+  printf '%s\n' "# comment" "" "$tmp/work layer" >"$tmp/layers"
   run_dot link
   assert_rc 0
   assert_link "$tmp/target/.rc" "$tmp/base/home/dot-rc"
@@ -117,7 +122,7 @@ test_layer_is_linked_after_base() {
 
 test_missing_layer_fails_before_linking() {
   touch "$tmp/base/home/dot-rc"
-  print -rl -- "$tmp/nope" >"$tmp/layers"
+  printf '%s\n' "$tmp/nope" >"$tmp/layers"
   run_dot link
   assert_rc 1
   assert_out_contains "dot: layer not found: $tmp/nope"
@@ -129,7 +134,7 @@ test_layer_without_home_is_fine() {
   touch "$tmp/work/folded/dot-config/tool/c"
   mkdir -p "$tmp/base/home/dot-config"
   touch "$tmp/base/home/dot-config/keep"
-  print -rl -- "$tmp/work" >"$tmp/layers"
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
   run_dot link
   assert_rc 0
   assert_link "$tmp/target/.config/tool" "$tmp/work/folded/dot-config/tool"
@@ -138,7 +143,7 @@ test_layer_without_home_is_fine() {
 test_unlink_removes_layer_links() {
   mkdir -p "$tmp/work/home"
   touch "$tmp/work/home/dot-w"
-  print -rl -- "$tmp/work" >"$tmp/layers"
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
   run_dot link
   assert_link "$tmp/target/.w" "$tmp/work/home/dot-w"
   run_dot unlink
@@ -147,19 +152,19 @@ test_unlink_removes_layer_links() {
 
 test_existing_file_conflict_is_explained() {
   touch "$tmp/base/home/dot-gitconfig"
-  print real >"$tmp/target/.gitconfig"
+  echo real >"$tmp/target/.gitconfig"
   run_dot link
   assert_rc 1
   assert_out_contains ".gitconfig"
   assert_out_contains "dot: could not link $tmp/base/home."
   assert_out_contains "re-run \`dot link\`"
-  [[ "$(<$tmp/target/.gitconfig)" == real ]] || fail "existing file was modified"
+  [[ "$(<"$tmp/target/.gitconfig")" == real ]] || fail "existing file was modified"
 }
 
 test_two_layers_same_file_conflict() {
   mkdir -p "$tmp/work/home"
   touch "$tmp/base/home/dot-rc" "$tmp/work/home/dot-rc"
-  print -rl -- "$tmp/work" >"$tmp/layers"
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
   run_dot link
   assert_rc 1
   assert_out_contains "dot: could not link $tmp/work/home."
@@ -182,7 +187,7 @@ test_prune_keeps_dir_with_other_files() {
   mkdir -p "$tmp/base/home/dot-config/app"
   touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/stay"
   run_dot link
-  print local >"$tmp/target/.config/app/untracked.json"
+  echo local >"$tmp/target/.config/app/untracked.json"
   rm -r "$tmp/base/home/dot-config/app"
   run_dot link
   assert_absent "$tmp/target/.config/app/init"
@@ -203,7 +208,7 @@ test_prune_ignores_foreign_dangling_links() {
 test_prune_layer_links() {
   mkdir -p "$tmp/work/home/dot-config/tool" "$tmp/work/home/dot-config/other"
   touch "$tmp/work/home/dot-config/tool/c" "$tmp/work/home/dot-config/other/o"
-  print -rl -- "$tmp/work" >"$tmp/layers"
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
   run_dot link
   rm -r "$tmp/work/home/dot-config/tool"
   run_dot link
@@ -213,7 +218,7 @@ test_prune_layer_links() {
 test_folded_dir_moves_between_layers() {
   mkdir -p "$tmp/base/home/dot-config" "$tmp/base/folded/dot-config/kb" "$tmp/work/folded/dot-config"
   touch "$tmp/base/home/dot-config/keep" "$tmp/base/folded/dot-config/kb/kb.json"
-  print -rl -- "$tmp/work" >"$tmp/layers"
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
   run_dot link
   mv "$tmp/base/folded/dot-config/kb" "$tmp/work/folded/dot-config/kb"
   rm -r "$tmp/base/folded" # the base no longer has a folded package at all
@@ -241,7 +246,7 @@ test_doctor_reports_unlinked() {
 test_doctor_reports_replaced_symlink() {
   touch "$tmp/base/home/dot-rc"
   run_dot link
-  print real >"$tmp/target/.rc.tmp"
+  echo real >"$tmp/target/.rc.tmp"
   mv "$tmp/target/.rc.tmp" "$tmp/target/.rc"
   run_dot doctor
   assert_rc 1
@@ -254,7 +259,7 @@ test_doctor_reports_dangling_and_missing_layer() {
   touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/keep/k"
   run_dot link
   rm -r "$tmp/base/home/dot-config/app"
-  print -rl -- "$tmp/nope" >"$tmp/layers"
+  printf '%s\n' "$tmp/nope" >"$tmp/layers"
   run_dot doctor
   assert_rc 1
   assert_out_contains "dangling: $tmp/target/.config/app/init"
@@ -281,7 +286,7 @@ test_offer_personal_no_writes_header_only() {
   run_dot __offer-personal-layer <<<""
   assert_rc 0
   [[ -f "$tmp/layers" ]] || fail "layers file not written"
-  [[ -z "$(grep -v '^#' "$tmp/layers")" ]] || fail "unexpected layer line"
+  ! grep -qv '^#' "$tmp/layers" || fail "unexpected layer line"
   run_dot link
   assert_rc 0
   assert_absent "$tmp/target/.personal"
@@ -307,7 +312,7 @@ test_prune_survives_unreadable_directory() {
 }
 
 test_prune_with_symlinked_parent_paths() {
-  [[ $tmp_raw != $tmp ]] || return 0 # nothing to tell apart on this system
+  [[ $tmp_raw != "$tmp" ]] || return 0 # nothing to tell apart on this system
   export DOTFILES="$tmp_raw/base" DOT_TARGET="$tmp_raw/target"
   mkdir -p "$tmp/base/home/dot-config/app" "$tmp/base/home/dot-config/keep"
   touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/keep/k"
@@ -362,7 +367,9 @@ test_unlink_failure_says_unlink() {
 test_tilde_slash_expands_to_home() {
   mkdir -p "$tmp/fakehome/work/home"
   touch "$tmp/fakehome/work/home/dot-w"
-  print -rl -- "~/work" >"$tmp/layers"
+  # A literal tilde is the point: dot has to expand it, not the shell.
+  # shellcheck disable=SC2088
+  printf '%s\n' '~/work' >"$tmp/layers"
   run_dot link
   assert_rc 0
   assert_link "$tmp/target/.w" "$tmp/fakehome/work/home/dot-w"
@@ -370,7 +377,7 @@ test_tilde_slash_expands_to_home() {
 
 test_tilde_user_is_not_expanded() {
   touch "$tmp/base/home/dot-rc"
-  print -rl -- "~bob/work" >"$tmp/layers"
+  printf '%s\n' "~bob/work" >"$tmp/layers"
   run_dot link
   assert_rc 1
   assert_out_contains "dot: layer path must be absolute: ~bob/work"
@@ -381,7 +388,7 @@ test_relative_layer_path_is_rejected() {
   # The directory exists relative to the repo root, where the tests run, so
   # only the absolute-path rule can reject it.
   touch "$tmp/base/home/dot-rc"
-  print -rl -- "tests" >"$tmp/layers"
+  printf '%s\n' "tests" >"$tmp/layers"
   run_dot link
   assert_rc 1
   assert_out_contains "dot: layer path must be absolute: tests"
@@ -391,7 +398,7 @@ test_relative_layer_path_is_rejected() {
 test_doctor_reports_relative_layer_path() {
   touch "$tmp/base/home/dot-rc"
   run_dot link
-  print -rl -- "tests" >"$tmp/layers"
+  printf '%s\n' "tests" >"$tmp/layers"
   run_dot doctor
   assert_rc 1
   assert_out_contains "layer path must be absolute: tests"
@@ -399,23 +406,20 @@ test_doctor_reports_relative_layer_path() {
 }
 
 failures=0
-for t in ${(ok)functions}; do
-  if [[ $t != test_* ]]; then
-    continue
-  fi
+for t in $(declare -F | awk '{ print $3 }' | grep '^test_' | sort); do
   test_failed=0
   setup
   $t
   teardown
   if ((test_failed)); then
     failures=$((failures + 1))
-    print -r -- "FAIL - $t"
+    echo "FAIL - $t"
   else
-    print -r -- "ok   - $t"
+    echo "ok   - $t"
   fi
 done
 
 if ((failures)); then
-  print -r -- "$failures test(s) failed"
+  echo "$failures test(s) failed"
   exit 1
 fi

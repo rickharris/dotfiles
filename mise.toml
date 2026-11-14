@@ -6,6 +6,7 @@
 
 [tools]
 "npm:prettier" = "3.10.1"
+shellcheck = "0.11.0"
 shfmt = "3.14.1"
 stylua = "2.6.0"
 taplo = "0.10.0"
@@ -16,8 +17,8 @@ run = [
   "prettier --write --log-level warn .",
   "stylua $(git ls-files '*.lua')",
   "taplo fmt $(git ls-files '*.toml')",
-  "shfmt -ln zsh -i 2 -w home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh",
-  "shfmt -i 2 -w $(git ls-files '*.sh')",
+  "shfmt -ln zsh -i 2 -w home/dot-zshrc",
+  "shfmt -i 2 -w home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
 
 [tasks."fmt:check"]
@@ -26,19 +27,24 @@ run = [
   "prettier --check --log-level warn .",
   "stylua --check $(git ls-files '*.lua')",
   "taplo fmt --check $(git ls-files '*.toml')",
-  "shfmt -ln zsh -i 2 -d home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh",
-  "shfmt -i 2 -d $(git ls-files '*.sh')",
+  "shfmt -ln zsh -i 2 -d home/dot-zshrc",
+  "shfmt -i 2 -d home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
+
+[tasks.lint]
+description = "ShellCheck every sh and bash script"
+run = "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')"
 
 [tasks.test]
 description = "Syntax checks and tests; touches only temp directories"
 run = [
-  "zsh -n home/dot-local/bin/dot",
+  # dot has to work on the bash macOS ships, so always test with /bin/bash.
+  "/bin/bash -n home/dot-local/bin/dot",
   "zsh -n home/dot-zshrc",
-  "zsh tests/dot_test.zsh",
+  "/bin/bash tests/dot_test.bash",
   "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
 ]
 
 [tasks.check]
 description = "Everything CI runs"
-depends = ["fmt:check", "test"]
+depends = ["fmt:check", "lint", "test"]
