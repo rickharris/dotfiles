@@ -60,7 +60,8 @@ the include hooks instead: `~/.zshrc.local` is sourced by `.zshrc`, and
 ## Checks
 
 ```sh
-mise run check   # formatting, linting, syntax and tests; what CI runs
+mise run check   # lint and tests; what CI runs
+mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format everything
 ```
 

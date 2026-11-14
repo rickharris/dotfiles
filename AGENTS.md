@@ -28,7 +28,8 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-mise run check   # everything CI runs: formatting, linting, syntax, tests
+mise run check   # everything CI runs: lint, then tests
+mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
 ```

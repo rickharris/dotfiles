@@ -21,19 +21,16 @@ run = [
   "shfmt -i 2 -w home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
 
-[tasks."fmt:check"]
-description = "Report files that are not formatted, without changing them"
+[tasks.lint]
+description = "Check formatting and run ShellCheck, without changing anything"
 run = [
   "prettier --check --log-level warn .",
   "stylua --check $(git ls-files '*.lua')",
   "taplo fmt --check $(git ls-files '*.toml')",
   "shfmt -ln zsh -i 2 -d home/dot-zshrc",
   "shfmt -i 2 -d home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
+  "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
 ]
-
-[tasks.lint]
-description = "ShellCheck every sh and bash script"
-run = "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')"
 
 [tasks.test]
 description = "Syntax checks and tests; touches only temp directories"
@@ -47,4 +44,4 @@ run = [
 
 [tasks.check]
 description = "Everything CI runs"
-depends = ["fmt:check", "lint", "test"]
+depends = ["lint", "test"]
