@@ -555,6 +555,23 @@ require("smart-splits").setup({
   resize = { amount = 2, ignored_events = {} },
 })
 
+-- The backend looks up its Ghostty terminal asynchronously and starts a
+-- long-lived osascript helper when the answer arrives. If Neovim has begun
+-- exiting by then (`nvim --headless +q`, as `dot install` runs it, or a very
+-- quick `:q`), the backend's own cleanup has already run, nothing stops the
+-- helper, and Neovim waits on it forever. So refuse to start it once exit is
+-- under way.
+do
+  local transport = require("smart-splits-backend-ghostty.transport")
+  local start = transport.start
+  transport.start = function()
+    if vim.v.exiting ~= vim.NIL then
+      return false
+    end
+    return start()
+  end
+end
+
 -- ## Editing
 
 require("nvim-autopairs").setup({
