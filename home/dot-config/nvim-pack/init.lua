@@ -205,6 +205,25 @@ vim.lsp.config("cssmodules_ls", {
 
 local oxlint_base_on_attach = vim.lsp.config.oxlint.on_attach
 vim.lsp.config("oxlint", {
+  cmd = function(dispatchers, config)
+    local cmd = "oxlint"
+    if (config or {}).root_dir then
+      -- Workspace dependencies may be hoisted above the package's LSP root.
+      for _, candidate in
+        ipairs(vim.fs.find("node_modules/.bin/oxlint", {
+          path = config.root_dir,
+          upward = true,
+          limit = math.huge,
+        }))
+      do
+        if vim.fn.executable(candidate) == 1 then
+          cmd = candidate
+          break
+        end
+      end
+    end
+    return vim.lsp.rpc.start({ cmd, "--lsp" }, dispatchers)
+  end,
   on_attach = function(client, bufnr)
     if not oxlint_base_on_attach then
       return
