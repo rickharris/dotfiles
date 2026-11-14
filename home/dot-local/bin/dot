@@ -153,12 +153,80 @@ stow_pkg() {
   fi
 }
 
+# Prints every broken symlink in the target that points into a layer, one per
+# line. Needs layer_dirs to be set. These are left behind when a directory is
+# removed from a layer or moved to another one: stow only cleans up inside
+# directories the package still has.
+#
+# Only the target's top level and the top-level directories that some layer
+# still provides (.config, .local, ...) are searched, not all of the target.
+# So if a whole top-level directory is removed from every layer, run
+# `dot unlink` before removing it.
+dangling_links() {
+  local layer package entry root link dest
+  local -a resolved_layers
+  local -aU roots
+
+  for layer in $layer_dirs; do
+    resolved_layers+=("${layer:A}")
+    for package in home folded; do
+      for entry in "$layer/$package"/*(ND/); do
+        roots+=("$target/${${entry:t}/#dot-/.}")
+      done
+    done
+  done
+
+  {
+    find "$target" -maxdepth 1 -type l
+    for root in $roots; do
+      if [[ -d $root && ! -L $root ]]; then
+        find "$root" -type l
+      fi
+    done
+  } 2>/dev/null | sort -u | while IFS= read -r link; do
+    if [[ -e $link ]]; then
+      continue
+    fi
+    # Resolve the link text against the link's own directory, with symlinked
+    # parents resolved on both sides so /tmp and /private/tmp compare equal.
+    dest=$(readlink "$link")
+    if [[ $dest != /* ]]; then
+      dest=${link:h:A}/$dest
+    fi
+    dest=${dest:a}
+    for layer in $resolved_layers; do
+      if [[ $dest == $layer/* ]]; then
+        print -r -- "$link"
+        break
+      fi
+    done
+  done
+}
+
+# Removes the links dangling_links finds, and any directories that leaves
+# empty.
+prune() {
+  local link dir
+  dangling_links | while IFS= read -r link; do
+    rm -- "$link"
+    print -r -- "pruned: $link"
+    dir=${link:h}
+    while [[ $dir == $target/* ]] && rmdir -- "$dir" 2>/dev/null; do
+      dir=${dir:h}
+    done
+  done
+}
+
 link() {
   if ! command -v stow >/dev/null 2>&1; then
     brew install stow
   fi
 
   layers
+  # Prune before stowing: a directory that moved from one layer to another
+  # leaves a dangling link that would block stow at the new location.
+  prune
+
   local layer
   for layer in $layer_dirs; do
     if [[ -d $layer/home ]]; then

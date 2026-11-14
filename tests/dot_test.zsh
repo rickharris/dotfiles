@@ -152,6 +152,63 @@ test_two_layers_same_file_conflict() {
   assert_out_contains "dot: could not link $tmp/work/home."
 }
 
+test_prune_removed_directory() {
+  mkdir -p "$tmp/base/home/dot-config/old app/lua" "$tmp/base/home/dot-config/keep"
+  touch "$tmp/base/home/dot-config/old app/init" "$tmp/base/home/dot-config/old app/lua/x" \
+    "$tmp/base/home/dot-config/keep/k"
+  run_dot link
+  rm -r "$tmp/base/home/dot-config/old app"
+  run_dot link
+  assert_rc 0
+  assert_out_contains "pruned: $tmp/target/.config/old app/init"
+  assert_absent "$tmp/target/.config/old app" # emptied directories go too
+  assert_link "$tmp/target/.config/keep/k" "$tmp/base/home/dot-config/keep/k"
+}
+
+test_prune_keeps_dir_with_other_files() {
+  mkdir -p "$tmp/base/home/dot-config/app"
+  touch "$tmp/base/home/dot-config/app/init" "$tmp/base/home/dot-config/stay"
+  run_dot link
+  print local >"$tmp/target/.config/app/untracked.json"
+  rm -r "$tmp/base/home/dot-config/app"
+  run_dot link
+  assert_absent "$tmp/target/.config/app/init"
+  [[ -f "$tmp/target/.config/app/untracked.json" ]] || fail "untracked file was removed"
+}
+
+test_prune_ignores_foreign_dangling_links() {
+  mkdir -p "$tmp/base/home/dot-config"
+  touch "$tmp/base/home/dot-config/k"
+  mkdir -p "$tmp/target/.config"
+  ln -s "$tmp/elsewhere/gone" "$tmp/target/.config/foreign"
+  ln -s "$tmp/elsewhere/gone" "$tmp/target/.toplevel-foreign"
+  run_dot link
+  [[ -L "$tmp/target/.config/foreign" ]] || fail "foreign dangling link was pruned"
+  [[ -L "$tmp/target/.toplevel-foreign" ]] || fail "foreign top-level link was pruned"
+}
+
+test_prune_layer_links() {
+  mkdir -p "$tmp/work/home/dot-config/tool" "$tmp/work/home/dot-config/other"
+  touch "$tmp/work/home/dot-config/tool/c" "$tmp/work/home/dot-config/other/o"
+  print -rl -- "$tmp/work" >"$tmp/layers"
+  run_dot link
+  rm -r "$tmp/work/home/dot-config/tool"
+  run_dot link
+  assert_absent "$tmp/target/.config/tool"
+}
+
+test_folded_dir_moves_between_layers() {
+  mkdir -p "$tmp/base/home/dot-config" "$tmp/base/folded/dot-config/kb" "$tmp/work/folded/dot-config"
+  touch "$tmp/base/home/dot-config/keep" "$tmp/base/folded/dot-config/kb/kb.json"
+  print -rl -- "$tmp/work" >"$tmp/layers"
+  run_dot link
+  mv "$tmp/base/folded/dot-config/kb" "$tmp/work/folded/dot-config/kb"
+  rm -r "$tmp/base/folded" # the base no longer has a folded package at all
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.config/kb" "$tmp/work/folded/dot-config/kb"
+}
+
 failures=0
 for t in ${(ok)functions[(I)test_*]}; do
   test_failed=0
