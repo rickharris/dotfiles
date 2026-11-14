@@ -4,4 +4,7 @@
 **/karabiner/automatic_backups
 home/dot-claude/zsh/.zcompdump
 
-.claude
+# Claude Code: track the project settings and hooks, ignore everything local.
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
