@@ -128,6 +128,10 @@ install() {
   fi
 
   mise install
+  # This repo has its own mise.toml, with the pinned formatters its checks
+  # use. mise only reads a project config once it has been trusted.
+  mise trust --quiet "$dotfiles"/mise.toml
+  mise --cd "$dotfiles" install
   mise exec -- nvim --headless +q
 }
 

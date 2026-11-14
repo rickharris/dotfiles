@@ -1,0 +1,44 @@
+# Tools and tasks for working on this repo. This is not the global mise
+# config, which lives in home/dot-config/mise/config.toml.
+#
+# Formatter output changes between versions, so the versions are pinned here
+# and CI, the agent hook and `mise run` all use the same ones.
+
+[tools]
+"npm:prettier" = "3.10.1"
+shfmt = "3.14.1"
+stylua = "2.6.0"
+taplo = "0.10.0"
+
+[tasks.fmt]
+description = "Format every file a formatter covers"
+run = [
+  "prettier --write --log-level warn .",
+  "stylua $(git ls-files '*.lua')",
+  "taplo fmt $(git ls-files '*.toml')",
+  "shfmt -ln zsh -i 2 -w home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh",
+  "shfmt -i 2 -w $(git ls-files '*.sh')",
+]
+
+[tasks."fmt:check"]
+description = "Report files that are not formatted, without changing them"
+run = [
+  "prettier --check --log-level warn .",
+  "stylua --check $(git ls-files '*.lua')",
+  "taplo fmt --check $(git ls-files '*.toml')",
+  "shfmt -ln zsh -i 2 -d home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh",
+  "shfmt -i 2 -d $(git ls-files '*.sh')",
+]
+
+[tasks.test]
+description = "Syntax checks and tests; touches only temp directories"
+run = [
+  "zsh -n home/dot-local/bin/dot",
+  "zsh -n home/dot-zshrc",
+  "zsh tests/dot_test.zsh",
+  "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
+]
+
+[tasks.check]
+description = "Everything CI runs"
+depends = ["fmt:check", "test"]

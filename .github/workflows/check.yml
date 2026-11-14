@@ -11,19 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install stow, neovim and shfmt
-        run: brew install stow neovim shfmt
+      # Installs the formatters pinned in mise.toml.
+      - uses: jdx/mise-action@v5
 
-      - name: Syntax check
-        run: zsh -n home/dot-local/bin/dot && zsh -n home/dot-zshrc
+      - name: Install stow and neovim
+        run: brew install stow neovim
 
-      - name: Formatting
-        run: |
-          shfmt -ln zsh -i 2 -d home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh
-          shfmt -i 2 -d .claude/hooks/check-dot.sh
-
-      - name: dot tests
-        run: zsh tests/dot_test.zsh
-
-      - name: pr_reviews query tests
-        run: nvim -l home/dot-config/nvim-shared/tests/query_spec.lua
+      - name: Formatting, syntax and tests
+        run: mise run check

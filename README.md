@@ -6,14 +6,14 @@ zsh <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/head
 
 ## Commands
 
-| Command       | What it does                                              |
-| ------------- | --------------------------------------------------------- |
-| `dot`         | Run `install` and then `prefs`                            |
-| `dot install` | Install dependencies                                      |
-| `dot link`    | Link dotfiles to the correct location                     |
-| `dot unlink`  | Remove dotfile symlinks                                   |
-| `dot doctor`  | Check for drift without changing anything                 |
-| `dot prefs`   | Set system and app preferences                            |
+| Command       | What it does                              |
+| ------------- | ----------------------------------------- |
+| `dot`         | Run `install` and then `prefs`            |
+| `dot install` | Install dependencies                      |
+| `dot link`    | Link dotfiles to the correct location     |
+| `dot unlink`  | Remove dotfile symlinks                   |
+| `dot doctor`  | Check for drift without changing anything |
+| `dot prefs`   | Set system and app preferences            |
 
 ## Layers
 
@@ -57,11 +57,15 @@ the include hooks instead: `~/.zshrc.local` is sourced by `.zshrc`, and
 `~/.gitconfig.local` is included by `.gitconfig`. A layer ships those as
 `home/dot-zshrc.local` and `home/dot-gitconfig.local`.
 
-## Tests
+## Checks
 
 ```sh
-zsh tests/dot_test.zsh
+mise run check   # formatting, syntax and tests; what CI runs
+mise run fmt     # format everything
 ```
+
+The formatters are pinned in `mise.toml`. `dot install` installs them; on a
+checkout it has not set up, run `mise trust && mise install` once.
 
 The tests run `dot` against temporary directories and never touch the real
 home directory.
