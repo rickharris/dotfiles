@@ -365,6 +365,7 @@ vim.lsp.enable({
   "marksman",
   "oxfmt",
   "oxlint",
+  "rumdl",
   "stylelint_lsp",
   "stylua",
   "taplo",
