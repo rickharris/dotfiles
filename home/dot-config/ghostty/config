@@ -11,7 +11,7 @@ font-feature = cv61
 # Support arbitrary bracketed ligatures, e.g. [info]
 font-feature = ss03
 
-theme = TokyoNight Moon
+theme = light:dawnfox,dark:TokyoNight Moon
 
 # Send Option as Alt so Neovim can map <M-...> bindings.
 macos-option-as-alt = true
