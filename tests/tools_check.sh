@@ -6,7 +6,8 @@
 # with few downloads, or one whose release carries weaker publisher evidence
 # than an earlier release did. A tool that is already installed is never
 # checked again, so a version bump can pass every other check here and then
-# stop `dot install`. This is the check that fails instead.
+# stop `dot install`. This is the check that fails instead. It also fails
+# when a tool installs without a command to run.
 #
 # It downloads about 1.5 GB.
 #
@@ -37,11 +38,19 @@ trap 'rm -rf "$tmp"' EXIT
 mkdir "$tmp/empty" || fail "could not make a temp directory"
 cd "$tmp/empty" || exit 3
 
-if ! MISE_GLOBAL_CONFIG_FILE=$config \
+MISE_GLOBAL_CONFIG_FILE=$config \
   MISE_DATA_DIR=$tmp/data \
   MISE_CACHE_DIR=$tmp/cache \
   MISE_STATE_DIR=$tmp/state \
-  mise install; then
+  mise install 2>&1 | tee "$tmp/log"
+if [ "${PIPESTATUS[0]}" -ne 0 ]; then
   echo "tools_check: mise could not install every tool in $config" >&2
+  exit 1
+fi
+
+# mise only warns when an npm package installs without the command it is
+# there for, which leaves the tool unusable.
+if grep -q "installed no executables" "$tmp/log"; then
+  echo "tools_check: a tool in $config installed without a command" >&2
   exit 1
 fi
