@@ -9,6 +9,11 @@ fi
 
 source $HOMEBREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Adds a prompt segment that shows when the dotfiles are behind. The test is
+# there because a pull brings this line in before `dot link` links the file.
+if [[ -r ~/.config/zsh/dot-prompt.zsh ]]; then
+  source ~/.config/zsh/dot-prompt.zsh
+fi
 
 FPATH=$HOMEBREW_PREFIX/share/zsh-completions:$FPATH
 
