@@ -1,5 +1,25 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Neovim plugins in vim.pack's lockfile that follow a branch. An entry with a version range does not match, because its closing brace does not follow src.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/nvim-pack-lock\\.json$/"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \\{\\s*\"rev\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"src\": \"(?<packageName>[^\"]+)\"\\s*\\}"
+      ],
+      "datasourceTemplate": "git-refs"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "One pull request a week for every Neovim plugin that moved. A commit on a branch has no release date, so the wait for new releases cannot apply to it.",
+      "matchFileNames": ["home/dot-config/nvim/nvim-pack-lock.json"],
+      "groupName": "nvim plugins",
+      "schedule": ["before 6am on monday"],
+      "minimumReleaseAge": null
+    }
+  ]
 }

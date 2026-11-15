@@ -75,6 +75,14 @@ reported while starting. It needs the network and takes about ten seconds.
 The diagnostics only read the Lua; this is the check that runs it, so run it
 after changing the Neovim version, the lockfile or `init.lua`.
 
+Renovate updates the Neovim plugins by rewriting the `rev` of each entry in
+`nvim-pack-lock.json`, which it finds with the regular expression in
+`renovate.json`. `tests/renovate_plugins_test.sh`, part of `mise run test`,
+fails if that expression stops matching every plugin that follows a branch.
+To check a change to `renovate.json`, run Renovate against this checkout
+without changing anything:
+`LOG_LEVEL=debug npx renovate --platform=local`.
+
 `install` and `prefs` have no tests, because they install software and change
 system settings. Nor does the last step of `update`, which hands over to
 `install`; the tests run the pull through the hidden `dot __pull`. After

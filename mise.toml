@@ -43,6 +43,7 @@ run = [
   "/bin/bash tests/dot_test.bash",
   "zsh tests/dot_prompt_test.zsh",
   "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
+  "tests/renovate_plugins_test.sh",
 ]
 
 [tasks.lua]
