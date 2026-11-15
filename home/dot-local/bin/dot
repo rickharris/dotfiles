@@ -516,12 +516,21 @@ pull_layers() {
     echo "dot: could not fast-forward $dotfiles." >&2
     return 1
   fi
+  # This repo now matches origin, so clear the count the prompt shows. The
+  # count is only about this repo, so do it before the other layers get a
+  # chance to fail.
+  write_cache 0 || true
 
   # Other layers are pulled on whatever branch they have checked out. A layer
-  # kept inside another repo, like layers/personal, came with that repo.
+  # kept inside another repo, like layers/personal, came with that repo. A
+  # layer with nothing to pull from (a repo that was never pushed, or a
+  # detached HEAD) is left as it is rather than stopping the update.
   for ((i = 1; i < ${#layer_dirs[@]}; i++)); do
     layer=${layer_dirs[i]}
     if ! is_git_root "$layer"; then
+      continue
+    fi
+    if ! git -C "$layer" rev-parse -q --verify '@{upstream}' >/dev/null 2>&1; then
       continue
     fi
     if ! git -C "$layer" pull --no-rebase --ff-only; then
@@ -529,9 +538,6 @@ pull_layers() {
       return 1
     fi
   done
-
-  # The checkout now matches origin, so clear the count the prompt shows.
-  write_cache 0 || true
 }
 
 update() {

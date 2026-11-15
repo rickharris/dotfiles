@@ -669,6 +669,34 @@ test_help_lists_update() {
   assert_out_contains "Pull the latest dotfiles and run install"
 }
 
+test_pull_skips_layer_repo_without_upstream() {
+  git_fixture
+  upstream_commit
+  mkdir -p "$tmp/local"
+  git -C "$tmp/local" init -q -b main
+  git -C "$tmp/local" commit -q --allow-empty -m first
+  printf '%s\n' "$tmp/local" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+  [[ $(git -C "$tmp/base" rev-list --count HEAD) -eq 2 ]] ||
+    fail "expected base to be fast-forwarded"
+}
+
+test_pull_resets_cache_when_a_layer_fails() {
+  git_fixture
+  mkdir -p "$tmp/work"
+  git_fixture "$tmp/work" "$tmp/work.git"
+  upstream_commit
+  upstream_commit "$tmp/work.git"
+  git -C "$tmp/work" commit -q --allow-empty -m local
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
+  run_dot update --check
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: could not fast-forward $tmp/work."
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
 failures=0
 for t in $(declare -F | awk '{ print $3 }' | grep '^test_' | sort); do
   test_failed=0
