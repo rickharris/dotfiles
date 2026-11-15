@@ -36,9 +36,7 @@ Neovim on its own only does that for plugins that are not installed yet.
 
 Renovate proposes updates to the tools in the mise configs, to the GitHub
 Actions, and once a week to the Neovim plugins, by changing the commits in
-`nvim-pack-lock.json`. Merging one and running `dot update` applies it. The
-two plugins locked to a version range, `blink.cmp` and `smart-splits.nvim`,
-are still updated by hand in Neovim.
+`nvim-pack-lock.json`. Merging one and running `dot update` applies it.
 
 ## Layers
 

@@ -11,7 +11,7 @@
     "blink.cmp": {
       "rev": "78336bc89ee5365633bcf754d93df01678b5c08f",
       "src": "https://github.com/saghen/blink.cmp",
-      "version": "1.0.0 - 2.0.0"
+      "version": "'v1.10.2'"
     },
     "bufferline.nvim": {
       "rev": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3",
@@ -148,7 +148,7 @@
     "smart-splits.nvim": {
       "rev": "5fd4fe53c2df2009e689f61511e3c474a9eccbaf",
       "src": "https://github.com/smart-splits-nvim/smart-splits.nvim",
-      "version": "3.0.0 - 4.0.0"
+      "version": "'v3.0.0'"
     },
     "snacks.nvim": {
       "rev": "882c996cf28183f4d63640de0b4c02ec886d01f2",

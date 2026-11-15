@@ -5,20 +5,45 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Neovim plugins in vim.pack's lockfile that follow a branch. An entry with a version range does not match, because its closing brace does not follow src.",
+      "description": "Neovim plugins in vim.pack's lockfile that follow a branch. An entry for a tagged release does not match, because its closing brace does not follow src.",
       "managerFilePatterns": ["/^home/dot-config/nvim/nvim-pack-lock\\.json$/"],
       "matchStrings": [
         "\"(?<depName>[^\"]+)\": \\{\\s*\"rev\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"src\": \"(?<packageName>[^\"]+)\"\\s*\\}"
       ],
       "datasourceTemplate": "git-refs"
+    },
+    {
+      "customType": "regex",
+      "description": "Neovim plugins in the lockfile that follow tagged releases: the tag and its commit.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/nvim-pack-lock\\.json$/"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \\{\\s*\"rev\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"src\": \"https://github\\.com/(?<packageName>[^\"]+)\",\\s*\"version\": \"'(?<currentValue>[^']+)'\"\\s*\\}"
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "The same tags where the Neovim config asks for them, so both files change together.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/init\\.lua$/"],
+      "matchStrings": [
+        "src = \"https://github\\.com/(?<packageName>[^\"/]+/(?<depName>[^\"]+))\",\\s*version = \"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "github-tags"
     }
   ],
   "packageRules": [
     {
-      "description": "One pull request a week for every Neovim plugin that moved. A commit on a branch has no release date, so the wait for new releases cannot apply to it.",
-      "matchFileNames": ["home/dot-config/nvim/nvim-pack-lock.json"],
+      "description": "One pull request a week for every Neovim plugin that moved.",
+      "matchFileNames": [
+        "home/dot-config/nvim/nvim-pack-lock.json",
+        "home/dot-config/nvim/init.lua"
+      ],
       "groupName": "nvim plugins",
-      "schedule": ["before 6am on monday"],
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "A commit on a branch has no release date, so the wait for new releases cannot apply to it.",
+      "matchDatasources": ["git-refs"],
       "minimumReleaseAge": null
     }
   ]

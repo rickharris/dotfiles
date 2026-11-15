@@ -117,14 +117,17 @@ vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/pwntester/octo.nvim",
   "https://github.com/rafamadriz/friendly-snippets",
+  -- These two follow releases, not a branch. The tag is exact, not a range,
+  -- so that Renovate can read which release is in use and propose the next;
+  -- it changes the tag here and the commit in the lockfile together.
   {
     src = "https://github.com/saghen/blink.cmp",
-    version = vim.version.range("1"),
+    version = "v1.10.2",
   },
   "https://github.com/smart-splits-nvim/backend-ghostty",
   {
     src = "https://github.com/smart-splits-nvim/smart-splits.nvim",
-    version = vim.version.range("3"),
+    version = "v3.0.0",
   },
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/stevearc/overseer.nvim",
