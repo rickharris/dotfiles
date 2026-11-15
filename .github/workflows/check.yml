@@ -44,8 +44,9 @@ jobs:
 
       - uses: jdx/mise-action@v5
 
+      # The version every machine gets, from the global mise config.
       - name: Install Neovim with mise
-        run: mise install neovim@latest
+        run: mise install "neovim@$(mise config get -f home/dot-config/mise/config.toml tools.neovim)"
 
       - name: Fetch the Neovim plugins
         run: tests/fetch_nvim_plugins.sh "$HOME/.local/share/nvim/site/pack/core/opt"
