@@ -14,7 +14,19 @@ bash <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/hea
 | `dot unlink`         | Remove dotfile symlinks                   |
 | `dot doctor`         | Check for drift without changing anything |
 | `dot prefs`          | Set system and app preferences            |
+| `dot update`         | Pull the latest dotfiles and run install  |
 | `dot update --check` | Report how far behind `origin/main` it is |
+
+## Keeping up to date
+
+The prompt shows `dot ⇣3` when this checkout is three commits behind
+`origin/main`. It reads a count that `dot update --check` records, and runs
+that check in the background when the count is more than an hour old.
+`dot doctor` reports the same thing, and fetches to find out.
+
+`dot update` pulls this repo and every layer that is a git repo of its own,
+then runs `dot install`. It does not run `dot prefs`. It only fast-forwards,
+so local edits are left alone, and it refuses when this repo is not on `main`.
 
 ## Layers
 

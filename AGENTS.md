@@ -11,9 +11,9 @@ symlinks into this working tree, and `~/.local/bin/dot` is the script in it. An
 edit here takes effect on the machine immediately, and a broken `dot` or
 `.zshrc` is broken for real.
 
-- **Do not run `dot`, `dot install`, `dot link`, `dot unlink` or `dot prefs`
-  to test a change.** They act on the real home directory. Run the tests
-  instead, or point all three overrides at a temp directory:
+- **Do not run `dot`, `dot install`, `dot link`, `dot unlink`, `dot prefs` or
+  `dot update` to test a change.** They act on the real home directory. Run
+  the tests instead, or point all three overrides at a temp directory:
 
   ```sh
   t=$(mktemp -d) && mkdir -p "$t/base/home" "$t/target"
@@ -23,7 +23,9 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 
 - `dot doctor` is always safe. It changes nothing in the home directory, but
   it does fetch from `origin`.
-- Run those four against the real home only when the task is to apply a
+- `dot update --check` fetches from `origin` and writes one cache file, so it
+  is safe too.
+- Run the others against the real home only when the task is to apply a
   change to this machine, and say that you did.
 
 ## Checks
@@ -57,8 +59,10 @@ hands back what it finds. Fix a diagnostic where it is reported; do not turn
 the rule off.
 
 `install` and `prefs` have no tests, because they install software and change
-system settings. After changing them, re-read the step order and say plainly
-that it was not exercised.
+system settings. Nor does the last step of `update`, which hands over to
+`install`; the tests run the pull through the hidden `dot __pull`. After
+changing any of them, re-read the step order and say plainly that it was not
+exercised.
 
 ## Layout
 

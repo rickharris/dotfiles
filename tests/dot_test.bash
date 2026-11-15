@@ -571,6 +571,104 @@ test_doctor_ok_without_origin() {
   assert_out_contains "dot: ok"
 }
 
+test_pull_fast_forwards_base() {
+  git_fixture
+  upstream_commit
+  run_dot __pull
+  assert_rc 0
+  local have want
+  have=$(git -C "$tmp/base" rev-parse HEAD)
+  want=$(git -C "$tmp/origin.git" rev-parse main)
+  [[ $have == "$want" ]] ||
+    fail "expected base to match origin/main"
+}
+
+test_pull_resets_cache() {
+  git_fixture
+  upstream_commit
+  run_dot update --check
+  run_dot __pull
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_pull_refuses_other_branch() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q -b topic
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: $tmp/base is not on the main branch"
+  [[ $(git -C "$tmp/base" rev-list --count HEAD) -eq 1 ]] ||
+    fail "expected no new commits"
+}
+
+test_pull_refuses_detached_head() {
+  git_fixture
+  git -C "$tmp/base" checkout -q --detach
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: $tmp/base is not on the main branch"
+}
+
+test_pull_keeps_unrelated_local_edits() {
+  git_fixture
+  upstream_commit
+  echo edited >"$tmp/base/README"
+  run_dot __pull
+  assert_rc 0
+  assert_file_is "$tmp/base/README" edited
+}
+
+test_pull_succeeds_when_ahead() {
+  git_fixture
+  git -C "$tmp/base" commit -q --allow-empty -m local
+  run_dot __pull
+  assert_rc 0
+}
+
+test_pull_diverged_fails() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" commit -q --allow-empty -m local
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: could not fast-forward $tmp/base."
+}
+
+test_pull_updates_layer_repo() {
+  git_fixture
+  mkdir -p "$tmp/work layer"
+  git_fixture "$tmp/work layer" "$tmp/work.git"
+  upstream_commit "$tmp/work.git"
+  printf '%s\n' "$tmp/work layer" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+  local have want
+  have=$(git -C "$tmp/work layer" rev-parse HEAD)
+  want=$(git -C "$tmp/work.git" rev-parse main)
+  [[ $have == "$want" ]] ||
+    fail "expected the layer to match its origin"
+}
+
+test_pull_skips_layers_that_are_not_repos() {
+  git_fixture
+  mkdir -p "$tmp/base/layers/personal" "$tmp/plain"
+  printf '%s\n' "$tmp/base/layers/personal" "$tmp/plain" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+}
+
+test_pull_outside_git_repo_fails() {
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: not a git repository: $tmp/base"
+}
+
+test_help_lists_update() {
+  run_dot help
+  assert_out_contains "Pull the latest dotfiles and run install"
+}
+
 failures=0
 for t in $(declare -F | awk '{ print $3 }' | grep '^test_' | sort); do
   test_failed=0

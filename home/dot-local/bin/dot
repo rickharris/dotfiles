@@ -493,6 +493,54 @@ update_check() {
   fi
 }
 
+# Fast-forwards the base repo and every layer that is a git repo of its own.
+# This is the half of `dot update` the tests can run.
+#
+# The base repo has to be on main, so an update never lands on a branch that
+# is being worked on. A fast-forward leaves local edits alone and fails if
+# they are in the way, or if main has commits origin does not, which is
+# better than merging or rebasing without being asked. --no-rebase keeps a
+# pull.rebase setting from turning the pull into a rebase.
+pull_layers() {
+  local i layer
+  layers
+  if ! is_git_root "$dotfiles"; then
+    echo "dot: not a git repository: $dotfiles" >&2
+    return 1
+  fi
+  if ! on_main "$dotfiles"; then
+    echo "dot: $dotfiles is not on the main branch; switch to it, then re-run \`dot update\`." >&2
+    return 1
+  fi
+  if ! git -C "$dotfiles" pull --no-rebase --ff-only origin main; then
+    echo "dot: could not fast-forward $dotfiles." >&2
+    return 1
+  fi
+
+  # Other layers are pulled on whatever branch they have checked out. A layer
+  # kept inside another repo, like layers/personal, came with that repo.
+  for ((i = 1; i < ${#layer_dirs[@]}; i++)); do
+    layer=${layer_dirs[i]}
+    if ! is_git_root "$layer"; then
+      continue
+    fi
+    if ! git -C "$layer" pull --no-rebase --ff-only; then
+      echo "dot: could not fast-forward $layer." >&2
+      return 1
+    fi
+  done
+
+  # The checkout now matches origin, so clear the count the prompt shows.
+  write_cache 0 || true
+}
+
+update() {
+  pull_layers
+  # Start the script again rather than calling install here. bash has already
+  # read this copy, and the pull may have changed what install does.
+  exec "$dotfiles/home/dot-local/bin/dot" install
+}
+
 # Reports drift without changing anything in the home directory: layers that
 # are missing, files that are not linked, links that were replaced by regular
 # files, dangling links, a checkout that is behind origin/main and unsatisfied
@@ -704,6 +752,7 @@ print_help() {
   printf "%-20s%s\n" "dot unlink" "Remove dotfile symlinks"
   printf "%-20s%s\n" "dot doctor" "Check for drift without changing anything"
   printf "%-20s%s\n" "dot prefs" "Set system and app preferences"
+  printf "%-20s%s\n" "dot update" "Pull the latest dotfiles and run install"
   printf "%-20s%s\n" "dot update --check" "Report how far behind origin/main this is"
 }
 
@@ -725,6 +774,9 @@ prefs)
   ;;
 update)
   case ${2:-} in
+  '')
+    update
+    ;;
   --check)
     update_check
     ;;
@@ -733,6 +785,10 @@ update)
     exit 1
     ;;
   esac
+  ;;
+__pull)
+  # Not a public command; it lets the tests run update without the install.
+  pull_layers
   ;;
 __offer-personal-layer)
   # Not a public command; it lets the tests drive the install prompt.
