@@ -4,10 +4,6 @@
       "rev": "d3e2250efab001fba40d2226361c0060ccf18fd6",
       "src": "https://github.com/b0o/SchemaStore.nvim"
     },
-    "auto-dark-mode.nvim": {
-      "rev": "2b16a24c202892e61fca7df4d2d7c4c872a44165",
-      "src": "https://github.com/f-person/auto-dark-mode.nvim"
-    },
     "backend-ghostty": {
       "rev": "3d9aca1959ddb66e2241399d8772a42de8046e64",
       "src": "https://github.com/smart-splits-nvim/backend-ghostty"

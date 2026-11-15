@@ -84,7 +84,6 @@ vim.pack.add({
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
   "https://github.com/femiagbabiaka/fff-snacks.nvim",
-  "https://github.com/f-person/auto-dark-mode.nvim",
   "https://github.com/folke/lazydev.nvim",
   "https://github.com/folke/noice.nvim",
   "https://github.com/folke/sidekick.nvim",
@@ -433,18 +432,30 @@ require("nightfox").setup({
 
 ---@diagnostic disable-next-line: missing-fields
 require("tokyonight").setup({ style = "moon" })
-require("auto-dark-mode").setup({
-  update_interval = 1000,
-  set_dark_mode = function()
-    vim.o.background = "dark"
-    vim.cmd.colorscheme("tokyonight")
-  end,
-  set_light_mode = function()
-    vim.o.background = "light"
-    vim.cmd.colorscheme("dawnfox")
-  end,
+-- The colorscheme follows 'background', which Neovim sets from the terminal's
+-- background color, at startup and whenever the terminal reports a theme
+-- change. So Neovim is light or dark when the terminal is. Nothing else should
+-- load a colorscheme on a theme change: setting 'background' reloads the
+-- current colorscheme, and dawnfox, being light only, fights a switch to dark
+-- and leaves Neovim on its default colors with g:colors_name unset.
+local function follow_background()
+  local name = vim.o.background == "light" and "dawnfox" or "tokyonight-moon"
+  if vim.g.colors_name == name then
+    return
+  end
+  -- A colorscheme only runs `hi clear` itself when g:colors_name is set.
+  -- Without it, plugins that define default highlights (bufferline) keep the
+  -- old theme's colors.
+  vim.cmd("hi clear")
+  vim.cmd.colorscheme(name)
+end
+vim.api.nvim_create_autocmd("OptionSet", {
+  pattern = "background",
+  -- Nested, so that loading the colorscheme fires ColorScheme for plugins.
+  nested = true,
+  callback = follow_background,
 })
-vim.cmd.colorscheme("tokyonight")
+follow_background()
 
 -- ## Core UI
 
@@ -522,9 +533,44 @@ require("lualine").setup({
 })
 
 require("bufferline").setup({
+  -- Make background tabs recede, so that only the current tab stands out.
+  -- Bufferline calls this at setup and whenever the colorscheme changes.
+  highlights = function(defaults)
+    -- Give them the bar's own color, which leaves only the current tab with
+    -- a shape.
+    local hls = vim.deepcopy(defaults.highlights)
+    local tab_bg, bar_bg = hls.background.bg, hls.fill.bg
+    for _, hl in pairs(hls) do
+      if hl.bg == tab_bg then
+        hl.bg = bar_bg
+      end
+    end
+
+    -- Color their file icons like their names. Icon groups are not part of
+    -- this table, but bufferline defines them as defaults, named after the
+    -- mini.icons group they copy, so a definition here takes precedence.
+    local icon_colors = {
+      "Azure",
+      "Blue",
+      "Cyan",
+      "Green",
+      "Grey",
+      "Orange",
+      "Purple",
+      "Red",
+      "Yellow",
+    }
+    for _, color in ipairs(icon_colors) do
+      local group = "BufferLineMiniIcons" .. color
+      vim.api.nvim_set_hl(0, group, { link = "BufferLineBackground" })
+    end
+
+    return hls
+  end,
   options = {
     always_show_bufferline = false,
     diagnostics = "nvim_lsp",
+    separator_style = "slant",
     close_command = function(n)
       Snacks.bufdelete(n)
     end,
@@ -1027,6 +1073,9 @@ require("which-key").add({
     "<cmd>BufferLineGroupClose ungrouped<cr>",
     desc = "Close unpinned",
   },
+  -- The built-in ]b and [b follow buffer numbers, not the order in the bar.
+  { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next buffer" },
+  { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous buffer" },
   { "<leader>c", group = "config" },
   {
     "<leader>cc",
