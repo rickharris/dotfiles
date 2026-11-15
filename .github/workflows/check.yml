@@ -5,17 +5,31 @@ on:
     branches: [main]
   pull_request:
 
+# Two jobs so the checks list on a pull request shows which kind of thing
+# failed. Both only call mise tasks; what they run is defined in mise.toml.
 jobs:
-  check:
+  lint:
+    # Formatting and ShellCheck need nothing from macOS.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Installs the tools pinned in mise.toml.
+      - uses: jdx/mise-action@v5
+
+      - name: Formatting and ShellCheck
+        run: mise run lint
+
+  test:
+    # dot targets macOS and the bash it ships, so the tests run there.
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
 
-      # Installs the formatters pinned in mise.toml.
       - uses: jdx/mise-action@v5
 
       - name: Install stow and neovim
         run: brew install stow neovim
 
-      - name: Formatting, syntax and tests
-        run: mise run check
+      - name: Syntax and tests
+        run: mise run test
