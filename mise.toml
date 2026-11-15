@@ -49,6 +49,11 @@ run = [
 description = "What lua-language-server reports; needs Neovim and its plugins installed"
 run = "tests/lua_check.sh"
 
+[tasks.tools]
+description = "Install the global mise config's tools into a temp directory; downloads about 1.5 GB"
+run = "tests/tools_check.sh"
+
+# Leaves out `tools`, which CI also runs, because of how much it downloads.
 [tasks.check]
-description = "Everything CI runs"
+description = "Lint, tests and Lua diagnostics"
 depends = ["lint", "test", "lua"]

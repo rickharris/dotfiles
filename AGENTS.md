@@ -32,12 +32,20 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-mise run check   # everything CI runs: lint, tests and Lua diagnostics
+mise run check   # lint, tests and Lua diagnostics
 mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
 mise run lua     # what lua-language-server reports
+mise run tools   # install the global mise tools into a temp directory
 ```
+
+CI runs `check` and `tools`. `tools` is not part of `check` because it
+downloads about 1.5 GB. Run it after changing a tool or a version in
+`home/dot-config/mise/config.toml`: mise refuses npm packages that fail its
+supply-chain checks, but only when it installs one, so nothing else notices.
+If it refuses one, find out why before adding an exemption, and exempt the
+narrowest thing that works.
 
 The tools are pinned in `mise.toml`: `oxfmt` for Markdown, JSON, YAML and
 TOML, `stylua` for Lua, `shfmt` and `shellcheck` for shell, and `rumdl` to

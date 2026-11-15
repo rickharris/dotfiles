@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
 
-# Three jobs so the checks list on a pull request shows which kind of thing
+# Four jobs so the checks list on a pull request shows which kind of thing
 # failed. Each only calls a mise task; what they run is defined in mise.toml.
 jobs:
   lint:
@@ -57,3 +57,21 @@ jobs:
 
       - name: Lua diagnostics
         run: mise run lua
+
+  tools:
+    # mise vets an npm package only when it installs one, so a version bump
+    # in the global mise config can pass the other jobs and still stop
+    # `dot install`. This installs every tool from scratch, on the platform
+    # the machines run.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v5
+
+      # mise asks GitHub's API for several of the releases, and without a
+      # token those requests share the runner's rate limit.
+      - name: Install the global tools from scratch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: mise run tools

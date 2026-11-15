@@ -6,11 +6,19 @@ deno = "latest"
 # Language servers, formatters and linters for Neovim. These are the default
 # versions; a project's own mise.toml overrides them inside that project, and
 # Neovim picks that up because it runs tools through mise's shims.
-"npm:@github/copilot-language-server" = "1.570.0"
-"npm:@stylelint/language-server" = "1.2.0"
+#
+# Copilot's language server comes from GitHub's releases as a standalone
+# binary, not from npm. The npm package declares its command at a path
+# outside the package, which npm repairs and mise does not, so mise installs
+# it without a command. It also depends on SDK packages that mise refuses
+# (github/copilot-sdk#2894).
+"github:github/copilot-language-server-release" = "1.570.0"
+# mise checks npm packages before installing them, and refuses one with under
+# 1000 weekly downloads unless it is exempted, as these two are.
+"npm:@stylelint/language-server" = { version = "1.2.0", allow_low_downloads = true }
 "npm:@vtsls/language-server" = "0.3.0"
 "npm:bash-language-server" = "5.8.1"
-"npm:cssmodules-language-server" = "1.5.2"
+"npm:cssmodules-language-server" = { version = "1.5.2", allow_low_downloads = true }
 "npm:graphql-language-service-cli" = "4.0.1"
 "npm:oxfmt" = "0.78.0"
 "npm:oxlint" = "1.93.0"
