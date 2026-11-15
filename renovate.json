@@ -33,12 +33,16 @@
   ],
   "packageRules": [
     {
-      "description": "One pull request for every Neovim plugin that moved, not one each.",
+      "description": "One pull request for every Neovim plugin that moved, not one each. Its table links each plugin to the commits between the old and new revision, since a commit on a branch has no changelog.",
       "matchFileNames": [
         "home/dot-config/nvim/nvim-pack-lock.json",
         "home/dot-config/nvim/init.lua"
       ],
-      "groupName": "nvim plugins"
+      "groupName": "nvim plugins",
+      "prBodyDefinitions": {
+        "Changes": "{{#if (equals datasource 'git-refs')}}[commits]({{{packageName}}}/compare/{{{currentDigest}}}...{{{newDigest}}}){{else}}[commits](https://github.com/{{{packageName}}}/compare/{{{currentValue}}}...{{{newValue}}}){{/if}}"
+      },
+      "prBodyColumns": ["Package", "Type", "Update", "Change", "Changes", "Pending"]
     },
     {
       "description": "A commit on a branch has no release date, so the wait for new releases would hold these forever. It would not suit them either: a busy plugin's newest commit is never three days old.",
