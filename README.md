@@ -1,7 +1,7 @@
 # Dotfiles
 
 ```sh
-zsh <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/heads/main/home/dot-local/bin/dot)
+bash <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/heads/main/home/dot-local/bin/dot)
 ```
 
 ## Commands
@@ -60,7 +60,7 @@ the include hooks instead: `~/.zshrc.local` is sourced by `.zshrc`, and
 ## Checks
 
 ```sh
-mise run check   # formatting, syntax and tests; what CI runs
+mise run check   # formatting, linting, syntax and tests; what CI runs
 mise run fmt     # format everything
 ```
 

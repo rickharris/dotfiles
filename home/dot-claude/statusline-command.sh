@@ -10,7 +10,7 @@ model=$(echo "$input" | jq -r '.model.display_name // ""')
 
 # Shorten home directory to ~
 home="$HOME"
-short_cwd="${cwd#$home}"
+short_cwd="${cwd#"$home"}"
 if [ "$short_cwd" != "$cwd" ]; then
   short_cwd="~$short_cwd"
 fi

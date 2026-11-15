@@ -1,6 +1,6 @@
 # Guidance for coding agents
 
-Personal dotfiles for macOS on Apple silicon. `home/dot-local/bin/dot` (zsh)
+Personal dotfiles for macOS on Apple silicon. `home/dot-local/bin/dot` (bash)
 bootstraps a machine and links everything with GNU Stow. The README covers the
 commands and how layers work; this file covers what is easy to get wrong.
 
@@ -18,7 +18,7 @@ edit here takes effect on the machine immediately, and a broken `dot` or
   ```sh
   t=$(mktemp -d) && mkdir -p "$t/base/home" "$t/target"
   DOTFILES=$t/base DOT_TARGET=$t/target DOT_LAYERS_FILE=$t/layers \
-    zsh home/dot-local/bin/dot link
+    /bin/bash home/dot-local/bin/dot link
   ```
 
 - `dot doctor` is read-only and always safe.
@@ -28,13 +28,13 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-mise run check   # everything CI runs: formatting, syntax, tests
+mise run check   # everything CI runs: formatting, linting, syntax, tests
 mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
 ```
 
 The formatters are pinned in `mise.toml`: `prettier` for Markdown, JSON and
-YAML, `stylua` for Lua, `taplo` for TOML and `shfmt` for shell. Run them
+YAML, `stylua` for Lua, `taplo` for TOML, and `shfmt` and `shellcheck` for shell. Run them
 through mise (`mise exec -- prettier ...`), not from wherever else they are
 installed, because their output changes between versions. On a new checkout
 run `mise trust && mise install` once.
@@ -73,9 +73,13 @@ which would otherwise turn a file-level link into a regular file.
   not decided to commit; `home/dot-claude/settings.json` is the usual one.
 - **Look up current versions** of GitHub Actions and tools before pinning
   them. Do not write a version from memory.
-- **`dot` is zsh, not bash.** `shellcheck` refuses zsh scripts, so it cannot
-  lint it. `shfmt` formats it, but its zsh support is incomplete: if it cannot
-  parse a construct, write that construct another way.
+- **`dot` must run on bash 3.2**, the bash macOS ships, because it bootstraps
+  a machine before anything newer is installed. No associative arrays, no
+  `mapfile`, no `${var,,}`. ShellCheck does not catch this; running the tests
+  with `/bin/bash` does, which `mise run test` and the hook both do.
+- **`.zshrc` and the completion file stay zsh.** ShellCheck refuses zsh, and
+  `shfmt`'s zsh support is incomplete: if it cannot parse a construct, write
+  that construct another way.
 - Under `set -e`, end a function with `if`, not `[[ ... ]] && cmd`, so a false
   test is not its exit status.
 - Error messages from `dot` start with `dot: ` and go to stderr.
