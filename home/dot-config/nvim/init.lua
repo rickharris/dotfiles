@@ -84,7 +84,6 @@ vim.pack.add({
   "https://github.com/EdenEast/nightfox.nvim",
   "https://github.com/esmuellert/codediff.nvim",
   "https://github.com/femiagbabiaka/fff-snacks.nvim",
-  "https://github.com/f-person/auto-dark-mode.nvim",
   "https://github.com/folke/lazydev.nvim",
   "https://github.com/folke/noice.nvim",
   "https://github.com/folke/sidekick.nvim",
@@ -433,18 +432,30 @@ require("nightfox").setup({
 
 ---@diagnostic disable-next-line: missing-fields
 require("tokyonight").setup({ style = "moon" })
-require("auto-dark-mode").setup({
-  update_interval = 1000,
-  set_dark_mode = function()
-    vim.o.background = "dark"
-    vim.cmd.colorscheme("tokyonight")
-  end,
-  set_light_mode = function()
-    vim.o.background = "light"
-    vim.cmd.colorscheme("dawnfox")
-  end,
+-- The colorscheme follows 'background', which Neovim sets from the terminal's
+-- background color, at startup and whenever the terminal reports a theme
+-- change. So Neovim is light or dark when the terminal is. Nothing else should
+-- load a colorscheme on a theme change: setting 'background' reloads the
+-- current colorscheme, and dawnfox, being light only, fights a switch to dark
+-- and leaves Neovim on its default colors with g:colors_name unset.
+local function follow_background()
+  local name = vim.o.background == "light" and "dawnfox" or "tokyonight-moon"
+  if vim.g.colors_name == name then
+    return
+  end
+  -- A colorscheme only runs `hi clear` itself when g:colors_name is set.
+  -- Without it, plugins that define default highlights (bufferline) keep the
+  -- old theme's colors.
+  vim.cmd("hi clear")
+  vim.cmd.colorscheme(name)
+end
+vim.api.nvim_create_autocmd("OptionSet", {
+  pattern = "background",
+  -- Nested, so that loading the colorscheme fires ColorScheme for plugins.
+  nested = true,
+  callback = follow_background,
 })
-vim.cmd.colorscheme("tokyonight")
+follow_background()
 
 -- ## Core UI
 
