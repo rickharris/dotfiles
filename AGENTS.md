@@ -13,12 +13,13 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 
 - **Do not run `dot`, `dot install`, `dot link`, `dot unlink`, `dot prefs` or
   `dot update` to test a change.** They act on the real home directory. Run
-  the tests instead, or point all three overrides at a temp directory:
+  the tests instead, or point all three overrides and the cache directory at
+  a temp directory:
 
   ```sh
   t=$(mktemp -d) && mkdir -p "$t/base/home" "$t/target"
   DOTFILES=$t/base DOT_TARGET=$t/target DOT_LAYERS_FILE=$t/layers \
-    /bin/bash home/dot-local/bin/dot link
+    XDG_CACHE_HOME=$t/cache /bin/bash home/dot-local/bin/dot link
   ```
 
 - `dot doctor` is always safe. It changes nothing in the home directory, but
@@ -84,6 +85,9 @@ which would otherwise turn a file-level link into a regular file.
 - **This repo is public.** Nothing work-related goes in it: no hostnames,
   paths, repo URLs or names of internal tools. Work config lives in a separate
   layer that this repo never mentions.
+- **Do not start a name under `home/` or `folded/` with `dot-`** unless it
+  should become a dotfile. Stow renames every file and directory that starts
+  with `dot-`, at any depth, so `dot-prompt.zsh` is linked as `.prompt.zsh`.
 - **Stage files by name.** Never `git add -A` or `git add home`. Apps write to
   their config through the symlinks, so the tree often holds edits the user has
   not decided to commit; `home/dot-claude/settings.json` is the usual one.

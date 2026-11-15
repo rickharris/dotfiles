@@ -435,10 +435,16 @@ on_main() {
   fi
 }
 
-# Fetches main from origin without printing anything, and without asking for
-# credentials, because the prompt runs this in the background.
+# Fetches main from origin without printing anything. The prompt runs this in
+# the background, where nobody can answer a question, so every way git has of
+# asking for credentials is turned off, and a connection that stalls is given
+# up on: after 10 seconds for ssh to connect, or 15 seconds of an https
+# transfer moving under 1000 bytes a second.
 fetch_origin() {
-  GIT_TERMINAL_PROMPT=0 git -C "$1" fetch --quiet origin main >/dev/null 2>&1
+  GIT_TERMINAL_PROMPT=0 GIT_ASKPASS=true SSH_ASKPASS=true \
+    GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-ssh} -o BatchMode=yes -o ConnectTimeout=10" \
+    git -C "$1" -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 \
+    fetch --quiet origin main >/dev/null 2>&1
 }
 
 # Prints how many commits a repo is behind origin/main, going by what was last
@@ -542,8 +548,9 @@ pull_layers() {
 
 update() {
   pull_layers
-  # Start the script again rather than calling install here. bash has already
-  # read this copy, and the pull may have changed what install does.
+  # Start the script again rather than calling install here. The functions
+  # bash has loaded are from before the pull, which may have changed what
+  # install does.
   exec "$dotfiles/home/dot-local/bin/dot" install
 }
 
@@ -779,6 +786,10 @@ prefs)
   preferences
   ;;
 update)
+  if (($# > 2)); then
+    print_help >&2
+    exit 1
+  fi
   case ${2:-} in
   '')
     update

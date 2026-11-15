@@ -466,6 +466,7 @@ test_check_writes_zero_when_ahead() {
   git_fixture
   git -C "$tmp/base" commit -q --allow-empty -m local
   run_dot update --check
+  assert_rc 0
   assert_file_is "$tmp/cache/dot/behind" 0
 }
 
@@ -504,7 +505,9 @@ test_check_without_origin_fails() {
   git -C "$tmp/base" commit -q --allow-empty -m first
   run_dot update --check
   assert_rc 1
-  assert_out_contains "dot: could not fetch from origin"
+  # Exactly one line: nothing from git itself gets through.
+  [[ $out == "dot: could not fetch from origin" ]] ||
+    fail "expected only the dot: line. Output: $out"
   assert_file_is "$tmp/cache/dot/behind" ""
 }
 
@@ -695,6 +698,27 @@ test_pull_resets_cache_when_a_layer_fails() {
   assert_rc 1
   assert_out_contains "dot: could not fast-forward $tmp/work."
   assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_update_check_rejects_extra_arguments() {
+  git_fixture
+  run_dot update --check junk
+  assert_rc 1
+  assert_out_contains "dot install"
+}
+
+# Stow's --dotfiles renames anything that starts with dot-, so a file named
+# dot-prompt.zsh would be linked as .prompt.zsh. This links the real home
+# package into a temp target to check the file .zshrc sources lands under the
+# name .zshrc uses.
+test_prompt_segment_is_linked_where_zshrc_sources_it() {
+  export DOTFILES=$repo
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.config/zsh/dotfiles-prompt.zsh" \
+    "$repo/home/dot-config/zsh/dotfiles-prompt.zsh"
+  grep -qF '.config/zsh/dotfiles-prompt.zsh' "$tmp/target/.zshrc" ||
+    fail "expected .zshrc to source ~/.config/zsh/dotfiles-prompt.zsh"
 }
 
 failures=0

@@ -21,8 +21,10 @@ bash <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/hea
 
 The prompt shows `dot ⇣3` when this checkout is three commits behind
 `origin/main`. It reads a count that `dot update --check` records, and runs
-that check in the background when the count is more than an hour old.
-`dot doctor` reports the same thing, and fetches to find out.
+that check in the background when the count is more than an hour old, or when
+the checkout has moved since (a `git pull`, a commit, a switch of branch). The
+new count shows on the prompt after the check finishes. `dot doctor` reports
+the same thing, and fetches to find out.
 
 `dot update` pulls this repo and every layer that is a git repo of its own,
 then runs `dot install`. It does not run `dot prefs`. It only fast-forwards,

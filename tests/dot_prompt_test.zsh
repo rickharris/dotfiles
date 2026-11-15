@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Tests for home/dot-config/zsh/dot-prompt.zsh, the prompt segment that shows
+# Tests for home/dot-config/zsh/dotfiles-prompt.zsh, the prompt segment that shows
 # how far behind the dotfiles are. Run with: zsh tests/dot_prompt_test.zsh
 #
 # The segment reads a cache file, so every test points XDG_CACHE_HOME at a
@@ -9,7 +9,7 @@
 zmodload zsh/datetime
 
 repo=$(cd "$(dirname "$0")/.." && pwd -P)
-segment=$repo/home/dot-config/zsh/dot-prompt.zsh
+segment=$repo/home/dot-config/zsh/dotfiles-prompt.zsh
 
 typeset -a p10k_calls
 p10k() {
@@ -26,6 +26,21 @@ setup() {
   mkdir -p "$tmp/dot"
   cache=$tmp/dot/behind
   p10k_calls=()
+  # A stand-in for the dotfiles repo, so the real one's git history does not
+  # decide what the tests see. head is the file git appends to whenever the
+  # checkout moves.
+  _dot_prompt_repo=$tmp/repo
+  mkdir -p "$tmp/repo/.git/logs"
+  head=$tmp/repo/.git/logs/HEAD
+  _dot_prompt_launched_at=0
+  _dot_prompt_launched_head=
+}
+
+# Sets a file's modification time to a number of seconds ago.
+age() {
+  local stamp
+  strftime -s stamp %Y%m%d%H%M.%S $((EPOCHSECONDS - $2))
+  touch -t "$stamp" "$1"
 }
 
 teardown() {
@@ -96,12 +111,79 @@ test_not_stale_when_fresh() {
 }
 
 test_stale_after_an_hour() {
-  local stamp
   echo 0 >"$cache"
-  strftime -s stamp %Y%m%d%H%M.%S $((EPOCHSECONDS - 7200))
-  touch -t "$stamp" "$cache"
+  age "$cache" 7200
   if ! _dot_prompt_stale; then
     fail "expected a cache file from two hours ago to be stale"
+  fi
+}
+
+# A manual git pull, or switching branch, moves the checkout without dot
+# knowing, so the count has to be worked out again.
+test_stale_when_checkout_moved_since() {
+  echo 2 >"$cache"
+  age "$cache" 600
+  touch "$head"
+  if ! _dot_prompt_stale; then
+    fail "expected a checkout that moved after the last check to be stale"
+  fi
+}
+
+test_not_stale_when_checkout_moved_before() {
+  touch "$head"
+  age "$head" 600
+  echo 2 >"$cache"
+  if _dot_prompt_stale; then
+    fail "expected a check newer than the last move not to be stale"
+  fi
+}
+
+test_check_wanted_when_stale() {
+  if ! _dot_prompt_should_check; then
+    fail "expected a check to be wanted when there is no cache file"
+  fi
+}
+
+test_check_not_wanted_when_fresh() {
+  echo 0 >"$cache"
+  if _dot_prompt_should_check; then
+    fail "expected no check when the cache file is fresh"
+  fi
+}
+
+# If the check cannot write the cache file, or dot is not on PATH, the file
+# stays stale. That must not start a check on every prompt.
+test_check_not_wanted_again_while_still_stale() {
+  _dot_prompt_should_check
+  if _dot_prompt_should_check; then
+    fail "expected no second check straight after the first"
+  fi
+}
+
+test_check_wanted_again_when_checkout_moves() {
+  _dot_prompt_should_check
+  touch "$head"
+  if ! _dot_prompt_should_check; then
+    fail "expected another check once the checkout moved"
+  fi
+}
+
+test_show_leaves_no_match_variable() {
+  echo 3 >"$cache"
+  unset MATCH
+  show
+  if ((${+MATCH})); then
+    fail "expected the segment not to leave MATCH set in the shell"
+  fi
+}
+
+# .zshrc allows there to be no ~/.p10k.zsh, in which case nothing has set the
+# list of segments.
+test_source_without_p10k_config() {
+  local out
+  out=$(zsh -fc 'source "$1" && print -r -- "[$POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS]"' zsh "$segment" 2>&1)
+  if [[ $out != "[dotfiles]" ]]; then
+    fail "expected only [dotfiles] and no errors, got: $out"
   fi
 }
 
