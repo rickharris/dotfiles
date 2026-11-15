@@ -10,8 +10,8 @@
 # - sh and bash are also linted with ShellCheck.
 # - dot and its tests also run the test suite, with the bash macOS ships. The
 #   tests only touch temp directories.
-# - .zshrc: syntax and formatting are checked and reported, never fixed,
-#   because shfmt's zsh support is incomplete.
+# - .zshrc and the zsh completion file: syntax and formatting are checked and
+#   reported, never fixed, because shfmt's zsh support is incomplete.
 
 file=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty')
 root=${CLAUDE_PROJECT_DIR:-$PWD}
@@ -57,7 +57,7 @@ case "$file" in
     exit 2
   fi
   ;;
-*/home/dot-zshrc)
+*/home/dot-zshrc | */site-functions/_dot)
   failed=0
   if ! output=$(zsh -n "$file" 2>&1); then
     failed=1
@@ -73,9 +73,12 @@ case "$file" in
     exit 2
   fi
   ;;
-*.md | *.json | *.yml | *.yaml) format prettier --write --log-level warn ;;
+*.md | *.json | *.yml | *.yaml | *.toml)
+  # A file on the ignore list in .oxfmtrc.json matches nothing; that is not
+  # an error.
+  format oxfmt --no-error-on-unmatched-pattern
+  ;;
 *.lua) format stylua ;;
-*.toml) format taplo fmt ;;
 *.sh | *.bash)
   format shfmt -i 2 -w
   lint
