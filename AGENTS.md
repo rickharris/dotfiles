@@ -32,11 +32,12 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-mise run check   # lint, tests and Lua diagnostics
+mise run check   # lint, tests, Lua diagnostics and a Neovim start
 mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
 mise run lua     # what lua-language-server reports
+mise run nvim    # start Neovim with this config in an empty home
 mise run tools   # install the global mise tools into a temp directory
 ```
 
@@ -66,6 +67,13 @@ installed, and takes about fifteen seconds. `.luarc.json` tells the server
 where they are. After you edit Lua, a hook runs the check when you stop and
 hands back what it finds. Fix a diagnostic where it is reported; do not turn
 the rule off.
+
+`mise run nvim` runs `tests/nvim_start.sh`, which starts Neovim with this
+checkout's config in an empty temp home: it installs every plugin from the
+lockfile, builds the parsers and runs the build hooks, and fails on any error
+reported while starting. It needs the network and takes about ten seconds.
+The diagnostics only read the Lua; this is the check that runs it, so run it
+after changing the Neovim version, the lockfile or `init.lua`.
 
 `install` and `prefs` have no tests, because they install software and change
 system settings. Nor does the last step of `update`, which hands over to

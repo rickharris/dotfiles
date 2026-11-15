@@ -79,7 +79,7 @@ the include hooks instead: `~/.zshrc.local` is sourced by `.zshrc`, and
 ## Checks
 
 ```sh
-mise run check   # lint, tests and Lua diagnostics
+mise run check   # lint, tests, Lua diagnostics and a Neovim start
 mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format everything
 mise run tools   # install the global mise tools into a temp directory

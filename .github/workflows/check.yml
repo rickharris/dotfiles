@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
 
-# Four jobs so the checks list on a pull request shows which kind of thing
+# Five jobs so the checks list on a pull request shows which kind of thing
 # failed. Each only calls a mise task; what they run is defined in mise.toml.
 jobs:
   lint:
@@ -28,8 +28,19 @@ jobs:
 
       - uses: jdx/mise-action@v5
 
-      - name: Install stow and neovim
-        run: brew install stow neovim
+      - name: Install stow
+        run: brew install stow
+
+      # The version every machine gets, not whichever one Homebrew has. It is
+      # not in this repo's mise.toml, so tell mise which version `nvim` means
+      # for the steps that follow.
+      - name: Install Neovim with mise
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          version=$(mise config get -f home/dot-config/mise/config.toml tools.neovim)
+          mise install "neovim@$version"
+          echo "MISE_NEOVIM_VERSION=$version" >> "$GITHUB_ENV"
 
       - name: Syntax and tests
         run: mise run test
@@ -57,6 +68,28 @@ jobs:
 
       - name: Lua diagnostics
         run: mise run lua
+
+  nvim:
+    # The lua job only reads the config. This one runs it: Neovim starts in
+    # an empty home, installs the plugins from the lockfile, builds the
+    # parsers and runs the build hooks, on the platform the machines run.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v5
+
+      - name: Install Neovim with mise
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: mise install "neovim@$(mise config get -f home/dot-config/mise/config.toml tools.neovim)"
+
+      # nvim-treesitter builds parsers with it.
+      - name: Install the tree-sitter CLI
+        run: brew install tree-sitter-cli
+
+      - name: Start Neovim
+        run: mise run nvim
 
   tools:
     # mise vets an npm package only when it installs one, so a version bump
