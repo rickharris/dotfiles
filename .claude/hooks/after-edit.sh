@@ -8,6 +8,8 @@
 #
 # - Markdown, JSON, YAML, Lua, TOML, sh and bash: formatted in place.
 # - Markdown is also linted with rumdl.
+# - Lua is also marked for lua-check.sh, which runs lua-language-server once
+#   the agent stops, because that takes too long to do after every edit.
 # - sh and bash are also linted with ShellCheck.
 # - dot and its tests also run the test suite, with the bash macOS ships. The
 #   tests only touch temp directories.
@@ -87,7 +89,10 @@ case "$file" in
   # an error.
   format oxfmt --no-error-on-unmatched-pattern
   ;;
-*.lua) format stylua ;;
+*.lua)
+  format stylua
+  touch .claude/lua-check-pending
+  ;;
 *.sh | *.bash)
   format shfmt -i 2 -w
   lint
