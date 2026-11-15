@@ -346,7 +346,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 -- ## Language servers
 
--- Every server here needs its executable in ~/.config/mise/config.toml.
+-- mise's own server starts for every TOML file but answers only for mise
+-- config files, beside taplo and oxfmt. It leaves formatting to them.
+vim.lsp.config("mise", { init_options = { formatting = false } })
+
+-- Every server here needs its executable in ~/.config/mise/config.toml, apart
+-- from mise, which is the mise binary itself (2026.10.18 or later).
 vim.lsp.enable({
   "bashls",
   "copilot",
@@ -359,6 +364,7 @@ vim.lsp.enable({
   "jsonls",
   "lua_ls",
   "marksman",
+  "mise",
   "oxfmt",
   "oxlint",
   "rumdl",
