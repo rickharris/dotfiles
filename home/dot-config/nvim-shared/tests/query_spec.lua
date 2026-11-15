@@ -1,6 +1,10 @@
 -- Zero-dependency test for pr_reviews.query. Run with: nvim -l <this file>
 local here = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
-package.path = here .. "../lua/?.lua;" .. here .. "../lua/?/init.lua;" .. package.path
+package.path = here
+  .. "../lua/?.lua;"
+  .. here
+  .. "../lua/?/init.lua;"
+  .. package.path
 
 local query = require("pr_reviews.query")
 
@@ -34,15 +38,18 @@ check(
 -- build_search_args: overrides
 check(
   "build_search_args overrides",
-  eq(query.build_search_args({ reviewer = "octocat", state = "open", limit = 25 }), {
-    "search",
-    "prs",
-    "--state=open",
-    "--draft=false",
-    "user-review-requested:octocat",
-    "--limit",
-    "25",
-  })
+  eq(
+    query.build_search_args({ reviewer = "octocat", state = "open", limit = 25 }),
+    {
+      "search",
+      "prs",
+      "--state=open",
+      "--draft=false",
+      "user-review-requested:octocat",
+      "--limit",
+      "25",
+    }
+  )
 )
 
 -- build_search_args: free-text search term inserted before qualifiers
@@ -61,7 +68,10 @@ check(
 )
 
 -- empty search term is ignored
-check("build_search_args ignores empty search", eq(query.build_search_args({}, ""), query.build_search_args({})))
+check(
+  "build_search_args ignores empty search",
+  eq(query.build_search_args({}, ""), query.build_search_args({}))
+)
 
 -- every requested field is one gh search prs actually supports
 local supported = {}
@@ -76,7 +86,10 @@ for _, f in ipairs(query.fields) do
   end
 end
 check("all requested fields are supported by gh search prs", all_supported)
-check("count_fields is non-empty (--json requires a field)", #query.count_fields > 0)
+check(
+  "count_fields is non-empty (--json requires a field)",
+  #query.count_fields > 0
+)
 
 if failures > 0 then
   error(failures .. " test(s) failed")

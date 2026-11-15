@@ -28,12 +28,21 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-zsh -n home/dot-local/bin/dot                              # syntax
-zsh tests/dot_test.zsh                                     # dot, against temp fixtures
-nvim -l home/dot-config/nvim-shared/tests/query_spec.lua   # pr_reviews query
+mise run check   # everything CI runs: formatting, syntax, tests
+mise run fmt     # format every file a formatter covers
+mise run test    # syntax and tests only
 ```
 
-CI runs all three. `tests/dot_test.zsh` refuses to start without `stow`.
+The formatters are pinned in `mise.toml`: `prettier` for Markdown, JSON and
+YAML, `stylua` for Lua, `taplo` for TOML and `shfmt` for shell. Run them
+through mise (`mise exec -- prettier ...`), not from wherever else they are
+installed, because their output changes between versions. On a new checkout
+run `mise trust && mise install` once.
+
+Files that apps rewrite themselves are listed in `.prettierignore`. Add a file
+there instead of fighting the app over its formatting.
+
+The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 
 `install` and `prefs` have no tests, because they install software and change
 system settings. After changing them, re-read the step order and say plainly
@@ -64,8 +73,8 @@ which would otherwise turn a file-level link into a regular file.
 - **Look up current versions** of GitHub Actions and tools before pinning
   them. Do not write a version from memory.
 - **`dot` is zsh, not bash.** `shellcheck` refuses zsh scripts, so it cannot
-  lint it. `shfmt` can format it: `shfmt -ln zsh -i 2 -d <file>` should print
-  nothing for `dot`, `.zshrc` and the tests.
+  lint it. `shfmt` formats it, but its zsh support is incomplete: if it cannot
+  parse a construct, write that construct another way.
 - Under `set -e`, end a function with `if`, not `[[ ... ]] && cmd`, so a false
   test is not its exit status.
 - Error messages from `dot` start with `dot: ` and go to stderr.
