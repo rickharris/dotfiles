@@ -52,7 +52,10 @@ assert_out_contains() {
 }
 
 assert_link() {
-  [[ -L $1 ]] || { fail "expected a symlink at $1"; return }
+  if [[ ! -L $1 ]]; then
+    fail "expected a symlink at $1"
+    return
+  fi
   [[ ${1:A} == ${2:A} ]] || fail "expected $1 to resolve to $2, got ${1:A}"
 }
 
@@ -396,7 +399,10 @@ test_doctor_reports_relative_layer_path() {
 }
 
 failures=0
-for t in ${(ok)functions[(I)test_*]}; do
+for t in ${(ok)functions}; do
+  if [[ $t != test_* ]]; then
+    continue
+  fi
   test_failed=0
   setup
   $t

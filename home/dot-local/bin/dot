@@ -385,7 +385,7 @@ doctor() {
 
   for layer in $layer_dirs; do
     for package in home folded; do
-      if ((!have_stow)) || [[ ! -d $layer/$package ]]; then
+      if ((have_stow == 0)) || [[ ! -d $layer/$package ]]; then
         continue
       fi
       flags=()

@@ -11,11 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install stow and neovim
-        run: brew install stow neovim
+      - name: Install stow, neovim and shfmt
+        run: brew install stow neovim shfmt
 
       - name: Syntax check
         run: zsh -n home/dot-local/bin/dot && zsh -n home/dot-zshrc
+
+      - name: Formatting
+        run: |
+          shfmt -ln zsh -i 2 -d home/dot-local/bin/dot home/dot-zshrc tests/dot_test.zsh
+          shfmt -i 2 -d .claude/hooks/check-dot.sh
 
       - name: dot tests
         run: zsh tests/dot_test.zsh
