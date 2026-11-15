@@ -33,16 +33,15 @@
   ],
   "packageRules": [
     {
-      "description": "One pull request a week for every Neovim plugin that moved.",
+      "description": "One pull request for every Neovim plugin that moved, not one each.",
       "matchFileNames": [
         "home/dot-config/nvim/nvim-pack-lock.json",
         "home/dot-config/nvim/init.lua"
       ],
-      "groupName": "nvim plugins",
-      "schedule": ["before 6am on monday"]
+      "groupName": "nvim plugins"
     },
     {
-      "description": "A commit on a branch has no release date, so the wait for new releases cannot apply to it.",
+      "description": "A commit on a branch has no release date, so the wait for new releases would hold these forever. It would not suit them either: a busy plugin's newest commit is never three days old.",
       "matchDatasources": ["git-refs"],
       "minimumReleaseAge": null
     }

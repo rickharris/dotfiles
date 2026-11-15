@@ -35,8 +35,10 @@ so local edits are left alone, and it refuses when this repo is not on `main`.
 Neovim on its own only does that for plugins that are not installed yet.
 
 Renovate proposes updates to the tools in the mise configs, to the GitHub
-Actions, and once a week to the Neovim plugins, by changing the commits in
-`nvim-pack-lock.json`. Merging one and running `dot update` applies it.
+Actions, and to the Neovim plugins, by changing the commits in
+`nvim-pack-lock.json`. The plugins share one pull request, which Renovate
+keeps up to date until it is merged. Merging one and running `dot update`
+applies it.
 
 ## Layers
 
