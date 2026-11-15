@@ -70,7 +70,13 @@ vim.api.nvim_create_autocmd("PackChanged", {
       if not ev.data.active then
         vim.cmd.packadd("nvim-treesitter")
       end
-      vim.cmd("TSUpdate")
+      -- This is what :TSUpdate runs. Without a UI (`dot install`), block until
+      -- the parsers are rebuilt, or quitting kills the builds mid-flight.
+      local ts_update =
+        require("nvim-treesitter").update(nil, { summary = true })
+      if #vim.api.nvim_list_uis() == 0 then
+        ts_update:wait(300000)
+      end
     end
   end,
 })
