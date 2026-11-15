@@ -5,8 +5,8 @@ on:
     branches: [main]
   pull_request:
 
-# Two jobs so the checks list on a pull request shows which kind of thing
-# failed. Both only call mise tasks; what they run is defined in mise.toml.
+# Three jobs so the checks list on a pull request shows which kind of thing
+# failed. Each only calls a mise task; what they run is defined in mise.toml.
 jobs:
   lint:
     # Formatting and ShellCheck need nothing from macOS.
@@ -31,9 +31,24 @@ jobs:
       - name: Install stow and neovim
         run: brew install stow neovim
 
-      # lua-language-server reads the plugins' type annotations.
-      - name: Fetch the Neovim plugins
-        run: tests/fetch_nvim_plugins.sh "$RUNNER_TEMP/nvim-plugins"
+      - name: Syntax and tests
+        run: mise run test
 
-      - name: Syntax, tests and Lua diagnostics
-        run: LUA_CHECK_PLUGINS="$RUNNER_TEMP/nvim-plugins" mise run test
+  lua:
+    # lua-language-server reads Neovim's runtime and the plugins' type
+    # annotations. .luarc.json says where they are on a machine set up by
+    # dot, so this job puts them in the same places.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@v5
+
+      - name: Install Neovim with mise
+        run: mise install neovim@latest
+
+      - name: Fetch the Neovim plugins
+        run: tests/fetch_nvim_plugins.sh "$HOME/.local/share/nvim/site/pack/core/opt"
+
+      - name: Lua diagnostics
+        run: mise run lua

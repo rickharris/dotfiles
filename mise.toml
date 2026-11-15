@@ -40,10 +40,12 @@ run = [
   "zsh -n home/dot-zshrc",
   "/bin/bash tests/dot_test.bash",
   "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
-  # Needs the Neovim plugins on disk; see the script.
-  "tests/lua_check.sh",
 ]
+
+[tasks.lua]
+description = "What lua-language-server reports; needs Neovim and its plugins installed"
+run = "tests/lua_check.sh"
 
 [tasks.check]
 description = "Everything CI runs"
-depends = ["lint", "test"]
+depends = ["lint", "test", "lua"]

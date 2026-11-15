@@ -28,10 +28,11 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 ## Checks
 
 ```sh
-mise run check   # everything CI runs: lint, then tests
+mise run check   # everything CI runs: lint, tests and Lua diagnostics
 mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format every file a formatter covers
 mise run test    # syntax and tests only
+mise run lua     # what lua-language-server reports
 ```
 
 The tools are pinned in `mise.toml`: `oxfmt` for Markdown, JSON, YAML and
@@ -46,7 +47,7 @@ formatting.
 
 The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 
-`mise run test` also runs `tests/lua_check.sh`, which reports the diagnostics
+`mise run lua` runs `tests/lua_check.sh`, which reports the diagnostics
 `lua-language-server` finds in the Neovim config: the ones the editor shows. It
 reads the plugins' type annotations, so it needs the plugins Neovim has
 installed, and takes about fifteen seconds. `.luarc.json` tells the server
