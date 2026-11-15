@@ -603,8 +603,8 @@ require("noice").setup({
 -- At an editor edge, hand movement and resizing to Ghostty panes. The keys
 -- here must match the `nvim/` key table in ~/.config/ghostty/config.
 require("smart-splits").setup({
-  mux = { backend = "smart-splits-backend-ghostty" },
-  move = { at_edge = "stop" },
+  mux = { backend = "smart-splits-backend-ghostty", warn_if_unusable = true },
+  move = { at_edge = "stop", same_row = false },
   resize = { amount = 2, ignored_events = {} },
 })
 
@@ -617,6 +617,7 @@ require("smart-splits").setup({
 do
   local transport = require("smart-splits-backend-ghostty.transport")
   local start = transport.start
+  ---@diagnostic disable-next-line: duplicate-set-field
   transport.start = function()
     if vim.v.exiting ~= vim.NIL then
       return false
@@ -786,7 +787,7 @@ require("octo").setup({ picker = "snacks", enable_builtin = true })
 require("litee.lib").setup()
 require("litee.gh").setup({})
 
-require("review").setup({})
+require("review").setup()
 
 require("pr_reviews").setup({})
 
