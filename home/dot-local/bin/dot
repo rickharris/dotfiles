@@ -139,7 +139,12 @@ install() {
   # use. mise only reads a project config once it has been trusted.
   mise trust --quiet "$dotfiles"/mise.toml
   mise --cd "$dotfiles" install
-  mise exec -- nvim --headless +q
+  # Starting Neovim installs the plugins that are missing, at the revisions in
+  # its lockfile, but leaves an installed plugin where it is. The update moves
+  # those to the lockfile's revisions too, which is how a lockfile change that
+  # was pulled reaches this machine. It never changes the lockfile.
+  mise exec -- nvim --headless \
+    "+lua vim.pack.update(nil, { target = 'lockfile', force = true })" +q
 }
 
 # Asks whether this machine should use the personal layer (layers/personal in

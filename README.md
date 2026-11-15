@@ -30,6 +30,10 @@ the same thing, and fetches to find out.
 then runs `dot install`. It does not run `dot prefs`. It only fast-forwards,
 so local edits are left alone, and it refuses when this repo is not on `main`.
 
+`dot install` also moves the Neovim plugins to the revisions in
+`nvim-pack-lock.json`, so a plugin update that was pulled takes effect.
+Neovim on its own only does that for plugins that are not installed yet.
+
 ## Layers
 
 `dot` links and installs from a list of layers. This repo is always the first
