@@ -529,6 +529,48 @@ test_update_rejects_unknown_option() {
   assert_out_contains "dot install"
 }
 
+test_doctor_reports_behind() {
+  git_fixture
+  upstream_commit
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "behind origin/main by 1 commit(s): run \`dot update\`"
+  assert_out_contains "dot: 1 problem(s) found"
+}
+
+test_doctor_ok_when_up_to_date() {
+  git_fixture
+  run_dot doctor
+  assert_rc 0
+  assert_out_contains "dot: ok"
+}
+
+test_doctor_ignores_behind_on_other_branch() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q -b topic
+  run_dot doctor
+  assert_rc 0
+}
+
+test_doctor_uses_last_fetch_when_offline() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" fetch -q origin main
+  git -C "$tmp/base" remote set-url origin "$tmp/gone.git"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "behind origin/main by 1 commit(s)"
+}
+
+test_doctor_ok_without_origin() {
+  git -C "$tmp/base" init -q -b main
+  git -C "$tmp/base" commit -q --allow-empty -m first
+  run_dot doctor
+  assert_rc 0
+  assert_out_contains "dot: ok"
+}
+
 failures=0
 for t in $(declare -F | awk '{ print $3 }' | grep '^test_' | sort); do
   test_failed=0

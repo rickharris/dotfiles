@@ -21,7 +21,8 @@ edit here takes effect on the machine immediately, and a broken `dot` or
     /bin/bash home/dot-local/bin/dot link
   ```
 
-- `dot doctor` is read-only and always safe.
+- `dot doctor` is always safe. It changes nothing in the home directory, but
+  it does fetch from `origin`.
 - Run those four against the real home only when the task is to apply a
   change to this machine, and say that you did.
 

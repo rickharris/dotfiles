@@ -493,11 +493,13 @@ update_check() {
   fi
 }
 
-# Reports drift without changing anything: layers that are missing, files
-# that are not linked, links that were replaced by regular files, dangling
-# links and unsatisfied Brewfiles.
+# Reports drift without changing anything in the home directory: layers that
+# are missing, files that are not linked, links that were replaced by regular
+# files, dangling links, a checkout that is behind origin/main and unsatisfied
+# Brewfiles. The one thing it does change is git's record of origin, because
+# it fetches to find out whether the checkout is behind.
 doctor() {
-  local problems=0 layer package output line
+  local problems=0 layer package output line behind
   local -a flags
 
   layers --keep-going
@@ -553,6 +555,17 @@ doctor() {
     echo "dangling: $line"
     problems=$((problems + 1))
   done < <(dangling_links)
+
+  # A failed fetch is not a problem in itself: offline, compare against what
+  # was fetched last. Only main is compared, so a branch being worked on does
+  # not count as drift.
+  if is_git_root "$dotfiles" && on_main "$dotfiles"; then
+    fetch_origin "$dotfiles" || true
+    if behind=$(behind_count "$dotfiles") && ((behind > 0)); then
+      echo "behind origin/main by $behind commit(s): run \`dot update\`"
+      problems=$((problems + 1))
+    fi
+  fi
 
   for layer in "${layer_dirs[@]}"; do
     if [[ -f $layer/Brewfile ]] && ! brew bundle check --no-upgrade --file="$layer/Brewfile" >/dev/null 2>&1; then
