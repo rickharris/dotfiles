@@ -525,6 +525,7 @@ require("bufferline").setup({
   options = {
     always_show_bufferline = false,
     diagnostics = "nvim_lsp",
+    separator_style = "slant",
     close_command = function(n)
       Snacks.bufdelete(n)
     end,
@@ -1027,6 +1028,9 @@ require("which-key").add({
     "<cmd>BufferLineGroupClose ungrouped<cr>",
     desc = "Close unpinned",
   },
+  -- The built-in ]b and [b follow buffer numbers, not the order in the bar.
+  { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next buffer" },
+  { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous buffer" },
   { "<leader>c", group = "config" },
   {
     "<leader>cc",
