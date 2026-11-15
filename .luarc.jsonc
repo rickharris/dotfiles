@@ -1,0 +1,15 @@
+{
+  "runtime": {
+    "version": "LuaJIT",
+    "path": ["lua/?.lua", "lua/?/init.lua"]
+  },
+  "workspace": {
+    "checkThirdParty": false,
+    "library": [
+      "${env:HOME}/.local/share/mise/installs/neovim/latest/share/nvim/runtime/lua",
+      "${3rd}/luv/library",
+      "${env:HOME}/.local/share/nvim/site/pack/core/opt"
+    ]
+  },
+  "diagnostics": { "libraryFiles": "Disable" }
+}

@@ -31,5 +31,9 @@ jobs:
       - name: Install stow and neovim
         run: brew install stow neovim
 
-      - name: Syntax and tests
-        run: mise run test
+      # lua-language-server reads the plugins' type annotations.
+      - name: Fetch the Neovim plugins
+        run: tests/fetch_nvim_plugins.sh "$RUNNER_TEMP/nvim-plugins"
+
+      - name: Syntax, tests and Lua diagnostics
+        run: LUA_CHECK_PLUGINS="$RUNNER_TEMP/nvim-plugins" mise run test

@@ -46,6 +46,15 @@ formatting.
 
 The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 
+`mise run test` also runs `tests/lua_check.sh`, which reports the diagnostics
+`lua-language-server` finds in the Neovim config: the ones the editor shows. It
+reads the plugins' type annotations, so it needs the plugins Neovim has
+installed, and takes about fifteen seconds. `.luarc.jsonc` tells the server
+where they are; it is `.jsonc` because lazydev.nvim objects to a `.luarc.json`.
+A hook runs it when you commit with Lua changes in the tree, and blocks the
+commit if it finds anything. Fix a diagnostic where it is reported; do not turn
+the rule off.
+
 `install` and `prefs` have no tests, because they install software and change
 system settings. After changing them, re-read the step order and say plainly
 that it was not exercised.

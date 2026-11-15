@@ -5,6 +5,7 @@
 # and CI, the agent hook and `mise run` all use the same ones.
 
 [tools]
+lua-language-server = "3.19.2"
 "npm:oxfmt" = "0.78.0"
 rumdl = "0.3.4"
 shellcheck = "0.11.0"
@@ -39,6 +40,8 @@ run = [
   "zsh -n home/dot-zshrc",
   "/bin/bash tests/dot_test.bash",
   "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
+  # Needs the Neovim plugins on disk; see the script.
+  "tests/lua_check.sh",
 ]
 
 [tasks.check]
