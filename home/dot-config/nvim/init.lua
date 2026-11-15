@@ -533,6 +533,40 @@ require("lualine").setup({
 })
 
 require("bufferline").setup({
+  -- Make background tabs recede, so that only the current tab stands out.
+  -- Bufferline calls this at setup and whenever the colorscheme changes.
+  highlights = function(defaults)
+    -- Give them the bar's own color, which leaves only the current tab with
+    -- a shape.
+    local hls = vim.deepcopy(defaults.highlights)
+    local tab_bg, bar_bg = hls.background.bg, hls.fill.bg
+    for _, hl in pairs(hls) do
+      if hl.bg == tab_bg then
+        hl.bg = bar_bg
+      end
+    end
+
+    -- Color their file icons like their names. Icon groups are not part of
+    -- this table, but bufferline defines them as defaults, named after the
+    -- mini.icons group they copy, so a definition here takes precedence.
+    local icon_colors = {
+      "Azure",
+      "Blue",
+      "Cyan",
+      "Green",
+      "Grey",
+      "Orange",
+      "Purple",
+      "Red",
+      "Yellow",
+    }
+    for _, color in ipairs(icon_colors) do
+      local group = "BufferLineMiniIcons" .. color
+      vim.api.nvim_set_hl(0, group, { link = "BufferLineBackground" })
+    end
+
+    return hls
+  end,
   options = {
     always_show_bufferline = false,
     diagnostics = "nvim_lsp",
