@@ -1,6 +1,6 @@
 [tools]
 node = "lts"
-neovim = "0.12"
+neovim = "0.12.6"
 deno = "latest"
 
 # Language servers, formatters and linters for Neovim. These are the default
