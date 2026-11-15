@@ -6,14 +6,33 @@ bash <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/hea
 
 ## Commands
 
-| Command       | What it does                              |
-| ------------- | ----------------------------------------- |
-| `dot`         | Run `install` and then `prefs`            |
-| `dot install` | Install dependencies                      |
-| `dot link`    | Link dotfiles to the correct location     |
-| `dot unlink`  | Remove dotfile symlinks                   |
-| `dot doctor`  | Check for drift without changing anything |
-| `dot prefs`   | Set system and app preferences            |
+| Command              | What it does                              |
+| -------------------- | ----------------------------------------- |
+| `dot`                | Run `install` and then `prefs`            |
+| `dot install`        | Install dependencies                      |
+| `dot link`           | Link dotfiles to the correct location     |
+| `dot unlink`         | Remove dotfile symlinks                   |
+| `dot doctor`         | Check for drift without changing anything |
+| `dot prefs`          | Set system and app preferences            |
+| `dot update`         | Pull the latest dotfiles and run install  |
+| `dot update --check` | Report how far behind `origin/main` it is |
+
+## Keeping up to date
+
+The prompt shows `dot ⇣3` when this checkout is three commits behind
+`origin/main`. It reads a count that `dot update --check` records, and runs
+that check in the background when the count is more than an hour old, or when
+the checkout has moved since (a `git pull`, a commit, a switch of branch). The
+new count shows on the prompt after the check finishes. `dot doctor` reports
+the same thing, and fetches to find out.
+
+`dot update` pulls this repo and every layer that is a git repo of its own,
+then runs `dot install`. It does not run `dot prefs`. It only fast-forwards,
+so local edits are left alone, and it refuses when this repo is not on `main`.
+
+`dot install` also moves the Neovim plugins to the revisions in
+`nvim-pack-lock.json`, so a plugin update that was pulled takes effect.
+Neovim on its own only does that for plugins that are not installed yet.
 
 ## Layers
 

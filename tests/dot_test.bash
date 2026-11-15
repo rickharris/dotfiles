@@ -29,6 +29,13 @@ setup() {
   export DOTFILES="$tmp/base"
   export DOT_TARGET="$tmp/target"
   export DOT_LAYERS_FILE="$tmp/layers"
+  # dot keeps how far behind the checkout is under the cache directory.
+  export XDG_CACHE_HOME="$tmp/cache"
+  # Keep git away from the config of whoever runs the tests, and give it an
+  # identity so the fixtures can commit.
+  export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
+  export GIT_AUTHOR_NAME=Test GIT_AUTHOR_EMAIL=test@example.com
+  export GIT_COMMITTER_NAME=Test GIT_COMMITTER_EMAIL=test@example.com
 }
 
 teardown() {
@@ -70,6 +77,38 @@ assert_dir_not_link() {
 
 assert_absent() {
   [[ ! -e $1 && ! -L $1 ]] || fail "expected nothing at $1"
+}
+
+assert_file_is() {
+  if [[ ! -f $1 ]]; then
+    fail "expected a file at $1"
+    return
+  fi
+  [[ $(<"$1") == "$2" ]] || fail "expected $1 to hold '$2', got '$(<"$1")'"
+}
+
+# Makes a directory (the base repo unless one is given) a git repo on main
+# with one commit, pushed to a new bare repo that is its origin.
+git_fixture() {
+  local dir=${1:-$tmp/base} bare=${2:-$tmp/origin.git}
+  git init -q --bare -b main "$bare"
+  git -C "$dir" init -q -b main
+  touch "$dir/README"
+  git -C "$dir" add README
+  git -C "$dir" commit -q -m first
+  git -C "$dir" remote add origin "$bare"
+  git -C "$dir" push -q -u origin main
+}
+
+# Adds one commit to main in a bare repo, through a second clone of it, so
+# the fixture repo falls one commit further behind its origin.
+upstream_commit() {
+  local bare=${1:-$tmp/origin.git}
+  if [[ ! -d $bare.clone ]]; then
+    git clone -q "$bare" "$bare.clone"
+  fi
+  git -C "$bare.clone" commit -q --allow-empty -m upstream
+  git -C "$bare.clone" push -q origin main
 }
 
 test_link_home_is_not_folded() {
@@ -403,6 +442,283 @@ test_doctor_reports_relative_layer_path() {
   assert_rc 1
   assert_out_contains "layer path must be absolute: tests"
   assert_out_contains "dot: 1 problem(s) found"
+}
+
+test_check_writes_behind_count() {
+  git_fixture
+  upstream_commit
+  upstream_commit
+  run_dot update --check
+  assert_rc 0
+  assert_out_contains "dot: 2 commit(s) behind origin/main; run \`dot update\`"
+  assert_file_is "$tmp/cache/dot/behind" 2
+}
+
+test_check_writes_zero_when_up_to_date() {
+  git_fixture
+  run_dot update --check
+  assert_rc 0
+  assert_out_contains "dot: up to date with origin/main"
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_check_writes_zero_when_ahead() {
+  git_fixture
+  git -C "$tmp/base" commit -q --allow-empty -m local
+  run_dot update --check
+  assert_rc 0
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_check_writes_zero_on_other_branch() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q -b topic
+  run_dot update --check
+  assert_rc 0
+  assert_out_contains "dot: not on the main branch, so not checked"
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_check_writes_zero_on_detached_head() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q --detach
+  run_dot update --check
+  assert_rc 0
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_check_keeps_old_count_when_fetch_fails() {
+  git_fixture
+  upstream_commit
+  run_dot update --check
+  git -C "$tmp/base" remote set-url origin "$tmp/gone.git"
+  run_dot update --check
+  assert_rc 1
+  assert_out_contains "dot: could not fetch from origin"
+  assert_file_is "$tmp/cache/dot/behind" 1
+}
+
+test_check_without_origin_fails() {
+  git -C "$tmp/base" init -q -b main
+  git -C "$tmp/base" commit -q --allow-empty -m first
+  run_dot update --check
+  assert_rc 1
+  # Exactly one line: nothing from git itself gets through.
+  [[ $out == "dot: could not fetch from origin" ]] ||
+    fail "expected only the dot: line. Output: $out"
+  assert_file_is "$tmp/cache/dot/behind" ""
+}
+
+test_check_outside_git_repo_touches_cache() {
+  run_dot update --check
+  assert_rc 1
+  assert_out_contains "dot: not a git repository: $tmp/base"
+  [[ -f $tmp/cache/dot/behind ]] || fail "expected the cache file to exist"
+}
+
+test_check_survives_unwritable_cache() {
+  git_fixture
+  touch "$tmp/cache" # a file where the cache directory should go
+  run_dot update --check
+  assert_rc 0
+  assert_out_contains "dot: up to date with origin/main"
+}
+
+test_update_rejects_unknown_option() {
+  run_dot update --bogus
+  assert_rc 1
+  assert_out_contains "dot install"
+}
+
+test_doctor_reports_behind() {
+  git_fixture
+  upstream_commit
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "behind origin/main by 1 commit(s): run \`dot update\`"
+  assert_out_contains "dot: 1 problem(s) found"
+}
+
+test_doctor_ok_when_up_to_date() {
+  git_fixture
+  run_dot doctor
+  assert_rc 0
+  assert_out_contains "dot: ok"
+}
+
+test_doctor_ignores_behind_on_other_branch() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q -b topic
+  run_dot doctor
+  assert_rc 0
+}
+
+test_doctor_uses_last_fetch_when_offline() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" fetch -q origin main
+  git -C "$tmp/base" remote set-url origin "$tmp/gone.git"
+  run_dot doctor
+  assert_rc 1
+  assert_out_contains "behind origin/main by 1 commit(s)"
+}
+
+test_doctor_ok_without_origin() {
+  git -C "$tmp/base" init -q -b main
+  git -C "$tmp/base" commit -q --allow-empty -m first
+  run_dot doctor
+  assert_rc 0
+  assert_out_contains "dot: ok"
+}
+
+test_pull_fast_forwards_base() {
+  git_fixture
+  upstream_commit
+  run_dot __pull
+  assert_rc 0
+  local have want
+  have=$(git -C "$tmp/base" rev-parse HEAD)
+  want=$(git -C "$tmp/origin.git" rev-parse main)
+  [[ $have == "$want" ]] ||
+    fail "expected base to match origin/main"
+}
+
+test_pull_resets_cache() {
+  git_fixture
+  upstream_commit
+  run_dot update --check
+  run_dot __pull
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_pull_refuses_other_branch() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" checkout -q -b topic
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: $tmp/base is not on the main branch"
+  [[ $(git -C "$tmp/base" rev-list --count HEAD) -eq 1 ]] ||
+    fail "expected no new commits"
+}
+
+test_pull_refuses_detached_head() {
+  git_fixture
+  git -C "$tmp/base" checkout -q --detach
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: $tmp/base is not on the main branch"
+}
+
+test_pull_keeps_unrelated_local_edits() {
+  git_fixture
+  upstream_commit
+  echo edited >"$tmp/base/README"
+  run_dot __pull
+  assert_rc 0
+  assert_file_is "$tmp/base/README" edited
+}
+
+test_pull_succeeds_when_ahead() {
+  git_fixture
+  git -C "$tmp/base" commit -q --allow-empty -m local
+  run_dot __pull
+  assert_rc 0
+}
+
+test_pull_diverged_fails() {
+  git_fixture
+  upstream_commit
+  git -C "$tmp/base" commit -q --allow-empty -m local
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: could not fast-forward $tmp/base."
+}
+
+test_pull_updates_layer_repo() {
+  git_fixture
+  mkdir -p "$tmp/work layer"
+  git_fixture "$tmp/work layer" "$tmp/work.git"
+  upstream_commit "$tmp/work.git"
+  printf '%s\n' "$tmp/work layer" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+  local have want
+  have=$(git -C "$tmp/work layer" rev-parse HEAD)
+  want=$(git -C "$tmp/work.git" rev-parse main)
+  [[ $have == "$want" ]] ||
+    fail "expected the layer to match its origin"
+}
+
+test_pull_skips_layers_that_are_not_repos() {
+  git_fixture
+  mkdir -p "$tmp/base/layers/personal" "$tmp/plain"
+  printf '%s\n' "$tmp/base/layers/personal" "$tmp/plain" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+}
+
+test_pull_outside_git_repo_fails() {
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: not a git repository: $tmp/base"
+}
+
+test_help_lists_update() {
+  run_dot help
+  assert_out_contains "Pull the latest dotfiles and run install"
+}
+
+test_pull_skips_layer_repo_without_upstream() {
+  git_fixture
+  upstream_commit
+  mkdir -p "$tmp/local"
+  git -C "$tmp/local" init -q -b main
+  git -C "$tmp/local" commit -q --allow-empty -m first
+  printf '%s\n' "$tmp/local" >"$tmp/layers"
+  run_dot __pull
+  assert_rc 0
+  [[ $(git -C "$tmp/base" rev-list --count HEAD) -eq 2 ]] ||
+    fail "expected base to be fast-forwarded"
+}
+
+test_pull_resets_cache_when_a_layer_fails() {
+  git_fixture
+  mkdir -p "$tmp/work"
+  git_fixture "$tmp/work" "$tmp/work.git"
+  upstream_commit
+  upstream_commit "$tmp/work.git"
+  git -C "$tmp/work" commit -q --allow-empty -m local
+  printf '%s\n' "$tmp/work" >"$tmp/layers"
+  run_dot update --check
+  run_dot __pull
+  assert_rc 1
+  assert_out_contains "dot: could not fast-forward $tmp/work."
+  assert_file_is "$tmp/cache/dot/behind" 0
+}
+
+test_update_check_rejects_extra_arguments() {
+  git_fixture
+  run_dot update --check junk
+  assert_rc 1
+  assert_out_contains "dot install"
+}
+
+# Stow's --dotfiles renames anything that starts with dot-, so a file named
+# dot-prompt.zsh would be linked as .prompt.zsh. This links the real home
+# package into a temp target to check the file .zshrc sources lands under the
+# name .zshrc uses.
+test_prompt_segment_is_linked_where_zshrc_sources_it() {
+  export DOTFILES=$repo
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.config/zsh/dotfiles-prompt.zsh" \
+    "$repo/home/dot-config/zsh/dotfiles-prompt.zsh"
+  grep -qF '.config/zsh/dotfiles-prompt.zsh' "$tmp/target/.zshrc" ||
+    fail "expected .zshrc to source ~/.config/zsh/dotfiles-prompt.zsh"
 }
 
 failures=0
