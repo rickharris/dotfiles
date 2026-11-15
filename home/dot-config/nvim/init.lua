@@ -2,6 +2,18 @@
 
 vim.loader.enable()
 
+-- Language servers, formatters and linters are installed by mise, not by a
+-- Neovim plugin. Putting its shims first on PATH means each tool is resolved
+-- for the directory it is started in: the version a project's mise.toml asks
+-- for where there is one, and the global default from
+-- ~/.config/mise/config.toml everywhere else. A project that pins a tool has
+-- to be trusted and installed (`mise trust && mise install`) for that to work.
+do
+  local data = vim.env.MISE_DATA_DIR
+    or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
+  vim.env.PATH = data .. "/shims:" .. vim.env.PATH
+end
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -90,8 +102,6 @@ vim.pack.add({
   "https://github.com/ldelossa/litee.nvim",
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/MagicDuck/grug-far.nvim",
-  "https://github.com/mason-org/mason.nvim",
-  "https://github.com/mason-org/mason-lspconfig.nvim",
   "https://github.com/MeanderingProgrammer/render-markdown.nvim",
   "https://github.com/MunifTanjim/nui.nvim",
   "https://github.com/NeogitOrg/neogit",
@@ -117,7 +127,6 @@ vim.pack.add({
   },
   "https://github.com/stevearc/conform.nvim",
   "https://github.com/stevearc/overseer.nvim",
-  "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
   "https://github.com/windwp/nvim-autopairs",
 })
 
@@ -339,32 +348,27 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 -- # Plugin setups
 
--- ## Mason + LSP/tool installation
+-- ## Language servers
 
-require("mason").setup()
-require("mason-lspconfig").setup({
-  ensure_installed = {
-    "bashls",
-    "copilot",
-    "cssls",
-    "cssmodules_ls",
-    "denols",
-    "eslint",
-    "graphql",
-    "html",
-    "jsonls",
-    "lua_ls",
-    "marksman",
-    "oxfmt",
-    "oxlint",
-    "stylelint_lsp",
-    "stylua",
-    "taplo",
-    "vtsls",
-  },
-})
-require("mason-tool-installer").setup({
-  ensure_installed = { "prettier", "shfmt", "shellcheck" },
+-- Every server here needs its executable in ~/.config/mise/config.toml.
+vim.lsp.enable({
+  "bashls",
+  "copilot",
+  "cssls",
+  "cssmodules_ls",
+  "denols",
+  "eslint",
+  "graphql",
+  "html",
+  "jsonls",
+  "lua_ls",
+  "marksman",
+  "oxfmt",
+  "oxlint",
+  "stylelint_lsp",
+  "stylua",
+  "taplo",
+  "vtsls",
 })
 
 -- ## Conform formatting
@@ -754,7 +758,7 @@ require("overseer").setup({})
 -- ## AI
 
 -- Copilot autocomplete comes straight from the copilot LSP server
--- (mason-installed above); <tab> accepts via the blink keymap.
+-- (installed by mise); <tab> accepts via the blink keymap.
 vim.lsp.inline_completion.enable()
 
 -- sidekick provides Copilot next-edit-suggestions (the <tab> keymaps below
