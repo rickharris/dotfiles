@@ -1,5 +1,49 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Neovim plugins in vim.pack's lockfile that follow a branch. An entry for a tagged release does not match, because its closing brace does not follow src.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/nvim-pack-lock\\.json$/"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \\{\\s*\"rev\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"src\": \"(?<packageName>[^\"]+)\"\\s*\\}"
+      ],
+      "datasourceTemplate": "git-refs"
+    },
+    {
+      "customType": "regex",
+      "description": "Neovim plugins in the lockfile that follow tagged releases: the tag and its commit.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/nvim-pack-lock\\.json$/"],
+      "matchStrings": [
+        "\"(?<depName>[^\"]+)\": \\{\\s*\"rev\": \"(?<currentDigest>[0-9a-f]{40})\",\\s*\"src\": \"https://github\\.com/(?<packageName>[^\"]+)\",\\s*\"version\": \"'(?<currentValue>[^']+)'\"\\s*\\}"
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "The same tags where the Neovim config asks for them, so both files change together.",
+      "managerFilePatterns": ["/^home/dot-config/nvim/init\\.lua$/"],
+      "matchStrings": [
+        "src = \"https://github\\.com/(?<packageName>[^\"/]+/(?<depName>[^\"]+))\",\\s*version = \"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "github-tags"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "One pull request for every Neovim plugin that moved, not one each.",
+      "matchFileNames": [
+        "home/dot-config/nvim/nvim-pack-lock.json",
+        "home/dot-config/nvim/init.lua"
+      ],
+      "groupName": "nvim plugins"
+    },
+    {
+      "description": "A commit on a branch has no release date, so the wait for new releases would hold these forever. It would not suit them either: a busy plugin's newest commit is never three days old.",
+      "matchDatasources": ["git-refs"],
+      "minimumReleaseAge": null
+    }
+  ]
 }
