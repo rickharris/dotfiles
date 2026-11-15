@@ -6,11 +6,26 @@ deno = "latest"
 # Language servers, formatters and linters for Neovim. These are the default
 # versions; a project's own mise.toml overrides them inside that project, and
 # Neovim picks that up because it runs tools through mise's shims.
-"npm:@github/copilot-language-server" = "1.570.0"
-"npm:@stylelint/language-server" = "1.2.0"
+#
+# mise checks npm packages before installing them, and refuses three of these
+# without an exemption. Two have under 1000 weekly downloads. Copilot depends
+# on GitHub's SDK packages, which stopped carrying provenance at 1.0.17 after
+# earlier releases had it (github/copilot-sdk#2894). They are still published
+# by GitHub's own workflow, so the one SDK version this Copilot release uses
+# is exempted, for every platform because mise checks them all. A Copilot
+# update that brings a new SDK version needs these six lines updated with it.
+"npm:@github/copilot-language-server" = { version = "1.570.0", trust_policy_excludes = [
+  "@github/copilot-sdk-darwin-arm64@1.0.28",
+  "@github/copilot-sdk-darwin-x64@1.0.28",
+  "@github/copilot-sdk-linux-arm64@1.0.28",
+  "@github/copilot-sdk-linux-x64@1.0.28",
+  "@github/copilot-sdk-win32-arm64@1.0.28",
+  "@github/copilot-sdk-win32-x64@1.0.28",
+] }
+"npm:@stylelint/language-server" = { version = "1.2.0", allow_low_downloads = true }
 "npm:@vtsls/language-server" = "0.3.0"
 "npm:bash-language-server" = "5.8.1"
-"npm:cssmodules-language-server" = "1.5.2"
+"npm:cssmodules-language-server" = { version = "1.5.2", allow_low_downloads = true }
 "npm:graphql-language-service-cli" = "4.0.1"
 "npm:oxfmt" = "0.78.0"
 "npm:oxlint" = "1.93.0"
