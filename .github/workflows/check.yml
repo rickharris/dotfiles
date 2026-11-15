@@ -44,8 +44,12 @@ jobs:
 
       - uses: jdx/mise-action@v5
 
-      # The version every machine gets, from the global mise config.
+      # The version every machine gets, from the global mise config. mise
+      # asks GitHub's API for the release, and without a token that request
+      # shares the runner's rate limit and can be refused with a 403.
       - name: Install Neovim with mise
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: mise install "neovim@$(mise config get -f home/dot-config/mise/config.toml tools.neovim)"
 
       - name: Fetch the Neovim plugins
