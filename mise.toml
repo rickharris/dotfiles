@@ -6,6 +6,7 @@
 
 [tools]
 "npm:oxfmt" = "0.78.0"
+rumdl = "0.3.4"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
 stylua = "2.6.0"
@@ -20,13 +21,14 @@ run = [
 ]
 
 [tasks.lint]
-description = "Check formatting and run ShellCheck, without changing anything"
+description = "Check formatting and run ShellCheck and rumdl, without changing anything"
 run = [
   "oxfmt --check .",
   "stylua --check $(git ls-files '*.lua')",
   "shfmt -ln zsh -i 2 -d home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot",
   "shfmt -i 2 -d home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
   "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
+  "rumdl check $(git ls-files '*.md')",
 ]
 
 [tasks.test]

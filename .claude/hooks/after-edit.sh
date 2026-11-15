@@ -7,6 +7,7 @@
 # the same ones CI uses.
 #
 # - Markdown, JSON, YAML, Lua, TOML, sh and bash: formatted in place.
+# - Markdown is also linted with rumdl.
 # - sh and bash are also linted with ShellCheck.
 # - dot and its tests also run the test suite, with the bash macOS ships. The
 #   tests only touch temp directories.
@@ -73,7 +74,15 @@ case "$file" in
     exit 2
   fi
   ;;
-*.md | *.json | *.yml | *.yaml | *.toml)
+*.md)
+  format oxfmt --no-error-on-unmatched-pattern
+  if ! output=$(mise exec -- rumdl check "$file" 2>&1); then
+    echo "rumdl found problems in $file:" >&2
+    echo "$output" | tail -n 40 >&2
+    exit 2
+  fi
+  ;;
+*.json | *.yml | *.yaml | *.toml)
   # A file on the ignore list in .oxfmtrc.json matches nothing; that is not
   # an error.
   format oxfmt --no-error-on-unmatched-pattern

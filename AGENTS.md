@@ -35,10 +35,10 @@ mise run test    # syntax and tests only
 ```
 
 The tools are pinned in `mise.toml`: `oxfmt` for Markdown, JSON, YAML and
-TOML, `stylua` for Lua, and `shfmt` and `shellcheck` for shell. Run them
-through mise (`mise exec -- oxfmt ...`), not from wherever else they are
-installed, because their output changes between versions. On a new checkout
-run `mise trust && mise install` once.
+TOML, `stylua` for Lua, `shfmt` and `shellcheck` for shell, and `rumdl` to
+lint Markdown. Run them through mise (`mise exec -- oxfmt ...`), not from
+wherever else they are installed, because their output changes between
+versions. On a new checkout run `mise trust && mise install` once.
 
 Files that apps rewrite themselves are listed under `ignorePatterns` in
 `.oxfmtrc.json`. Add a file there instead of fighting the app over its
@@ -84,7 +84,7 @@ which would otherwise turn a file-level link into a regular file.
   that construct another way.
 - Under `set -e`, end a function with `if`, not `[[ ... ]] && cmd`, so a false
   test is not its exit status.
-- Error messages from `dot` start with `dot: ` and go to stderr.
+- Error messages from `dot` start with `dot:` and a space, and go to stderr.
 
 ## Git
 

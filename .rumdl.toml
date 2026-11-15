@@ -1,0 +1,3 @@
+# CLAUDE.md is a one-line import of AGENTS.md, not a document.
+[per-file-ignores]
+"CLAUDE.md" = ["MD041"]
