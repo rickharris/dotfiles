@@ -1,7 +1,7 @@
 #compdef dot
 
 _dot() {
-  _arguments -C "1: :->cmds"
+  _arguments -C "1: :->cmds" "*:: :->args"
 
   case "$state" in
   cmds)
@@ -11,7 +11,15 @@ _dot() {
       "unlink[Remove dotfile symlinks]" \
       "doctor[Check for drift without changing anything]" \
       "prefs[Set system and app preferences]" \
+      "update[Pull the latest dotfiles and run install]" \
       "help[Show the list of commands]"
+    ;;
+  args)
+    case $words[1] in
+    update)
+      _arguments "--check[Report how far behind origin/main this is]"
+      ;;
+    esac
     ;;
   esac
 }

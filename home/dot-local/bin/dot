@@ -10,6 +10,9 @@ set -e
 dotfiles=${DOTFILES:-$HOME/src/github.com/rickharris/dotfiles}
 target=${DOT_TARGET:-$HOME}
 layers_file=${DOT_LAYERS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/dot/layers}
+# How many commits this checkout is behind origin/main, as of the last
+# `dot update --check`. The shell prompt reads it. Empty when not known.
+cache_file=${XDG_CACHE_HOME:-$HOME/.cache}/dot/behind
 # Try to load homebrew in case it has been installed already but the script
 # failed and needs to be re-run. This keeps us from re-installing homebrew.
 if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -415,6 +418,81 @@ unlink() {
   done
 }
 
+# Succeeds when a directory is the top of its own git work tree, which a layer
+# kept inside another repo (layers/personal) is not.
+is_git_root() {
+  local top
+  top=$(git -C "$1" rev-parse --show-toplevel 2>/dev/null) || return 1
+  if [[ $top != "$(resolve_dir "$1")" ]]; then
+    return 1
+  fi
+}
+
+# Succeeds when a repo has main checked out. A detached HEAD is not main.
+on_main() {
+  if [[ $(git -C "$1" symbolic-ref --short -q HEAD) != main ]]; then
+    return 1
+  fi
+}
+
+# Fetches main from origin without printing anything, and without asking for
+# credentials, because the prompt runs this in the background.
+fetch_origin() {
+  GIT_TERMINAL_PROMPT=0 git -C "$1" fetch --quiet origin main >/dev/null 2>&1
+}
+
+# Prints how many commits a repo is behind origin/main, going by what was last
+# fetched. Fails if there is no origin/main.
+behind_count() {
+  git -C "$1" rev-list --count HEAD..origin/main 2>/dev/null
+}
+
+# Writes a count to the cache file. It is written under another name and moved
+# into place, so the prompt never reads half a file. Fails quietly if the
+# cache cannot be written.
+write_cache() {
+  local tmp_file=$cache_file.$$
+  {
+    mkdir -p "$(dirname "$cache_file")" &&
+      echo "$1" >"$tmp_file" &&
+      mv -f "$tmp_file" "$cache_file"
+  } 2>/dev/null
+}
+
+# Says how far behind origin/main this checkout is, and records it in the
+# cache file for the prompt. The prompt runs this in the background with the
+# output thrown away, so failing to write the cache is never an error.
+update_check() {
+  # Touch the cache file first. The prompt starts a check when the file is
+  # old, so this stops it starting a second one while this one runs, and
+  # keeps a failed fetch from being retried on every prompt.
+  {
+    mkdir -p "$(dirname "$cache_file")" && touch "$cache_file"
+  } 2>/dev/null || true
+
+  if ! is_git_root "$dotfiles"; then
+    echo "dot: not a git repository: $dotfiles" >&2
+    return 1
+  fi
+  if ! on_main "$dotfiles"; then
+    write_cache 0 || true
+    echo "dot: not on the main branch, so not checked"
+    return 0
+  fi
+
+  local count
+  if ! fetch_origin "$dotfiles" || ! count=$(behind_count "$dotfiles"); then
+    echo "dot: could not fetch from origin" >&2
+    return 1
+  fi
+  write_cache "$count" || true
+  if ((count == 0)); then
+    echo "dot: up to date with origin/main"
+  else
+    echo "dot: $count commit(s) behind origin/main; run \`dot update\`"
+  fi
+}
+
 # Reports drift without changing anything: layers that are missing, files
 # that are not linked, links that were replaced by regular files, dangling
 # links and unsatisfied Brewfiles.
@@ -607,12 +685,13 @@ fi
 
 print_help() {
   printf "%s\n\n" "Run scripts related to your dotfiles repo."
-  printf "%s\t%s\n" "dot        " "Run all scripts in the proper order"
-  printf "%s\t%s\n" "dot install" "Install dependencies"
-  printf "%s\t%s\n" "dot link   " "Link dotfiles the correct location"
-  printf "%s\t%s\n" "dot unlink " "Remove dotfile symlinks"
-  printf "%s\t%s\n" "dot doctor " "Check for drift without changing anything"
-  printf "%s\t%s\n" "dot prefs  " "Set system and app preferences"
+  printf "%-20s%s\n" "dot" "Run all scripts in the proper order"
+  printf "%-20s%s\n" "dot install" "Install dependencies"
+  printf "%-20s%s\n" "dot link" "Link dotfiles the correct location"
+  printf "%-20s%s\n" "dot unlink" "Remove dotfile symlinks"
+  printf "%-20s%s\n" "dot doctor" "Check for drift without changing anything"
+  printf "%-20s%s\n" "dot prefs" "Set system and app preferences"
+  printf "%-20s%s\n" "dot update --check" "Report how far behind origin/main this is"
 }
 
 case ${1:-} in
@@ -630,6 +709,17 @@ doctor)
   ;;
 prefs)
   preferences
+  ;;
+update)
+  case ${2:-} in
+  --check)
+    update_check
+    ;;
+  *)
+    print_help >&2
+    exit 1
+    ;;
+  esac
   ;;
 __offer-personal-layer)
   # Not a public command; it lets the tests drive the install prompt.

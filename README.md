@@ -6,14 +6,15 @@ bash <(curl -fsSL https://raw.githubusercontent.com/rickharris/dotfiles/refs/hea
 
 ## Commands
 
-| Command       | What it does                              |
-| ------------- | ----------------------------------------- |
-| `dot`         | Run `install` and then `prefs`            |
-| `dot install` | Install dependencies                      |
-| `dot link`    | Link dotfiles to the correct location     |
-| `dot unlink`  | Remove dotfile symlinks                   |
-| `dot doctor`  | Check for drift without changing anything |
-| `dot prefs`   | Set system and app preferences            |
+| Command              | What it does                              |
+| -------------------- | ----------------------------------------- |
+| `dot`                | Run `install` and then `prefs`            |
+| `dot install`        | Install dependencies                      |
+| `dot link`           | Link dotfiles to the correct location     |
+| `dot unlink`         | Remove dotfile symlinks                   |
+| `dot doctor`         | Check for drift without changing anything |
+| `dot prefs`          | Set system and app preferences            |
+| `dot update --check` | Report how far behind `origin/main` it is |
 
 ## Layers
 
