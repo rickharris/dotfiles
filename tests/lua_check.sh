@@ -3,7 +3,7 @@
 # diagnostics Neovim shows, checked from the command line.
 #
 # Most of them come from the plugins' type annotations, so the plugins have to
-# be on disk. The server is configured by .luarc.jsonc, which points at where
+# be on disk. The server is configured by .luarc.json, which points at where
 # mise installs Neovim and where vim.pack installs plugins. CI has neither, so
 # it sets LUA_CHECK_PLUGINS to a directory filled by
 # tests/fetch_nvim_plugins.sh, and the check then runs with a copy of the
@@ -36,11 +36,10 @@ if [ -n "${LUA_CHECK_PLUGINS:-}" ]; then
   plugins=$LUA_CHECK_PLUGINS
   runtime=$(nvim --clean --headless \
     -c 'lua io.stdout:write(vim.env.VIMRUNTIME)' -c q 2>/dev/null)/lua
-  # .luarc.jsonc has no comments, so jq can read it.
   if ! jq --arg runtime "$runtime" --arg plugins "$plugins" \
     '.workspace.library = [$runtime, "${3rd}/luv/library", $plugins]' \
-    .luarc.jsonc >"$tmp/luarc.json"; then
-    fail "could not read .luarc.jsonc"
+    .luarc.json >"$tmp/luarc.json"; then
+    fail "could not read .luarc.json"
   fi
   set -- --configpath "$tmp/luarc.json"
 else
