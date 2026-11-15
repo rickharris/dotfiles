@@ -60,10 +60,14 @@ the include hooks instead: `~/.zshrc.local` is sourced by `.zshrc`, and
 ## Checks
 
 ```sh
-mise run check   # lint, tests and Lua diagnostics; what CI runs
+mise run check   # lint, tests and Lua diagnostics
 mise run lint    # formatting and ShellCheck, changing nothing
 mise run fmt     # format everything
+mise run tools   # install the global mise tools into a temp directory
 ```
+
+CI runs `check` and `tools`. `tools` checks that a new machine could install
+everything in the global mise config, and downloads about 1.5 GB to do it.
 
 The formatters are pinned in `mise.toml`. `dot install` installs them; on a
 checkout it has not set up, run `mise trust && mise install` once.
