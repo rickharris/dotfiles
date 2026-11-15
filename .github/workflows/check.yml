@@ -31,13 +31,16 @@ jobs:
       - name: Install stow
         run: brew install stow
 
-      # The version every machine gets, not whichever one Homebrew has.
+      # The version every machine gets, not whichever one Homebrew has. It is
+      # not in this repo's mise.toml, so tell mise which version `nvim` means
+      # for the steps that follow.
       - name: Install Neovim with mise
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          mise install "neovim@$(mise config get -f home/dot-config/mise/config.toml tools.neovim)"
-          echo "$HOME/.local/share/mise/installs/neovim/latest/bin" >> "$GITHUB_PATH"
+          version=$(mise config get -f home/dot-config/mise/config.toml tools.neovim)
+          mise install "neovim@$version"
+          echo "MISE_NEOVIM_VERSION=$version" >> "$GITHUB_ENV"
 
       - name: Syntax and tests
         run: mise run test
