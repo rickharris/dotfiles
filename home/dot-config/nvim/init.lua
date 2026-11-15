@@ -8,11 +8,7 @@ vim.loader.enable()
 -- for where there is one, and the global default from
 -- ~/.config/mise/config.toml everywhere else. A project that pins a tool has
 -- to be trusted and installed (`mise trust && mise install`) for that to work.
-do
-  local data = vim.env.MISE_DATA_DIR
-    or ((vim.env.XDG_DATA_HOME or (vim.env.HOME .. "/.local/share")) .. "/mise")
-  vim.env.PATH = data .. "/shims:" .. vim.env.PATH
-end
+vim.env.PATH = vim.env.HOME .. "/.local/share/mise/shims:" .. vim.env.PATH
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
