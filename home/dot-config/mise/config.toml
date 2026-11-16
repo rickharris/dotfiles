@@ -2,6 +2,8 @@
 node = "lts"
 neovim = "0.12.6"
 deno = "latest"
+pnpm = "12.21.0"
+yarn = "4.18.1"
 
 # Language servers, formatters and linters for Neovim. These are the default
 # versions; a project's own mise.toml overrides them inside that project, and
@@ -33,5 +35,4 @@ stylua = "2.6.0"
 taplo = "0.10.0"
 
 [settings]
-node.corepack = true
-idiomatic_version_file_enable_tools = ["node"]
+idiomatic_version_file_enable_tools = ["node", "pnpm", "yarn"]
