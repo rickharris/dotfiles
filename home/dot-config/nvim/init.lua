@@ -401,50 +401,40 @@ vim.lsp.enable({
 
 -- ## Conform formatting
 
--- Prettier runs only in a project that configures it, and only on files it
--- supports. Everything else falls back to the language servers, oxfmt's
--- among them where a project configures oxfmt.
-local prettier_supports
-local function prettier_supported(filename)
-  if not prettier_supports then
-    prettier_supports = { extensions = {}, filenames = {} }
-    local result = vim.system({ "prettier", "--support-info" }):wait()
-    local ok, info = pcall(vim.json.decode, result.stdout or "")
-    if result.code == 0 and ok then
-      for _, language in ipairs(info.languages) do
-        vim.list_extend(prettier_supports.extensions, language.extensions or {})
-        vim.list_extend(prettier_supports.filenames, language.filenames or {})
-      end
-    end
-  end
-
-  local basename = vim.fs.basename(filename)
-  if vim.tbl_contains(prettier_supports.filenames, basename) then
-    return true
-  end
-  for _, extension in ipairs(prettier_supports.extensions) do
-    if vim.endswith(basename, extension) then
-      return true
-    end
-  end
-  return false
+-- Prettier runs only in a project that configures it. Everything else falls
+-- back to the language servers, oxfmt's among them where a project configures
+-- oxfmt.
+local formatters_by_ft = {
+  sh = { "shfmt", "shellcheck" },
+}
+for _, filetype in ipairs({
+  "css",
+  "graphql",
+  "handlebars",
+  "html",
+  "javascript",
+  "javascriptreact",
+  "json",
+  "json5",
+  "jsonc",
+  "less",
+  "markdown",
+  "scss",
+  "typescript",
+  "typescriptreact",
+  "vue",
+  "yaml",
+}) do
+  formatters_by_ft[filetype] = { "prettier" }
 end
 
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
   format_on_save = { timeout_ms = 500 },
   formatters = {
-    prettier = {
-      require_cwd = true,
-      condition = function(_, ctx)
-        return prettier_supported(ctx.filename)
-      end,
-    },
+    prettier = { require_cwd = true },
   },
-  formatters_by_ft = {
-    sh = { "shfmt", "shellcheck" },
-    ["_"] = { "prettier" },
-  },
+  formatters_by_ft = formatters_by_ft,
 })
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
