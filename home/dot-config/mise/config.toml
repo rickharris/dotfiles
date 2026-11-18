@@ -1,7 +1,7 @@
 [tools]
-node = "lts"
+node = "26.13.1"
 neovim = "0.12.6"
-deno = "latest"
+deno = "2.9.8"
 # Node 25 and later no longer bundle corepack. Installed as its own tool, it
 # survives a change of Node version and needs no `corepack enable`: mise
 # makes shims for the yarn and pnpm commands the package provides.
