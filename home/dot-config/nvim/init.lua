@@ -404,37 +404,31 @@ vim.lsp.enable({
 -- Prettier runs only in a project that configures it. Everything else falls
 -- back to the language servers, oxfmt's among them where a project configures
 -- oxfmt.
-local formatters_by_ft = {
-  sh = { "shfmt", "shellcheck" },
-}
-for _, filetype in ipairs({
-  "css",
-  "graphql",
-  "handlebars",
-  "html",
-  "javascript",
-  "javascriptreact",
-  "json",
-  "json5",
-  "jsonc",
-  "less",
-  "markdown",
-  "scss",
-  "typescript",
-  "typescriptreact",
-  "vue",
-  "yaml",
-}) do
-  formatters_by_ft[filetype] = { "prettier" }
-end
-
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
   format_on_save = { timeout_ms = 500 },
   formatters = {
     prettier = { require_cwd = true },
   },
-  formatters_by_ft = formatters_by_ft,
+  formatters_by_ft = {
+    css = { "prettier" },
+    graphql = { "prettier" },
+    handlebars = { "prettier" },
+    html = { "prettier" },
+    javascript = { "prettier" },
+    javascriptreact = { "prettier" },
+    json = { "prettier" },
+    json5 = { "prettier" },
+    jsonc = { "prettier" },
+    less = { "prettier" },
+    markdown = { "prettier" },
+    scss = { "prettier" },
+    sh = { "shfmt", "shellcheck" },
+    typescript = { "prettier" },
+    typescriptreact = { "prettier" },
+    vue = { "prettier" },
+    yaml = { "prettier" },
+  },
 })
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
