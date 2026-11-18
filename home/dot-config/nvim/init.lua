@@ -272,6 +272,23 @@ vim.lsp.config("oxlint", {
   end,
 })
 
+local eslint_base_on_attach = vim.lsp.config.eslint.on_attach
+vim.lsp.config("eslint", {
+  -- Fixes run on save below, so the server need not format as well.
+  settings = { format = false },
+  on_attach = function(client, bufnr)
+    if not eslint_base_on_attach then
+      return
+    end
+
+    eslint_base_on_attach(client, bufnr)
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = bufnr,
+      command = "LspEslintFixAll",
+    })
+  end,
+})
+
 local stylelint_base_on_attach = vim.lsp.config.stylelint_lsp.on_attach
 vim.lsp.config("stylelint_lsp", {
   on_attach = function(client, bufnr)
@@ -387,10 +404,28 @@ vim.lsp.enable({
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
   format_on_save = { timeout_ms = 500 },
+  formatters = {
+    -- Only in projects with a prettier config
+    prettier = { require_cwd = true },
+  },
   formatters_by_ft = {
-    markdown = { "prettier" },
-    sh = { "shfmt", "shellcheck" },
+    css = { "prettier" },
+    graphql = { "prettier" },
+    handlebars = { "prettier" },
     html = { "prettier" },
+    javascript = { "prettier" },
+    javascriptreact = { "prettier" },
+    json = { "prettier" },
+    json5 = { "prettier" },
+    jsonc = { "prettier" },
+    less = { "prettier" },
+    markdown = { "prettier" },
+    scss = { "prettier" },
+    sh = { "shfmt", "shellcheck" },
+    typescript = { "prettier" },
+    typescriptreact = { "prettier" },
+    vue = { "prettier" },
+    yaml = { "prettier" },
   },
 })
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
