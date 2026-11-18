@@ -1,40 +1,27 @@
 [tools]
-node = "26.13.1"
-neovim = "0.12.6"
 deno = "2.9.8"
-# Node 25 and later no longer bundle corepack. Installed as its own tool, it
-# survives a change of Node version and needs no `corepack enable`: mise
-# makes shims for the yarn and pnpm commands the package provides.
-"npm:corepack" = "0.36.0"
+lua-language-server = "3.19.2"
+marksman = "2026-02-08"
+neovim = "0.12.6"
+node = "26.13.1"
+rumdl = "0.3.4"
+shellcheck = "0.11.0"
+shfmt = "3.14.1"
+stylua = "2.6.0"
+taplo = "0.10.0"
 
-# Language servers, formatters and linters for Neovim. These are the default
-# versions; a project's own mise.toml overrides them inside that project, and
-# Neovim picks that up because it runs tools through mise's shims.
-#
-# Copilot's language server comes from GitHub's releases as a standalone
-# binary, not from npm. The npm package declares its command at a path
-# outside the package, which npm repairs and mise does not, so mise installs
-# it without a command. It also depends on SDK packages that mise refuses
-# (github/copilot-sdk#2894).
 "github:github/copilot-language-server-release" = "1.570.0"
-# mise checks npm packages before installing them, and refuses one with under
-# 1000 weekly downloads unless it is exempted, as these two are.
+
 "npm:@stylelint/language-server" = { version = "1.2.0", allow_low_downloads = true }
 "npm:@vtsls/language-server" = "0.3.0"
 "npm:bash-language-server" = "5.8.1"
+"npm:corepack" = "0.36.0"
 "npm:cssmodules-language-server" = { version = "1.5.2", allow_low_downloads = true }
 "npm:graphql-language-service-cli" = "4.0.1"
 "npm:oxfmt" = "0.78.0"
 "npm:oxlint" = "1.93.0"
 "npm:prettier" = "3.10.1"
 "npm:vscode-langservers-extracted" = "4.10.0"
-lua-language-server = "3.19.2"
-marksman = "2026-02-08"
-rumdl = "0.3.4"
-shellcheck = "0.11.0"
-shfmt = "3.14.1"
-stylua = "2.6.0"
-taplo = "0.10.0"
 
 [settings]
 idiomatic_version_file_enable_tools = ["node"]
