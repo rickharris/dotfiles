@@ -401,13 +401,11 @@ vim.lsp.enable({
 
 -- ## Conform formatting
 
--- Prettier runs only in a project that configures it. Everything else falls
--- back to the language servers, oxfmt's among them where a project configures
--- oxfmt.
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
   format_on_save = { timeout_ms = 500 },
   formatters = {
+    -- Only in projects with a prettier config
     prettier = { require_cwd = true },
   },
   formatters_by_ft = {
