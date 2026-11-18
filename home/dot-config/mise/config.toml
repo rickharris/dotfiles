@@ -3,7 +3,10 @@ node = "lts"
 neovim = "0.12.6"
 deno = "latest"
 pnpm = "12.21.0"
-yarn = "4.18.1"
+# The packageManager field in a project's package.json overrides these. A
+# project without it gets Yarn 1, as it did with corepack: Yarn 2 and later
+# record their version there or in yarnPath, which Yarn 1 hands over to.
+yarn = "1.22.22"
 
 # Language servers, formatters and linters for Neovim. These are the default
 # versions; a project's own mise.toml overrides them inside that project, and
