@@ -2,11 +2,10 @@
 node = "lts"
 neovim = "0.12.6"
 deno = "latest"
-pnpm = "12.21.0"
-# The packageManager field in a project's package.json overrides these. A
-# project without it gets Yarn 1, as it did with corepack: Yarn 2 and later
-# record their version there or in yarnPath, which Yarn 1 hands over to.
-yarn = "1.22.22"
+# Node 25 and later no longer bundle corepack. Installed as its own tool, it
+# survives a change of Node version and needs no `corepack enable`: mise
+# makes shims for the yarn and pnpm commands the package provides.
+"npm:corepack" = "0.36.0"
 
 # Language servers, formatters and linters for Neovim. These are the default
 # versions; a project's own mise.toml overrides them inside that project, and
@@ -38,4 +37,4 @@ stylua = "2.6.0"
 taplo = "0.10.0"
 
 [settings]
-idiomatic_version_file_enable_tools = ["node", "pnpm", "yarn"]
+idiomatic_version_file_enable_tools = ["node"]
