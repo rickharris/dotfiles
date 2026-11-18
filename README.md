@@ -57,6 +57,20 @@ Every layer has the same layout, and every part is optional:
   config by replacing the file, which would otherwise break a file-level
   link.
 - `Brewfile` is installed by `dot install`.
+- `install` is an executable script that `dot install` runs from the layer's
+  directory, for setup that a Brewfile or a linked file cannot do, such as
+  logging in to another account with `gh auth login`.
+
+### Install scripts
+
+`dot install` runs each layer's `install` in layer order. The scripts run
+after the dotfiles are linked and 1Password and `gh` are set up, and before the
+Brewfiles, so a script can ask for input but cannot use anything a Brewfile
+installs. If one fails, `dot install` stops there.
+
+`dot update` ends by running `dot install`, so a script runs again on every
+update. Make it skip what is already done, for example by checking
+`gh auth status` before logging in.
 
 ### The personal layer
 

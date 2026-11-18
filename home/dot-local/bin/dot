@@ -96,10 +96,21 @@ install() {
     gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
-  # From here on nothing asks for input. Install every layer's Brewfile, the
-  # base repo's first.
+  # Run each layer's own install script, in layer order. It runs here, before
+  # the unattended part, so it can ask for input, and after the links, 1Password
+  # and gh are in place, so it can use them. `dot update` ends by running
+  # install, so a script runs again on every update and must skip what is
+  # already done.
   layers
   local layer
+  for layer in "${layer_dirs[@]:1}"; do
+    if [[ -e $layer/install ]]; then
+      run_layer_install "$layer"
+    fi
+  done
+
+  # From here on nothing asks for input. Install every layer's Brewfile, the
+  # base repo's first.
   for layer in "${layer_dirs[@]}"; do
     if [[ -f $layer/Brewfile ]]; then
       bundle "$layer"/Brewfile
@@ -296,6 +307,22 @@ stow_pkg() {
       echo "dot: could not link $layer/$package." >&2
       echo 'dot: move the files listed above out of the way (or merge them into the repo), then re-run `dot link`.' >&2
     fi
+    return 1
+  fi
+}
+
+# Runs a layer's install script from inside the layer directory:
+# run_layer_install <layer>. Stops the install if the script is not executable
+# or fails, so nothing after it runs on a half-set-up machine.
+run_layer_install() {
+  local layer=$1
+  if [[ ! -x $layer/install ]]; then
+    echo "dot: $layer/install is not executable; run \`chmod +x\` on it." >&2
+    return 1
+  fi
+  echo -e "\nRunning $layer/install…"
+  if ! (cd "$layer" && ./install); then
+    echo "dot: $layer/install failed." >&2
     return 1
   fi
 }
