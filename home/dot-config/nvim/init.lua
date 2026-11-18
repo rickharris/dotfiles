@@ -272,6 +272,23 @@ vim.lsp.config("oxlint", {
   end,
 })
 
+local eslint_base_on_attach = vim.lsp.config.eslint.on_attach
+vim.lsp.config("eslint", {
+  -- Fixes run on save below, so the server need not format as well.
+  settings = { format = false },
+  on_attach = function(client, bufnr)
+    if not eslint_base_on_attach then
+      return
+    end
+
+    eslint_base_on_attach(client, bufnr)
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = bufnr,
+      command = "LspEslintFixAll",
+    })
+  end,
+})
+
 local stylelint_base_on_attach = vim.lsp.config.stylelint_lsp.on_attach
 vim.lsp.config("stylelint_lsp", {
   on_attach = function(client, bufnr)
@@ -384,13 +401,49 @@ vim.lsp.enable({
 
 -- ## Conform formatting
 
+-- Prettier runs only in a project that configures it, and only on files it
+-- supports. Everything else falls back to the language servers, oxfmt's
+-- among them where a project configures oxfmt.
+local prettier_supports
+local function prettier_supported(filename)
+  if not prettier_supports then
+    prettier_supports = { extensions = {}, filenames = {} }
+    local result = vim.system({ "prettier", "--support-info" }):wait()
+    local ok, info = pcall(vim.json.decode, result.stdout or "")
+    if result.code == 0 and ok then
+      for _, language in ipairs(info.languages) do
+        vim.list_extend(prettier_supports.extensions, language.extensions or {})
+        vim.list_extend(prettier_supports.filenames, language.filenames or {})
+      end
+    end
+  end
+
+  local basename = vim.fs.basename(filename)
+  if vim.tbl_contains(prettier_supports.filenames, basename) then
+    return true
+  end
+  for _, extension in ipairs(prettier_supports.extensions) do
+    if vim.endswith(basename, extension) then
+      return true
+    end
+  end
+  return false
+end
+
 require("conform").setup({
   default_format_opts = { lsp_format = "fallback" },
   format_on_save = { timeout_ms = 500 },
+  formatters = {
+    prettier = {
+      require_cwd = true,
+      condition = function(_, ctx)
+        return prettier_supported(ctx.filename)
+      end,
+    },
+  },
   formatters_by_ft = {
-    markdown = { "prettier" },
     sh = { "shfmt", "shellcheck" },
-    html = { "prettier" },
+    ["_"] = { "prettier" },
   },
 })
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
