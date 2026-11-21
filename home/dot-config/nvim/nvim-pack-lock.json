@@ -1,11 +1,11 @@
 {
   "plugins": {
     "SchemaStore.nvim": {
-      "rev": "62be7a3daa56bb0031803435cc9302dab36467a7",
+      "rev": "abc95e13502ff3acbed151de97667174b2e4132d",
       "src": "https://github.com/b0o/SchemaStore.nvim"
     },
     "backend-ghostty": {
-      "rev": "c1e4082418d219fa62f00648cae92a58b303567f",
+      "rev": "409b83b1aee2efa566ed55db837d7ac91e40bfd5",
       "src": "https://github.com/smart-splits-nvim/backend-ghostty"
     },
     "blink.cmp": {
@@ -34,7 +34,7 @@
       "src": "https://github.com/femiagbabiaka/fff-snacks.nvim"
     },
     "fff.nvim": {
-      "rev": "ab3002a9bfbef53874dd0b56608e34d281791b4c",
+      "rev": "9a7b1c8fc1d20236a255bf3ddb24eeb761bd6bd9",
       "src": "https://github.com/dmtrKovalenko/fff.nvim"
     },
     "friendly-snippets": {
@@ -66,11 +66,11 @@
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "mini.files": {
-      "rev": "52b6a0ff498edd0755c71c3476b30ba07798989a",
+      "rev": "9898bee3b9004a3adf1b0c1b6ba984eae87082c2",
       "src": "https://github.com/nvim-mini/mini.files"
     },
     "mini.icons": {
-      "rev": "fc90b3925a2a68282be06e28cfe0cbb366c75dad",
+      "rev": "5d58117d176c133f4cb5585ec8cb3450881c89a0",
       "src": "https://github.com/nvim-mini/mini.icons"
     },
     "neogit": {
@@ -106,7 +106,7 @@
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
     },
     "nvim-lspconfig": {
-      "rev": "e1c6a5a45d95ad22cf55c874db2ff8ab969556f0",
+      "rev": "4648fd8ba5c678d7e2db75ae44ffac269bb589d8",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -118,7 +118,7 @@
       "src": "https://github.com/kylechui/nvim-surround"
     },
     "nvim-treesitter": {
-      "rev": "b706d642dd20d0922e7e92365dc73617f0fdb4ea",
+      "rev": "37e52c733ada9d8d544d53a763140ef1ba404353",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "octo.nvim": {
