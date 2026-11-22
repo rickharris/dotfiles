@@ -7,14 +7,16 @@
 [tools]
 lua-language-server = "3.19.2"
 "npm:oxfmt" = "0.79.0"
-rumdl = "0.3.4"
+rumdl = "0.3.5"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
 stylua = "2.6.0"
 
 [tasks.fmt]
-description = "Format every file a formatter covers"
+description = "Format every file a formatter covers, and fix what rumdl can"
 run = [
+  # Before oxfmt, so oxfmt formats what rumdl's fixes leave.
+  "rumdl fmt $(git ls-files '*.md')",
   "oxfmt .",
   "stylua $(git ls-files '*.lua')",
   "shfmt -ln zsh -i 2 -w home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot home/dot-config/zsh/dotfiles-prompt.zsh tests/dot_prompt_test.zsh",

@@ -24,8 +24,10 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 
 - `dot doctor` is always safe. It changes nothing in the home directory, but
   it does fetch from `origin`.
+
 - `dot update --check` fetches from `origin` and writes one cache file, so it
   is safe too.
+
 - Run the others against the real home only when the task is to apply a
   change to this machine, and say that you did.
 
@@ -33,8 +35,8 @@ edit here takes effect on the machine immediately, and a broken `dot` or
 
 ```sh
 mise run check   # lint, tests, Lua diagnostics and a Neovim start
-mise run lint    # formatting and ShellCheck, changing nothing
-mise run fmt     # format every file a formatter covers
+mise run lint    # formatting, ShellCheck and rumdl, changing nothing
+mise run fmt     # format, and fix what rumdl can, in every file covered
 mise run test    # syntax and tests only
 mise run lua     # what lua-language-server reports
 mise run nvim    # start Neovim with this config in an empty home
