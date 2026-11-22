@@ -7,7 +7,8 @@
 # the same ones CI uses.
 #
 # - Markdown, JSON, YAML, Lua, TOML, sh and bash: formatted in place.
-# - Markdown is also linted with rumdl.
+# - Markdown is also fixed with rumdl, before formatting, and what rumdl
+#   cannot fix is reported.
 # - Lua is also marked for lua-check.sh, which runs lua-language-server once
 #   the agent stops, because that takes too long to do after every edit.
 # - sh and bash are also linted with ShellCheck.
@@ -77,6 +78,8 @@ case "$file" in
   fi
   ;;
 *.md)
+  # rumdl fmt exits 0 even when it leaves problems, so check afterwards.
+  format rumdl fmt
   format oxfmt --no-error-on-unmatched-pattern
   if ! output=$(mise exec -- rumdl check "$file" 2>&1); then
     echo "rumdl found problems in $file:" >&2
