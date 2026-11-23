@@ -5,7 +5,7 @@
 # Most of them come from the plugins' type annotations, so Neovim's runtime
 # and the plugins have to be on disk. .luarc.json tells the server where: the
 # Neovim that mise installs, and the directory vim.pack installs plugins in.
-# CI fills that directory with tests/fetch_nvim_plugins.sh.
+# CI fills that directory with scripts/fetch_nvim_plugins.sh.
 #
 # Exit status: 0 for no diagnostics, 1 for diagnostics, 3 if the check could
 # not run.

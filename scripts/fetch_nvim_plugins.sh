@@ -3,7 +3,7 @@
 # directory given. CI uses this to give tests/lua_check.sh the plugins without
 # starting Neovim with the full config.
 #
-# Usage: tests/fetch_nvim_plugins.sh DIRECTORY
+# Usage: scripts/fetch_nvim_plugins.sh DIRECTORY
 
 set -eu
 

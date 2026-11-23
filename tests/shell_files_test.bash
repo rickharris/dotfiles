@@ -1,9 +1,9 @@
 #!/bin/bash
-# Tests for tests/shell_files.sh, against fixture files in a temp directory
+# Tests for scripts/shell_files.sh, against fixture files in a temp directory
 # and against this repo's own scripts.
 set -u
 repo=$(cd "$(dirname "$0")/.." && pwd -P)
-list=$repo/tests/shell_files.sh
+list=$repo/scripts/shell_files.sh
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
@@ -62,7 +62,7 @@ done
 # With no files it lists the repo's own, relative to its top.
 sh_files=$(/bin/bash "$list" sh)
 zsh_files=$(/bin/bash "$list" zsh)
-for f in home/dot-local/bin/dot layers/personal/install tests/shell_files.sh; do
+for f in home/dot-local/bin/dot layers/personal/install scripts/shell_files.sh; do
   if grep -qx "$f" <<<"$sh_files"; then
     echo "ok   - repo sh: $f"
   else

@@ -2,7 +2,7 @@
 # Lists the shell scripts in this repo, one group at a time, so the checks
 # find a new script without being told about it:
 #
-#   tests/shell_files.sh sh|zsh [file...]
+#   scripts/shell_files.sh sh|zsh [file...]
 #
 # With no files it looks at every file git tracks or would track, and prints
 # paths relative to the top of the repo. With files it prints those that are
@@ -57,7 +57,7 @@ is_generated() {
 }
 
 if [[ $# -lt 1 || ($1 != sh && $1 != zsh) ]]; then
-  echo "usage: tests/shell_files.sh sh|zsh [file...]" >&2
+  echo "usage: scripts/shell_files.sh sh|zsh [file...]" >&2
   exit 2
 fi
 want=$1

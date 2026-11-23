@@ -11,7 +11,7 @@
 #   cannot fix is reported.
 # - Lua is also marked for lua-check.sh, which runs lua-language-server once
 #   the agent stops, because that takes too long to do after every edit.
-# - sh and bash are also linted with ShellCheck. tests/shell_files.sh says
+# - sh and bash are also linted with ShellCheck. scripts/shell_files.sh says
 #   which files are shell, so a script without an extension is found too.
 # - dot and its tests also run the test suite, with the bash macOS ships. The
 #   tests only touch temp directories.
@@ -101,12 +101,12 @@ case "$file" in
   touch .claude/lua-check-pending
   ;;
 *)
-  # Anything else may be a shell script. tests/shell_files.sh decides, by
+  # Anything else may be a shell script. scripts/shell_files.sh decides, by
   # extension or first line, the same way the mise tasks do.
-  if [ -n "$(tests/shell_files.sh sh "$file")" ]; then
+  if [ -n "$(scripts/shell_files.sh sh "$file")" ]; then
     format shfmt -i 2 -w
     lint
-  elif [ -n "$(tests/shell_files.sh zsh "$file")" ]; then
+  elif [ -n "$(scripts/shell_files.sh zsh "$file")" ]; then
     check_zsh
   fi
   ;;

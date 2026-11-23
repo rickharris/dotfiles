@@ -19,9 +19,9 @@ run = [
   "rumdl fmt $(git ls-files '*.md')",
   "oxfmt .",
   "stylua $(git ls-files '*.lua')",
-  # tests/shell_files.sh finds the shell scripts, by extension or first line.
-  "shfmt -ln zsh -i 2 -w $(tests/shell_files.sh zsh)",
-  "shfmt -i 2 -w $(tests/shell_files.sh sh)",
+  # scripts/shell_files.sh finds the shell scripts, by extension or first line.
+  "shfmt -ln zsh -i 2 -w $(scripts/shell_files.sh zsh)",
+  "shfmt -i 2 -w $(scripts/shell_files.sh sh)",
 ]
 
 [tasks.lint]
@@ -29,10 +29,10 @@ description = "Check formatting and run ShellCheck and rumdl, without changing a
 run = [
   "oxfmt --check .",
   "stylua --check $(git ls-files '*.lua')",
-  # tests/shell_files.sh finds the shell scripts, by extension or first line.
-  "shfmt -ln zsh -i 2 -d $(tests/shell_files.sh zsh)",
-  "shfmt -i 2 -d $(tests/shell_files.sh sh)",
-  "shellcheck $(tests/shell_files.sh sh)",
+  # scripts/shell_files.sh finds the shell scripts, by extension or first line.
+  "shfmt -ln zsh -i 2 -d $(scripts/shell_files.sh zsh)",
+  "shfmt -i 2 -d $(scripts/shell_files.sh sh)",
+  "shellcheck $(scripts/shell_files.sh sh)",
   "rumdl check $(git ls-files '*.md')",
 ]
 

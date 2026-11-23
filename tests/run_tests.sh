@@ -1,7 +1,7 @@
 #!/bin/bash
 # Checks the syntax of every shell script, then runs every test in tests/
-# whose name ends in _test and a shell extension. shell_files.sh finds the
-# scripts, so a new one is checked without being listed anywhere.
+# whose name ends in _test and a shell extension. scripts/shell_files.sh
+# finds the scripts, so a new one is checked without being listed anywhere.
 #
 # - sh and bash are parsed with /bin/bash, the 3.2 macOS ships, because `dot`
 #   has to run on it.
@@ -14,12 +14,12 @@ cd "$(dirname "$0")/.." || exit 1
 
 failed=0
 
-for file in $(tests/shell_files.sh sh); do
+for file in $(scripts/shell_files.sh sh); do
   if ! /bin/bash -n "$file"; then
     failed=1
   fi
 done
-for file in $(tests/shell_files.sh zsh); do
+for file in $(scripts/shell_files.sh zsh); do
   if ! zsh -n "$file"; then
     failed=1
   fi
