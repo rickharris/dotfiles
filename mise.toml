@@ -19,8 +19,9 @@ run = [
   "rumdl fmt $(git ls-files '*.md')",
   "oxfmt .",
   "stylua $(git ls-files '*.lua')",
-  "shfmt -ln zsh -i 2 -w home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot home/dot-config/zsh/dotfiles-prompt.zsh tests/dot_prompt_test.zsh",
-  "shfmt -i 2 -w home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
+  # tests/shell_files.sh finds the shell scripts, by extension or first line.
+  "shfmt -ln zsh -i 2 -w $(tests/shell_files.sh zsh)",
+  "shfmt -i 2 -w $(tests/shell_files.sh sh)",
 ]
 
 [tasks.lint]
@@ -28,24 +29,20 @@ description = "Check formatting and run ShellCheck and rumdl, without changing a
 run = [
   "oxfmt --check .",
   "stylua --check $(git ls-files '*.lua')",
-  "shfmt -ln zsh -i 2 -d home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot home/dot-config/zsh/dotfiles-prompt.zsh tests/dot_prompt_test.zsh",
-  "shfmt -i 2 -d home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
-  "shellcheck home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
+  # tests/shell_files.sh finds the shell scripts, by extension or first line.
+  "shfmt -ln zsh -i 2 -d $(tests/shell_files.sh zsh)",
+  "shfmt -i 2 -d $(tests/shell_files.sh sh)",
+  "shellcheck $(tests/shell_files.sh sh)",
   "rumdl check $(git ls-files '*.md')",
 ]
 
 [tasks.test]
 description = "Syntax checks and tests; touches only temp directories"
 run = [
-  # dot has to work on the bash macOS ships, so always test with /bin/bash.
-  "/bin/bash -n home/dot-local/bin/dot",
-  "zsh -n home/dot-zshrc",
-  "zsh -n home/dot-config/zsh/dotfiles-prompt.zsh",
-  "zsh -n tests/dot_prompt_test.zsh",
-  "/bin/bash tests/dot_test.bash",
-  "zsh tests/dot_prompt_test.zsh",
+  # The syntax of every shell script, then every tests/*_test.* script.
+  # dot has to work on the bash macOS ships, so bash runs as /bin/bash.
+  "tests/run_tests.sh",
   "nvim -l home/dot-config/nvim-shared/tests/query_spec.lua </dev/null",
-  "tests/renovate_plugins_test.sh",
 ]
 
 [tasks.lua]

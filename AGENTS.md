@@ -60,6 +60,16 @@ Files that apps rewrite themselves are listed under `ignorePatterns` in
 `.oxfmtrc.json`. Add a file there instead of fighting the app over its
 formatting.
 
+Nothing lists the shell scripts by name. `tests/shell_files.sh` finds them
+for the tasks and the hook: sh and bash by a `.sh` or `.bash` extension or
+their shebang, zsh by `.zsh`, a zsh shebang, or a first line of
+`# vim:ft=zsh` or `#compdef`. Give a new script one of those marks or it is
+not checked at all. Generated shell files go on the list at the top of that
+script, the way other generated files go in `.oxfmtrc.json`.
+`tests/run_tests.sh` checks the syntax of every script it finds, then runs
+every `tests/*_test.bash`, `*_test.zsh` and `*_test.sh`, so a new test needs
+only that name.
+
 The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 
 `mise run lua` runs `tests/lua_check.sh`, which reports the diagnostics
