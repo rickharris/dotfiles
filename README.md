@@ -81,12 +81,12 @@ change the answer later, edit that file.
 
 ### Private layers
 
-A layer can live in a private repo that belongs to another GitHub account,
-such as an enterprise-managed one. That repo's README holds the one-liner
-above with two options added, where `<dot-url>` is the URL that one fetches:
+A layer can live in a private repo that belongs to another GitHub account.
+That repo's README holds the one-liner above with two options added:
 
 ```sh
-bash <(curl -fsSL <dot-url>) \
+bash <(curl -fsSL \
+  https://raw.githubusercontent.com/rickharris/dotfiles/refs/heads/main/home/dot-local/bin/dot) \
   --layer https://github.com/<owner>/<repo> --user <login>
 ```
 
