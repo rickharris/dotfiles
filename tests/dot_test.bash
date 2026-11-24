@@ -834,10 +834,9 @@ test_add_layer_writes_credential_helper() {
   run_dot __add-layer "$private_url" me_acme "$private_dir"
   assert_rc 0
   local want
-  # The first value is empty, which clears the global helpers. $HOME is
-  # literal: the shell git runs the helper with expands it.
-  # shellcheck disable=SC2016
-  want=$'\n''!"$HOME/.local/bin/dot" __credential me_acme'
+  # The first value is empty, which clears the global helpers. The path is
+  # written out in full, so it does not depend on HOME when git runs it.
+  want=$'\n'"!'$tmp/fakehome/.local/bin/dot' __credential me_acme"
   [[ $(git -C "$private_dir" config --get-all credential.helper) == "$want" ]] ||
     fail "helpers: $(git -C "$private_dir" config --get-all credential.helper)"
 }
@@ -954,9 +953,38 @@ test_credential_fails_without_token() {
   [[ $out != *password=* ]] || fail "printed a password: $out"
 }
 
+# The token is only for github.com over https. For anything else the helper
+# says nothing, and git moves on to asking the user.
+test_credential_ignores_other_hosts() {
+  gh_stub
+  run_dot __credential me get <<<$'protocol=https\nhost=example.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered for example.com: $out"
+  run_dot __credential me get <<<$'protocol=https\nhost=github.com.example.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered for github.com.example.com: $out"
+}
+
+test_credential_ignores_plain_http() {
+  gh_stub
+  run_dot __credential me get <<<$'protocol=http\nhost=github.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered over http: $out"
+}
+
+test_add_layer_refuses_home_with_a_quote() {
+  private_fixture
+  mkdir -p "$tmp/it's"
+  out=$(HOME="$tmp/it's" /bin/bash "$dot" __add-layer "$private_url" me "$private_dir" 2>&1)
+  rc=$?
+  assert_rc 1
+  assert_out_contains "dot: the home directory has a ' in its path"
+  assert_absent "$private_dir"
+}
+
 # git itself asks the layer's checkout for a credential: the helper add_layer
-# wrote must reach dot through $HOME/.local/bin, and a global helper (gh's, on
-# a real machine) must not answer instead.
+# wrote must reach dot in ~/.local/bin even when git runs with another HOME,
+# and a global helper (gh's, on a real machine) must not answer instead.
 test_layer_checkout_gets_token_through_dot() {
   private_fixture
   gh_stub
@@ -966,7 +994,8 @@ test_layer_checkout_gets_token_through_dot() {
   # A complete answer, so git would stop at this helper if it were asked.
   printf '[credential]\n\thelper = "!printf %s; :"\n' \
     "'username=global\\\\npassword=global\\\\n'" >"$tmp/gitconfig"
-  out=$(HOME=$tmp/fakehome GIT_CONFIG_GLOBAL=$tmp/gitconfig \
+  mkdir -p "$tmp/otherhome"
+  out=$(HOME=$tmp/otherhome GIT_CONFIG_GLOBAL=$tmp/gitconfig \
     git -C "$private_dir" credential fill <<<$'protocol=https\nhost=github.com\n' 2>&1)
   rc=$?
   assert_rc 0

@@ -233,14 +233,21 @@ add_to_layers_file() {
 
 # The git credential helper of a private layer's checkout:
 # credential <login> <operation>. For `get` it answers with <login>'s token
-# from gh, whichever account gh has active. gh stores and refreshes the
-# token, so `store` and `erase` do nothing. DOT_GH stands in for gh in the
-# tests.
+# from gh, whichever account gh has active, but only when git is asking
+# about https://github.com. Anything else gets no answer, so a second remote,
+# a fetch from another URL or a redirect never sees the token. gh stores and
+# refreshes the token, so `store` and `erase` do nothing. DOT_GH stands in
+# for gh in the tests.
 credential() {
-  local login=$1 operation=${2:-} token
-  # Read the request git writes, so git never writes to a closed pipe.
-  cat >/dev/null
-  if [[ $operation != get ]]; then
+  local login=$1 operation=${2:-} line protocol='' host='' token
+  # Read the whole request, so git never writes to a closed pipe.
+  while IFS= read -r line; do
+    case $line in
+    protocol=*) protocol=${line#protocol=} ;;
+    host=*) host=${line#host=} ;;
+    esac
+  done
+  if [[ $operation != get || $protocol != https || $host != github.com ]]; then
     return 0
   fi
   if ! token=$("${DOT_GH:-gh}" auth token --hostname github.com --user "$login" 2>/dev/null) ||
@@ -285,11 +292,16 @@ setup_private_layer() {
 add_layer() {
   local url=$1 login=$2 dir=$3 helper origin
   valid_login "$login"
-  # $HOME is expanded by the shell git runs the helper with, not here. The
-  # path is absolute because ~/.local/bin is only on the PATH in .zshrc,
-  # which neither install nor a GUI git client reads.
-  # shellcheck disable=SC2016
-  helper='!"$HOME/.local/bin/dot" __credential '$login
+  # The path is written out in full, not found on the PATH or through $HOME
+  # when git runs the helper: ~/.local/bin is only on the PATH in .zshrc,
+  # which neither install nor a GUI git client reads, and a tool that runs
+  # git with another HOME must not get to choose which dot runs. git runs it
+  # with the shell, so it is single-quoted, and a ' in it would end that.
+  if [[ $HOME == *\'* ]]; then
+    echo "dot: the home directory has a ' in its path, which the credential helper cannot quote: $HOME" >&2
+    return 1
+  fi
+  helper="!'$HOME/.local/bin/dot' __credential $login"
 
   if [[ -e $dir ]]; then
     if ! is_git_root "$dir"; then
