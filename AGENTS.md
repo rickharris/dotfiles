@@ -60,6 +60,16 @@ Files that apps rewrite themselves are listed under `ignorePatterns` in
 `.oxfmtrc.json`. Add a file there instead of fighting the app over its
 formatting.
 
+Nothing lists the shell scripts by name. `scripts/shell_files.sh` finds them
+for the tasks and the hook: sh and bash by a `.sh` or `.bash` extension or
+their shebang, zsh by `.zsh`, a zsh shebang, or a first line of
+`# vim:ft=zsh` or `#compdef`. Give a new script one of those marks or it is
+not checked at all. Generated shell files go on the list at the top of that
+script, the way other generated files go in `.oxfmtrc.json`.
+`tests/run_tests.sh` checks the syntax of every script it finds, then runs
+every `tests/*_test.bash`, `*_test.zsh` and `*_test.sh`, so a new test needs
+only that name.
+
 The tests run `dot` against temp fixtures, and refuse to start without `stow`.
 
 `mise run lua` runs `tests/lua_check.sh`, which reports the diagnostics
@@ -106,6 +116,8 @@ exercised.
 | `home/dot-config/mise/config.toml` | The **global** mise config: default versions of node, Neovim and every language server, formatter and linter Neovim uses. Neovim runs them through mise shims, so a project `mise.toml` overrides them. |
 | `home/dot-claude/settings.json`    | The user's **global** Claude Code settings, live.                                                                                                                                                       |
 | `.claude/settings.json`            | Settings for agents working **in this repo**. Not linked anywhere.                                                                                                                                      |
+| `tests/`                           | Tests, and the checks the `mise` tasks run.                                                                                                                                                             |
+| `scripts/`                         | Helpers for working on this repo that are not checks themselves: they are used by the tasks, the hooks and CI. Not linked anywhere.                                                                     |
 
 Use a `folded/` package for an app that saves config by replacing the file,
 which would otherwise turn a file-level link into a regular file.

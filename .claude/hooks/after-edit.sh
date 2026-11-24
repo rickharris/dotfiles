@@ -11,10 +11,11 @@
 #   cannot fix is reported.
 # - Lua is also marked for lua-check.sh, which runs lua-language-server once
 #   the agent stops, because that takes too long to do after every edit.
-# - sh and bash are also linted with ShellCheck.
+# - sh and bash are also linted with ShellCheck. scripts/shell_files.sh says
+#   which files are shell, so a script without an extension is found too.
 # - dot and its tests also run the test suite, with the bash macOS ships. The
 #   tests only touch temp directories.
-# - .zshrc and the zsh completion file: syntax and formatting are checked and
+# - zsh files, found the same way: syntax and formatting are checked and
 #   reported, never fixed, because shfmt's zsh support is incomplete.
 
 file=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty')
@@ -49,19 +50,9 @@ lint() {
   fi
 }
 
-case "$file" in
-*/home/dot-local/bin/dot | */tests/dot_test.bash)
-  format shfmt -i 2 -w
-  lint
-  # dot has to work on the bash macOS ships, so always test with /bin/bash.
-  if ! output=$(/bin/bash tests/dot_test.bash 2>&1); then
-    echo "dot tests failed after editing $file:" >&2
-    # Passing tests are noise here; keep the failures and their details.
-    echo "$output" | grep -v '^ok ' | tail -n 40 >&2
-    exit 2
-  fi
-  ;;
-*/home/dot-zshrc | */site-functions/_dot)
+# Reports zsh syntax errors and formatting, without fixing either, because
+# shfmt's zsh support is incomplete.
+check_zsh() {
   failed=0
   if ! output=$(zsh -n "$file" 2>&1); then
     failed=1
@@ -74,6 +65,19 @@ case "$file" in
     echo "$output" | tail -n 40 >&2
   fi
   if [ "$failed" = 1 ]; then
+    exit 2
+  fi
+}
+
+case "$file" in
+*/home/dot-local/bin/dot | */tests/dot_test.bash)
+  format shfmt -i 2 -w
+  lint
+  # dot has to work on the bash macOS ships, so always test with /bin/bash.
+  if ! output=$(/bin/bash tests/dot_test.bash 2>&1); then
+    echo "dot tests failed after editing $file:" >&2
+    # Passing tests are noise here; keep the failures and their details.
+    echo "$output" | grep -v '^ok ' | tail -n 40 >&2
     exit 2
   fi
   ;;
@@ -96,8 +100,14 @@ case "$file" in
   format stylua
   touch .claude/lua-check-pending
   ;;
-*.sh | *.bash)
-  format shfmt -i 2 -w
-  lint
+*)
+  # Anything else may be a shell script. scripts/shell_files.sh decides, by
+  # extension or first line, the same way the mise tasks do.
+  if [ -n "$(scripts/shell_files.sh sh "$file")" ]; then
+    format shfmt -i 2 -w
+    lint
+  elif [ -n "$(scripts/shell_files.sh zsh "$file")" ]; then
+    check_zsh
+  fi
   ;;
 esac
