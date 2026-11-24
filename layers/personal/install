@@ -1,0 +1,12 @@
+#!/bin/bash
+# Setup for personal machines that a Brewfile or a linked file cannot do.
+# `dot install` runs this on every install and update, so each step skips
+# what is already done.
+set -euo pipefail
+
+# The native installer, not the Homebrew cask, which turns off Claude Code's
+# own auto-update.
+if ! command -v claude >/dev/null 2>&1; then
+  echo -e "\nInstalling Claude Code…"
+  curl -fsSL https://claude.ai/install.sh | bash
+fi

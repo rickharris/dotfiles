@@ -20,7 +20,7 @@ run = [
   "oxfmt .",
   "stylua $(git ls-files '*.lua')",
   "shfmt -ln zsh -i 2 -w home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot home/dot-config/zsh/dotfiles-prompt.zsh tests/dot_prompt_test.zsh",
-  "shfmt -i 2 -w home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
+  "shfmt -i 2 -w home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
 ]
 
 [tasks.lint]
@@ -29,8 +29,8 @@ run = [
   "oxfmt --check .",
   "stylua --check $(git ls-files '*.lua')",
   "shfmt -ln zsh -i 2 -d home/dot-zshrc home/dot-local/share/zsh/site-functions/_dot home/dot-config/zsh/dotfiles-prompt.zsh tests/dot_prompt_test.zsh",
-  "shfmt -i 2 -d home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
-  "shellcheck home/dot-local/bin/dot $(git ls-files '*.sh' '*.bash')",
+  "shfmt -i 2 -d home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
+  "shellcheck home/dot-local/bin/dot layers/personal/install $(git ls-files '*.sh' '*.bash')",
   "rumdl check $(git ls-files '*.md')",
 ]
 
