@@ -96,6 +96,13 @@ install() {
     gh auth login --git-protocol=https --hostname=github.com --web
   fi
 
+  # A private layer given with --layer and --user. It is set up here, after
+  # the gh login it needs and before the layer install scripts, so its own
+  # script runs below along with everyone else's.
+  if [[ -n ${layer_url:-} ]]; then
+    setup_private_layer
+  fi
+
   # Run each layer's own install script, in layer order. It runs here, before
   # the unattended part, so it can ask for input, and after the links, 1Password
   # and gh are in place, so it can use them. `dot update` ends by running
@@ -167,14 +174,208 @@ offer_personal_layer() {
 
   mkdir -p "$(dirname "$layers_file")"
   {
-    # The backticks are literal text for whoever reads the file.
-    # shellcheck disable=SC2016
-    echo '# Layers for this machine, one directory per line. Read by `dot`.'
-    echo '# Edit by hand to add or remove layers.'
+    write_layers_header
     if [[ $answer == [yY]* ]]; then
       echo "$dotfiles/layers/personal"
     fi
   } >"$layers_file"
+}
+
+# Prints the comment at the top of a layers file that dot writes.
+write_layers_header() {
+  # The backticks are literal text for whoever reads the file.
+  # shellcheck disable=SC2016
+  echo '# Layers for this machine, one directory per line. Read by `dot`.'
+  echo '# Edit by hand to add or remove layers.'
+}
+
+# Prints the directory one line of the layers file names, with surrounding
+# whitespace trimmed and a leading ~ expanded, or nothing for a blank line or a
+# comment. Only ~ and ~/ are expanded: ~name is left alone, and the caller
+# rejects it for not being absolute.
+layer_line_path() {
+  local line=$1
+  line=${line#"${line%%[![:space:]]*}"}
+  line=${line%"${line##*[![:space:]]}"}
+  if [[ -z $line || $line == \#* ]]; then
+    return 0
+  fi
+  if [[ $line == \~ || $line == \~/* ]]; then
+    line=$HOME${line#\~}
+  fi
+  echo "$line"
+}
+
+# Adds a directory to the end of the layers file, unless the file already
+# lists it, creating the file if needed. A directory under the home directory
+# is written in its ~/ form, so the file reads the same on every machine.
+add_to_layers_file() {
+  local dir=$1 entry=$1 line
+  if [[ $dir == "$HOME"/* ]]; then
+    entry=\~/${dir#"$HOME"/}
+  fi
+  if [[ ! -e $layers_file ]]; then
+    mkdir -p "$(dirname "$layers_file")"
+    write_layers_header >"$layers_file"
+  fi
+  while IFS= read -r line || [[ -n $line ]]; do
+    if [[ $(layer_line_path "$line") == "$dir" ]]; then
+      return 0
+    fi
+  done <"$layers_file"
+  # Without this, a file whose last line has no newline would have the entry
+  # joined onto that line.
+  if [[ -s $layers_file && -n $(tail -c 1 "$layers_file") ]]; then
+    echo >>"$layers_file"
+  fi
+  echo "$entry" >>"$layers_file"
+}
+
+# The git credential helper of a private layer's checkout:
+# credential <login> <operation>. For `get` it answers with <login>'s token
+# from gh, whichever account gh has active. gh stores and refreshes the
+# token, so `store` and `erase` do nothing. DOT_GH stands in for gh in the
+# tests.
+credential() {
+  local login=$1 operation=${2:-} token
+  # Read the request git writes, so git never writes to a closed pipe.
+  cat >/dev/null
+  if [[ $operation != get ]]; then
+    return 0
+  fi
+  if ! token=$("${DOT_GH:-gh}" auth token --hostname github.com --user "$login" 2>/dev/null) ||
+    [[ -z $token ]]; then
+    echo "dot: no GitHub token for $login; run \`gh auth login\` and sign in as $login." >&2
+    return 1
+  fi
+  echo username=x-access-token
+  echo "password=$token"
+}
+
+# Sets up the private layer that parse_layer_options read: signs gh in to
+# layer_user if it has no token for that account, clones the layer to
+# ~/src/github.com/<owner>/<repo>, adds it to the layers file and links it.
+# gh makes a newly added account the active one, so this switches back:
+# the account that was active stays the one git uses everywhere else.
+setup_private_layer() {
+  local dir=$HOME/src/github.com/$layer_owner/$layer_repo personal active
+  if ! gh auth token --hostname github.com --user "$layer_user" >/dev/null 2>&1; then
+    personal=$(gh api user --jq .login)
+    echo -e "\nSign in to GitHub as $layer_user, which $layer_url belongs to."
+    echo "If the browser is signed in as $personal, open the login page in a private window."
+    gh auth login --hostname github.com --git-protocol https --web
+    active=$(gh api user --jq .login)
+    if [[ $active != "$layer_user" ]]; then
+      gh auth switch --hostname github.com --user "$personal" >/dev/null 2>&1 || true
+      echo "dot: signed in as $active, not $layer_user; re-run to try again." >&2
+      return 1
+    fi
+    gh auth switch --hostname github.com --user "$personal"
+  fi
+  add_layer "$layer_url" "$layer_user" "$dir"
+  link
+}
+
+# Clones a private layer and adds it to the layers file:
+# add_layer <url> <login> <dir>. Its checkout gets a credential helper of its
+# own, which asks gh for <login>'s token, so the layer can be pulled with an
+# account other than the one gh has active. If <dir> is already a clone of
+# <url> it is not cloned again, but the helper and the layers file are still
+# brought up to date, so running this twice changes nothing.
+add_layer() {
+  local url=$1 login=$2 dir=$3 helper origin
+  valid_login "$login"
+  # $HOME is expanded by the shell git runs the helper with, not here. The
+  # path is absolute because ~/.local/bin is only on the PATH in .zshrc,
+  # which neither install nor a GUI git client reads.
+  # shellcheck disable=SC2016
+  helper='!"$HOME/.local/bin/dot" __credential '$login
+
+  if [[ -e $dir ]]; then
+    if ! is_git_root "$dir"; then
+      echo "dot: $dir exists but is not a git repository" >&2
+      return 1
+    fi
+    origin=$(git -C "$dir" remote get-url origin 2>/dev/null || true)
+    if [[ $origin != "$url" && $origin != "$url.git" ]]; then
+      echo "dot: $dir is a clone of ${origin:-no remote}, not $url" >&2
+      return 1
+    fi
+  else
+    mkdir -p "$(dirname "$dir")"
+    # An empty helper clears the ones from the global config, gh's included,
+    # so only this one answers. The same pair goes into the checkout below.
+    if ! git -c credential.helper= -c credential.helper="$helper" clone "$url" "$dir"; then
+      echo "dot: could not clone $url." >&2
+      return 1
+    fi
+  fi
+
+  # --unset-all fails when there is nothing to unset, which is fine.
+  git -C "$dir" config --unset-all credential.helper || true
+  git -C "$dir" config --add credential.helper ''
+  git -C "$dir" config --add credential.helper "$helper"
+  add_to_layers_file "$dir"
+}
+
+# Succeeds when a GitHub login is made only of the characters GitHub allows
+# in one. The login is written into a git config value, so this also keeps it
+# from breaking the quoting there.
+valid_login() {
+  if [[ ! $1 =~ ^[A-Za-z0-9_-]+$ ]]; then
+    echo "dot: not a GitHub login: $1" >&2
+    return 1
+  fi
+}
+
+# Reads the options `dot` and `dot install` take for a private layer:
+# --layer <url> and --user <login>, which go together. Sets layer_url,
+# layer_owner, layer_repo and layer_user, or leaves them empty when neither is
+# given. The URL must be https://github.com/<owner>/<repo>, optionally ending
+# in .git or /, and is normalized to the form without either.
+parse_layer_options() {
+  local url='' user='' pattern='^https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)$'
+  layer_url='' layer_owner='' layer_repo='' layer_user=''
+  while (($# > 0)); do
+    case $1 in
+    --layer | --user)
+      if (($# < 2)); then
+        echo "dot: $1 needs a value" >&2
+        return 1
+      fi
+      if [[ $1 == --layer ]]; then
+        url=$2
+      else
+        user=$2
+      fi
+      shift 2
+      ;;
+    *)
+      echo "dot: unknown argument: $1" >&2
+      return 1
+      ;;
+    esac
+  done
+
+  if [[ -z $url && -z $user ]]; then
+    return 0
+  fi
+  if [[ -z $url || -z $user ]]; then
+    echo "dot: --layer and --user go together" >&2
+    return 1
+  fi
+  url=${url%/}
+  url=${url%.git}
+  if [[ ! $url =~ $pattern ]]; then
+    echo "dot: --layer must be https://github.com/<owner>/<repo>: $url" >&2
+    return 1
+  fi
+  # Read the match before valid_login runs a match of its own.
+  layer_owner=${BASH_REMATCH[1]}
+  layer_repo=${BASH_REMATCH[2]}
+  valid_login "$user"
+  layer_url=$url
+  layer_user=$user
 }
 
 # Installs what a Brewfile lists, unless it is already satisfied.
@@ -254,16 +455,9 @@ layers() {
 
   local line
   while IFS= read -r line || [[ -n $line ]]; do
-    # Trim leading, then trailing, whitespace.
-    line=${line#"${line%%[![:space:]]*}"}
-    line=${line%"${line##*[![:space:]]}"}
-    if [[ -z $line || $line == \#* ]]; then
+    line=$(layer_line_path "$line")
+    if [[ -z $line ]]; then
       continue
-    fi
-    # Only ~ and ~/ are expanded. ~name is left alone and then rejected below
-    # for not being absolute.
-    if [[ $line == \~ || $line == \~/* ]]; then
-      line=$HOME${line#\~}
     fi
     if [[ $line != /* ]]; then
       if ((keep_going)); then
@@ -781,7 +975,11 @@ preferences() {
   defaults write com.apple.Safari InternalDebugHostedBlurMaterialInMediaControlsEnabled -bool false
 }
 
-if [ $# -eq 0 ]; then
+# With no command, or only the private layer options, run everything.
+if [[ $# -eq 0 || $1 == --layer || $1 == --user ]]; then
+  # Check the options before anything else, so a typo in the one-liner fails
+  # before a long install rather than partway through it.
+  parse_layer_options "$@"
   # Fail on missing permissions now rather than after a long install.
   check_full_disk_access
   install
@@ -799,10 +997,13 @@ print_help() {
   printf "%-20s%s\n" "dot prefs" "Set system and app preferences"
   printf "%-20s%s\n" "dot update" "Pull the latest dotfiles and run install"
   printf "%-20s%s\n" "dot update --check" "Report how far behind origin/main this is"
+  printf "\n%s\n" "dot and dot install also take --layer <url> --user <login>, to set up a private layer."
 }
 
 case ${1:-} in
 install)
+  shift
+  parse_layer_options "$@"
   install
   ;;
 link)
@@ -842,6 +1043,23 @@ __pull)
 __offer-personal-layer)
   # Not a public command; it lets the tests drive the install prompt.
   offer_personal_layer
+  ;;
+__check-options)
+  # Not a public command; it lets the tests check the private layer options
+  # without running install.
+  shift
+  parse_layer_options "$@"
+  echo "$layer_url $layer_user $layer_owner $layer_repo"
+  ;;
+__add-layer)
+  # Not a public command; it lets the tests clone a layer from a local repo
+  # without the gh login install does first.
+  add_layer "$2" "$3" "$4"
+  ;;
+__credential)
+  # Not a public command: the credential helper add_layer writes into a
+  # private layer's checkout, which git runs as `dot __credential <login> get`.
+  credential "$2" "${3:-}"
   ;;
 help | -h | --help)
   print_help

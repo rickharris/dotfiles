@@ -79,6 +79,27 @@ personal machines. The first time `dot install` runs on a machine it asks
 whether to enable it, and records the answer by writing the layers file. To
 change the answer later, edit that file.
 
+### Private layers
+
+A layer can live in a private repo that belongs to another GitHub account,
+such as an enterprise-managed one. That repo's README holds the one-liner
+above with two options added, where `<dot-url>` is the URL that one fetches:
+
+```sh
+bash <(curl -fsSL <dot-url>) \
+  --layer https://github.com/<owner>/<repo> --user <login>
+```
+
+After the usual GitHub login, `dot install` adds `<login>` to `gh` if it does
+not have it yet, and switches the active account back. It then clones the
+layer to `~/src/github.com/<owner>/<repo>`, adds it to the layers file and
+links it. The layer's `install` script and `Brewfile` run with the others.
+
+The checkout gets a credential helper of its own, which asks `gh` for
+`<login>`'s token. So `dot update` pulls it with that account, while
+everything else keeps using the active one. Running the one-liner again on a
+machine that has the layer changes nothing.
+
 ### Machines set up before layers existed
 
 Such a machine has no layers file, so it has never been asked about the
