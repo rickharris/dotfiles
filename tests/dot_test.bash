@@ -31,6 +31,8 @@ setup() {
   export DOT_LAYERS_FILE="$tmp/layers"
   # dot keeps how far behind the checkout is under the cache directory.
   export XDG_CACHE_HOME="$tmp/cache"
+  # Set by the tests that stub gh.
+  unset DOT_GH
   # Keep git away from the config of whoever runs the tests, and give it an
   # identity so the fixtures can commit.
   export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
@@ -719,6 +721,286 @@ test_prompt_segment_is_linked_where_zshrc_sources_it() {
     "$repo/home/dot-config/zsh/dotfiles-prompt.zsh"
   grep -qF '.config/zsh/dotfiles-prompt.zsh' "$tmp/target/.zshrc" ||
     fail "expected .zshrc to source ~/.config/zsh/dotfiles-prompt.zsh"
+}
+
+# Private layers. These names stand in for a real private repo and account,
+# which this public repo never names.
+
+test_options_accept_github_url() {
+  run_dot __check-options --layer https://github.com/acme/layer --user me_acme
+  assert_rc 0
+  [[ $out == "https://github.com/acme/layer me_acme acme layer" ]] || fail "got: $out"
+}
+
+test_options_normalize_git_suffix_and_slash() {
+  run_dot __check-options --user me --layer https://github.com/acme/layer.git
+  assert_rc 0
+  [[ $out == "https://github.com/acme/layer me acme layer" ]] || fail "got: $out"
+  run_dot __check-options --layer https://github.com/acme/layer/ --user me
+  assert_rc 0
+  [[ $out == "https://github.com/acme/layer me acme layer" ]] || fail "got: $out"
+}
+
+test_options_layer_needs_user() {
+  run_dot __check-options --layer https://github.com/acme/layer
+  assert_rc 1
+  assert_out_contains "dot: --layer and --user go together"
+}
+
+test_options_user_needs_layer() {
+  run_dot __check-options --user me
+  assert_rc 1
+  assert_out_contains "dot: --layer and --user go together"
+}
+
+test_options_option_needs_a_value() {
+  run_dot __check-options --user me --layer
+  assert_rc 1
+  assert_out_contains "dot: --layer needs a value"
+}
+
+test_options_reject_other_hosts() {
+  run_dot __check-options --layer https://example.com/acme/layer --user me
+  assert_rc 1
+  assert_out_contains "dot: --layer must be https://github.com/<owner>/<repo>"
+}
+
+test_options_reject_deeper_paths() {
+  run_dot __check-options --layer https://github.com/acme/layer/tree --user me
+  assert_rc 1
+  assert_out_contains "dot: --layer must be https://github.com/<owner>/<repo>"
+}
+
+test_options_reject_bad_login() {
+  run_dot __check-options --layer https://github.com/acme/layer --user 'me;x'
+  assert_rc 1
+  assert_out_contains "dot: not a GitHub login: me;x"
+}
+
+test_options_reject_unknown_argument() {
+  run_dot __check-options --layer https://github.com/acme/layer --user me -x
+  assert_rc 1
+  assert_out_contains "dot: unknown argument: -x"
+}
+
+# These two run the real entry points, so they only ever pass options that
+# fail: options that passed would start a real install.
+test_install_checks_options_first() {
+  run_dot install --layer https://example.com/a/b --user me
+  assert_rc 1
+  assert_out_contains "dot: --layer must be https://github.com/<owner>/<repo>"
+  [[ $out != *Installing* ]] || fail "install started: $out"
+}
+
+test_bare_dot_checks_options_first() {
+  run_dot --user me
+  assert_rc 1
+  assert_out_contains "dot: --layer and --user go together"
+  [[ $out != *"Full Disk Access"* ]] || fail "went on to check permissions"
+}
+
+# Makes a bare repo at $tmp/private.git holding a layer with one file, and
+# sets private_url to it, private_dir to where install would clone it and
+# private_entry to the line the layers file gets for it.
+private_fixture() {
+  mkdir -p "$tmp/private-src/home"
+  touch "$tmp/private-src/home/dot-private"
+  git_fixture "$tmp/private-src" "$tmp/private.git"
+  git -C "$tmp/private-src" add home
+  git -C "$tmp/private-src" commit -q -m layer
+  git -C "$tmp/private-src" push -q origin main
+  private_url=file://$tmp/private.git
+  private_dir=$tmp/fakehome/src/github.com/acme/layer
+  # How the layers file lists private_dir, as HOME is $tmp/fakehome.
+  private_entry=\~/src/github.com/acme/layer
+}
+
+# Prints the layers file without its comments.
+layer_lines() {
+  grep -v '^#' "$tmp/layers"
+}
+
+test_add_layer_clones_and_lists_it() {
+  private_fixture
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 0
+  [[ -f $private_dir/home/dot-private ]] || fail "not cloned: $out"
+  [[ $(layer_lines) == "$private_entry" ]] ||
+    fail "layers file holds: $(layer_lines)"
+}
+
+test_add_layer_writes_credential_helper() {
+  private_fixture
+  run_dot __add-layer "$private_url" me_acme "$private_dir"
+  assert_rc 0
+  local want
+  # The first value is empty, which clears the global helpers. The path is
+  # written out in full, so it does not depend on HOME when git runs it.
+  want=$'\n'"!'$tmp/fakehome/.local/bin/dot' __credential me_acme"
+  [[ $(git -C "$private_dir" config --get-all credential.helper) == "$want" ]] ||
+    fail "helpers: $(git -C "$private_dir" config --get-all credential.helper)"
+}
+
+test_add_layer_twice_changes_nothing() {
+  private_fixture
+  run_dot __add-layer "$private_url" me "$private_dir"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 0
+  [[ $(git -C "$private_dir" config --get-all credential.helper | wc -l) -eq 2 ]] ||
+    fail "expected two helper values"
+  [[ $(layer_lines | wc -l) -eq 1 ]] || fail "layers file holds: $(layer_lines)"
+}
+
+test_add_layer_keeps_earlier_layers() {
+  private_fixture
+  run_dot __offer-personal-layer <<<"y"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 0
+  [[ $(layer_lines) == "$tmp/base/layers/personal"$'\n'"$private_entry" ]] ||
+    fail "layers file holds: $(layer_lines)"
+}
+
+test_add_layer_after_last_line_without_newline() {
+  private_fixture
+  printf '%s' "$tmp/other" >"$tmp/layers"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 0
+  [[ $(<"$tmp/layers") == "$tmp/other"$'\n'"$private_entry" ]] ||
+    fail "layers file holds: $(<"$tmp/layers")"
+}
+
+test_add_layer_absolute_entry_counts_as_listed() {
+  private_fixture
+  printf '%s\n' "$private_dir" >"$tmp/layers"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 0
+  [[ $(<"$tmp/layers") == "$private_dir" ]] ||
+    fail "layers file holds: $(<"$tmp/layers")"
+}
+
+test_add_layer_refuses_clone_of_another_repo() {
+  private_fixture
+  git_fixture "$tmp/base" "$tmp/origin.git"
+  mkdir -p "$(dirname "$private_dir")"
+  git clone -q "$tmp/origin.git" "$private_dir"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 1
+  assert_out_contains "dot: $private_dir is a clone of $tmp/origin.git, not $private_url"
+  assert_absent "$tmp/layers"
+}
+
+test_add_layer_refuses_directory_that_is_not_a_repo() {
+  private_fixture
+  mkdir -p "$private_dir"
+  run_dot __add-layer "$private_url" me "$private_dir"
+  assert_rc 1
+  assert_out_contains "dot: $private_dir exists but is not a git repository"
+  assert_absent "$tmp/layers"
+}
+
+test_add_layer_checks_login_before_cloning() {
+  private_fixture
+  run_dot __add-layer "$private_url" 'me"x' "$private_dir"
+  assert_rc 1
+  assert_out_contains 'dot: not a GitHub login: me"x'
+  assert_absent "$private_dir"
+}
+
+test_add_layer_then_link_links_it() {
+  private_fixture
+  run_dot __add-layer "$private_url" me "$private_dir"
+  run_dot link
+  assert_rc 0
+  assert_link "$tmp/target/.private" "$private_dir/home/dot-private"
+}
+
+# Writes a stub gh that prints its arguments, or one that fails when called as
+# `gh_stub fail`, and points DOT_GH at it. dot puts Homebrew first on the
+# PATH, so a stub on the PATH would lose to the real gh.
+gh_stub() {
+  if [[ ${1:-} == fail ]]; then
+    printf '#!/bin/bash\nexit 1\n' >"$tmp/gh"
+  else
+    printf '#!/bin/bash\necho "token $*"\n' >"$tmp/gh"
+  fi
+  chmod +x "$tmp/gh"
+  export DOT_GH=$tmp/gh
+}
+
+test_credential_get_prints_token_for_login() {
+  gh_stub
+  run_dot __credential me_acme get <<<$'protocol=https\nhost=github.com\n'
+  assert_rc 0
+  [[ $out == $'username=x-access-token\npassword=token auth token --hostname github.com --user me_acme' ]] ||
+    fail "got: $out"
+}
+
+test_credential_ignores_store_and_erase() {
+  gh_stub
+  run_dot __credential me store <<<$'protocol=https\nhost=github.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "store printed: $out"
+  run_dot __credential me erase <<<$'protocol=https\nhost=github.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "erase printed: $out"
+}
+
+test_credential_fails_without_token() {
+  gh_stub fail
+  run_dot __credential me get <<<$'protocol=https\nhost=github.com\n'
+  assert_rc 1
+  assert_out_contains "dot: no GitHub token for me"
+  [[ $out != *password=* ]] || fail "printed a password: $out"
+}
+
+# The token is only for github.com over https. For anything else the helper
+# says nothing, and git moves on to asking the user.
+test_credential_ignores_other_hosts() {
+  gh_stub
+  run_dot __credential me get <<<$'protocol=https\nhost=example.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered for example.com: $out"
+  run_dot __credential me get <<<$'protocol=https\nhost=github.com.example.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered for github.com.example.com: $out"
+}
+
+test_credential_ignores_plain_http() {
+  gh_stub
+  run_dot __credential me get <<<$'protocol=http\nhost=github.com\n'
+  assert_rc 0
+  [[ -z $out ]] || fail "answered over http: $out"
+}
+
+test_add_layer_refuses_home_with_a_quote() {
+  private_fixture
+  mkdir -p "$tmp/it's"
+  out=$(HOME="$tmp/it's" /bin/bash "$dot" __add-layer "$private_url" me "$private_dir" 2>&1)
+  rc=$?
+  assert_rc 1
+  assert_out_contains "dot: the home directory has a ' in its path"
+  assert_absent "$private_dir"
+}
+
+# git itself asks the layer's checkout for a credential: the helper add_layer
+# wrote must reach dot in ~/.local/bin even when git runs with another HOME,
+# and a global helper (gh's, on a real machine) must not answer instead.
+test_layer_checkout_gets_token_through_dot() {
+  private_fixture
+  gh_stub
+  run_dot __add-layer "$private_url" me_acme "$private_dir"
+  mkdir -p "$tmp/fakehome/.local/bin"
+  ln -s "$dot" "$tmp/fakehome/.local/bin/dot"
+  # A complete answer, so git would stop at this helper if it were asked.
+  printf '[credential]\n\thelper = "!printf %s; :"\n' \
+    "'username=global\\\\npassword=global\\\\n'" >"$tmp/gitconfig"
+  mkdir -p "$tmp/otherhome"
+  out=$(HOME=$tmp/otherhome GIT_CONFIG_GLOBAL=$tmp/gitconfig \
+    git -C "$private_dir" credential fill <<<$'protocol=https\nhost=github.com\n' 2>&1)
+  rc=$?
+  assert_rc 0
+  assert_out_contains "password=token auth token --hostname github.com --user me_acme"
+  [[ $out != *global* ]] || fail "the global helper answered: $out"
 }
 
 failures=0

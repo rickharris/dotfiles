@@ -16,6 +16,11 @@ _dot() {
     ;;
   args)
     case $words[1] in
+    install)
+      _arguments \
+        "--layer[Also set up the private layer at this URL]:url:" \
+        "--user[The GitHub login the private layer belongs to]:login:"
+      ;;
     update)
       _arguments "--check[Report how far behind origin/main this is]"
       ;;
