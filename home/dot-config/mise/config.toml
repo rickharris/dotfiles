@@ -10,7 +10,7 @@ shfmt = "3.14.1"
 stylua = "2.6.0"
 taplo = "0.10.0"
 
-"github:github/copilot-language-server-release" = "1.573.0"
+"github:github/copilot-language-server-release" = "1.574.2"
 
 "npm:@stylelint/language-server" = { version = "1.2.0", allow_low_downloads = true }
 "npm:@vtsls/language-server" = "0.3.0"
