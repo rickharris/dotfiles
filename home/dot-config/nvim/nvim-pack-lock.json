@@ -1,11 +1,11 @@
 {
   "plugins": {
     "SchemaStore.nvim": {
-      "rev": "ffbe34a31de0cf696f688e7d9e226dc5b86b4323",
+      "rev": "6ad680dc81c58ae141c4e7533164ca54d65db2a0",
       "src": "https://github.com/b0o/SchemaStore.nvim"
     },
     "backend-ghostty": {
-      "rev": "409b83b1aee2efa566ed55db837d7ac91e40bfd5",
+      "rev": "ae8c0719a5667e33c8b51f601dca4198d3778b17",
       "src": "https://github.com/smart-splits-nvim/backend-ghostty"
     },
     "blink.cmp": {
@@ -34,7 +34,7 @@
       "src": "https://github.com/femiagbabiaka/fff-snacks.nvim"
     },
     "fff.nvim": {
-      "rev": "8bb398151738dd3d68d843e8e169c0bcb93bcab3",
+      "rev": "eb584015bb6bb77a3f93e84520a8e47379ab8435",
       "src": "https://github.com/dmtrKovalenko/fff.nvim"
     },
     "friendly-snippets": {
@@ -46,7 +46,7 @@
       "src": "https://github.com/ldelossa/gh.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "c0862d382a35b7b45757d8d151a6a634c09bf3ce",
+      "rev": "166c03131e6a3528f692dd89f37668d991f17baa",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "grug-far.nvim": {
@@ -66,7 +66,7 @@
       "src": "https://github.com/nvim-lualine/lualine.nvim"
     },
     "mini.files": {
-      "rev": "9898bee3b9004a3adf1b0c1b6ba984eae87082c2",
+      "rev": "bf671396edd8b462c98044376582bb3a2ce79a80",
       "src": "https://github.com/nvim-mini/mini.files"
     },
     "mini.icons": {
@@ -74,7 +74,7 @@
       "src": "https://github.com/nvim-mini/mini.icons"
     },
     "neogit": {
-      "rev": "17929b7b0b9c05fe3dfc788fbba9881eb9c1cbec",
+      "rev": "0468adaa4af22ede35c0df6bdd81e93a9c217733",
       "src": "https://github.com/NeogitOrg/neogit"
     },
     "neotest": {
@@ -106,7 +106,7 @@
       "src": "https://github.com/brenoprata10/nvim-highlight-colors"
     },
     "nvim-lspconfig": {
-      "rev": "4648fd8ba5c678d7e2db75ae44ffac269bb589d8",
+      "rev": "76f4cafc49677a34dc8ad8142b773d78ab4a041e",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-nio": {
@@ -122,7 +122,7 @@
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "octo.nvim": {
-      "rev": "0ddca04c02aab8ba18d2072f9b855f3806adad54",
+      "rev": "4b229445735c394ad9659ab28dc9285a26782356",
       "src": "https://github.com/pwntester/octo.nvim"
     },
     "overseer.nvim": {
